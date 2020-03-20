@@ -12,7 +12,7 @@ int frame_n = 0;
 
 int h = 36;
 int w = 28;
-int alpha = 20;
+int alpha = 1;
 
 float game_h;
 float game_w;
@@ -160,6 +160,11 @@ void frame() {
 
 
 void render_Game() {
+    int a1 = (window_height() - 10) / h;
+    int a2 = (window_width() - 10) / w;
+    alpha = a1 < a2 ? a1 : a2;
+    px_creature = alpha * 2 - 10;
+
     map_xy_to_window_xy(pacman->pos_x, pacman->pos_y, &pacman->x, &pacman->y);
     map_xy_to_window_xy(ghost->pos_x, ghost->pos_y, &ghost->x, &ghost->y);
     map_xy_to_window_xy(w, h, &game_w, &game_h);
@@ -175,9 +180,6 @@ void mouse_Game(float x, float y) {
 }
 
 void init_Game() {
-
-    px_creature = alpha * 2 - 10;
-
     pacman = (struct Pacman*) malloc(sizeof(struct Pacman));
     pacman->mouth_opened = 0;
     pacman->mouth_count_in_frames = 5;

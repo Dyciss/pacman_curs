@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
     
 	glutCreateWindow("Pacman");
-    glutFullScreen();
+    glutFullScreen(); // now we can:)
     
     init_Menu();
     init_About();
