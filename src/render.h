@@ -25,6 +25,12 @@ enum Direction {
     LEFT
 };
 
+enum Food {
+    SMALL,
+    MEDIUM,
+    LARGE
+};
+
 typedef struct Button Button;
 
 
@@ -39,3 +45,11 @@ void render_Pacman(int size_px, float x_center, float y_center, Color color);
 void render_Pacman_mouth(int size_px, float x_center, float y_center, Color color, enum Direction direction);
 
 void render_Ghost(int size_px, float x_center, float y_center, Color color, enum Direction direction);
+
+void render_Food(int size_px, float x_center, float y_center, Color color, enum Food food);
+
+void render_Wall(int size_px, float x_center, float y_center, Color color);
+
+void set_Wall(int map_x, int map_y);
+
+

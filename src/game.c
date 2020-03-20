@@ -41,12 +41,26 @@ void grid() {
     }
 }
 
+void set_Wall(int map_x, int map_y){
+    float game_x;
+    float game_y;
+    map_xy_to_window_xy(map_x, map_y, &game_x, &game_y);
+    render_Wall(alpha*2, game_x, game_y, GAME_BG);
+}
+
+void set_Food(int  map_x, int map_y, enum Food food){
+    float game_x;
+    float game_y;
+    map_xy_to_window_xy(map_x, map_y, &game_x, &game_y);
+    render_Food(alpha*2-1, game_x, game_y, GOLD, food);
+}
+
 void pacman_run_mouth(int open) {
     float xw;
     float yw;
     map_xy_to_window_xy(pacman->x, pacman->y, &xw, &yw);
     if (open) {
-        render_Pacman_mouth(pacman->px, xw, yw, GAME_BG, RIGHT);
+        render_Pacman_mouth(pacman->px, xw, yw, GAME_BG, TOP);
         glutTimerFunc(pacman->fps, pacman_run_mouth, 0);
     }
     else {
@@ -72,14 +86,26 @@ void render_Game() {
         glVertex2f(game_w + alpha_relative_x, game_h - alpha_relative_y);
         glVertex2f(-1 + alpha_relative_x, game_h - alpha_relative_y);
     glEnd();
-    render_Ghost(50, -0.7, 0.1, RED, TOP);
     if (!pacman->mouth_runned) {
       pacman_run_mouth(0);
       pacman->mouth_runned = 1; 
     }
+  //  grid();
+    render_Ghost(alpha*2-10, -0.7, 0.1, RED, TOP);
 
-    grid();
-    render_Ghost(50, -0.7, 0.1, RED, TOP);
+
+    set_Wall(27,36);
+    set_Wall(27,35);
+    set_Wall(27,34);
+    set_Wall(27,33);
+    set_Wall(27,32);
+    set_Wall(28,32);
+    set_Wall(26,32);
+
+    set_Food(28,35,SMALL);
+    set_Food(28,34, MEDIUM);
+    set_Food(28,33, LARGE);
+
 }
 
 void mouse_Game(float x, float y) {
