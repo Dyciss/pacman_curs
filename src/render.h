@@ -3,10 +3,12 @@
 #include <GL/freeglut.h>
 #include <string.h>
 
+#include "windowsize.h"
+
 #define FONT GLUT_BITMAP_9_BY_15
-#define FONT_HEIGHT (15 / (float) glutGet(GLUT_WINDOW_HEIGHT))
+#define FONT_HEIGHT (15 / (float) window_height())
 #define FONT_HEIGHT_UPPER_CASE (FONT_HEIGHT * 2)
-#define FONT_WIDTH (9 / (float) glutGet(GLUT_WINDOW_WIDTH))
+#define FONT_WIDTH (9 / (float) window_width())
 #define WHITE ((Color) {234, 220, 177})
 #define GAME_BG ((Color) {42, 30, 120})
 #define GOLD ((Color) {245, 238, 0})

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(pacman)
 
-add_executable(pacman main.c menu.c about.c render.c game.c)
+add_executable(pacman main.c menu.c about.c render.c game.c windowsize.c)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
 set(CMAKE_C_FLAGS "-pedantic -Werror")

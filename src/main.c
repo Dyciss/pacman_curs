@@ -7,6 +7,7 @@
 #include "about.h"
 #include "menu.h"
 #include "game.h"
+#include "windowsize.h"
 
 enum Program_state program_state;
 
@@ -23,6 +24,7 @@ void exit_and_free(int exit_code) {
 }
 
 void render() {
+    set_window_size();
     switch (program_state) {
     case Menu:
         render_Menu();
@@ -46,12 +48,11 @@ void render() {
 
     }
     glutSwapBuffers();
-    //glFlush();
 }
 
 void mouse(int button, int state, int x, int y) {
-    float fx = 2 * x / (float) glutGet(GLUT_WINDOW_WIDTH) - 1.0;
-    float fy = 1.0 - 2 * y / (float) glutGet(GLUT_WINDOW_HEIGHT);
+    float fx = 2 * x / (float) window_width() - 1.0;
+    float fy = 1.0 - 2 * y / (float) window_height();
     
     if (state != GLUT_DOWN) return;
     switch (program_state) {
@@ -84,7 +85,6 @@ int main(int argc, char *argv[]) {
     program_state = Menu;
 
     glutDisplayFunc(render);
-    //glutTimerFunc(1000.0 / 20.0, render, 1);
     glutMouseFunc(mouse);
 
     glutMainLoop();
