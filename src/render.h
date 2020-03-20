@@ -51,6 +51,4 @@ void render_Food(int size_px, float x_center, float y_center, Color color, enum 
 
 void render_Wall(int size_px, float x_center, float y_center, Color color);
 
-void set_Wall(int map_x, int map_y);
-
 
