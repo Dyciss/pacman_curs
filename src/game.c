@@ -17,18 +17,28 @@ int alpha = 20;
 float game_h;
 float game_w;
 
+int px_creature = 0;
+
 struct Pacman {
-    int px;
     int pos_x;
     int pos_y;
     float x;
     float y;
-    int alive;
     int mouth_opened;
     int mouth_count_in_frames;
     int move_count_in_frames;
     enum Direction direction;
 } *pacman;
+
+struct Ghost{
+    int pos_x;
+    int pos_y;
+    float x;
+    float y;
+    int move_count_in_frames;
+    enum Direction direction;
+} *ghost;
+
 
 void map_xy_to_window_xy(int x, int y, float *xw, float *yw) {
     x *= alpha;
@@ -98,11 +108,15 @@ void set_Pacman() {
         pacman_move();
     }
 
-    render_Pacman(pacman->px, pacman->x, pacman->y, GOLD);
+    render_Pacman(px_creature, pacman->x, pacman->y, GOLD);
 
-    if (!pacman->mouth_opened) {
-        render_Pacman_mouth(pacman->px, pacman->x, pacman->y, GAME_BG, pacman->direction);
+    if (pacman->mouth_opened) {
+        render_Pacman_mouth(px_creature, pacman->x, pacman->y, GAME_BG, pacman->direction);
     }
+}
+
+void set_Ghost(){
+    render_Ghost(px_creature, ghost->x, ghost->y, RED, ghost->direction);
 }
 
 void frame() {
@@ -122,8 +136,6 @@ void frame() {
         glVertex2f(-1 + alpha_relative_x, game_h - alpha_relative_y);
     glEnd();
     
-    render_Ghost(alpha*2-10, -0.7, 0.1, RED, BOTTOM);
-
 
     set_Wall(27,36);
     set_Wall(27,35);
@@ -137,6 +149,7 @@ void frame() {
     set_Food(28,34, MEDIUM);
     set_Food(28,33, LARGE);
     set_Pacman();
+    set_Ghost();
 
     grid();
     glutTimerFunc(1000.0/fps, frame, 0);
@@ -148,6 +161,7 @@ void frame() {
 
 void render_Game() {
     map_xy_to_window_xy(pacman->pos_x, pacman->pos_y, &pacman->x, &pacman->y);
+    map_xy_to_window_xy(ghost->pos_x, ghost->pos_y, &ghost->x, &ghost->y);
     map_xy_to_window_xy(w, h, &game_w, &game_h);
 
     if (!game_alive) {
@@ -161,15 +175,22 @@ void mouse_Game(float x, float y) {
 }
 
 void init_Game() {
+
+    px_creature = alpha * 2 - 10;
+
     pacman = (struct Pacman*) malloc(sizeof(struct Pacman));
-    pacman->px = alpha * 2 - 10;
-    pacman->alive = 0;
     pacman->mouth_opened = 0;
-    pacman->mouth_count_in_frames = 2;
-    pacman->move_count_in_frames = 2;
+    pacman->mouth_count_in_frames = 5;
+    pacman->move_count_in_frames = 10;
     pacman->direction = LEFT;
     pacman->pos_x = 28;
     pacman->pos_y = 36;
+
+    ghost = (struct Ghost*) malloc(sizeof(struct Ghost));
+    ghost->pos_x = 20;
+    ghost->pos_y = 36;
+    ghost->direction = LEFT;
+    ghost->move_count_in_frames = 10;
 }
 
 void free_Game() {
