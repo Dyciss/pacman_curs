@@ -7,6 +7,9 @@
 #include "windowsize.h"
 #include "directions.h"
 
+char escape_btn_text[] = "escape";
+Button *escape_btn = NULL;
+
 int game_alive = 0;
 int fps = 30;
 int frame_n = 0;
@@ -121,6 +124,7 @@ void set_Ghost(){
 }
 
 void frame() {
+    if (!game_alive) return;
     clock_t t1 = clock();
     frame_n = (frame_n + 1) % (pacman->mouth_count_in_frames * pacman->move_count_in_frames);
 
@@ -129,6 +133,8 @@ void frame() {
 
     glClear(GL_COLOR_BUFFER_BIT);
 
+    render_string("PACMAN GAME!", game_w + alpha_relative_x + FONT_WIDTH, 1 - alpha_relative_y - FONT_HEIGHT_UPPER_CASE, FONT, WHITE);
+    render_button(escape_btn, 1 - FONT_WIDTH*(sizeof escape_btn_text), -1 + FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
     glBegin(GL_POLYGON);
         glColor3ub(GAME_BG.r, GAME_BG.g, GAME_BG.b);
         glVertex2f(-1 + alpha_relative_x, 1 - alpha_relative_y);
@@ -155,14 +161,14 @@ void frame() {
     grid();
     glutTimerFunc(1000.0/fps, frame, 0);
     clock_t t2 = clock();
-    printf("%lf\n", 1.0/((double)(t2 - t1) / CLOCKS_PER_SEC));
+    //printf("%lf\n", 1.0/((double)(t2 - t1) / CLOCKS_PER_SEC));
     glutSwapBuffers();
 }
 
 
 void render_Game() {
-    int a1 = (window_height() - 10) / h;
-    int a2 = (window_width() - 10) / w;
+    int a1 = window_height()*(1 - FONT_HEIGHT) / h;
+    int a2 = window_width()*(1 - FONT_WIDTH*30) / w; // 30 symbols in right part of screen
     alpha = a1 < a2 ? a1 : a2;
     px_creature = alpha * 2 - 10;
 
@@ -171,13 +177,17 @@ void render_Game() {
     map_xy_to_window_xy(w, h, &game_w, &game_h);
 
     if (!game_alive) {
+      game_alive = 1;
       frame();
-      game_alive = 1; 
     }
 }
 
 void mouse_Game(float x, float y) {
-
+    if (in_button(escape_btn, x, y)) {
+        game_alive = 0;
+        set_program_state(Menu);
+        return;
+    }
 }
 
 void keyboard_special_Game(int key, int x, int y) {
@@ -190,8 +200,8 @@ void keyboard_special_Game(int key, int x, int y) {
 void init_Game() {
     pacman = (struct Pacman*) malloc(sizeof(struct Pacman));
     pacman->mouth_opened = 0;
-    pacman->mouth_count_in_frames = 5;
-    pacman->move_count_in_frames = 10;
+    pacman->mouth_count_in_frames = 2;
+    pacman->move_count_in_frames = 4;
     pacman->direction = LEFT;
     pacman->pos_x = 28;
     pacman->pos_y = 36;
@@ -201,11 +211,14 @@ void init_Game() {
     ghost->pos_y = 36;
     ghost->direction = LEFT;
     ghost->move_count_in_frames = 10;
+
+    escape_btn = new_Button(escape_btn_text);
 }
 
 void free_Game() {
     free(pacman);
     free(ghost);
+    free_Button(escape_btn);
 }
 
 
