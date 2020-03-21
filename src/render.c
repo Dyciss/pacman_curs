@@ -51,7 +51,7 @@ void render_button(Button *btn, float x_center, float y_center, Color color_text
     render_string(btn->text, x_text, y_text, FONT, color_text);
     
     btn->x1 = x_text - FONT_WIDTH;
-    btn->x2 = x_center - btn->x1;
+    btn->x2 = x_text + FONT_WIDTH + 2*FONT_WIDTH*btn->symbols;
     btn->y1 = y_text - FONT_HEIGHT;
     btn->y2 = y_text + FONT_HEIGHT_UPPER_CASE;
 
