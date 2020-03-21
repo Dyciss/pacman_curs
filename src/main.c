@@ -51,10 +51,10 @@ void render() {
 }
 
 void mouse(int button, int state, int x, int y) {
+    if (state != GLUT_DOWN) return;
+
     float fx = 2 * x / (float) window_width() - 1.0;
     float fy = 1.0 - 2 * y / (float) window_height();
-    
-    if (state != GLUT_DOWN) return;
     switch (program_state) {
     case Menu:
         mouse_Menu(fx, fy);
@@ -69,6 +69,45 @@ void mouse(int button, int state, int x, int y) {
     default:
         break;
     }
+}
+
+void keyboard(unsigned char key, int x, int y) {
+    switch (program_state)
+    {
+    case Menu:
+        // keyboard_Menu()
+        break;
+        
+    default:
+        break;
+    }
+}
+
+void keyboard_special(int key, int x, int y) {
+    switch (key)
+    {
+    case GLUT_KEY_F5:
+        glutFullScreenToggle();
+        break;
+    case GLUT_KEY_F12:
+        exit_and_free(EXIT_SUCCESS);
+        break;
+    default:
+        switch (program_state)
+        {
+        case Menu:
+            // keyboard_special_Menu()
+            break;
+        
+        case Game:
+            keyboard_special_Game(key, x, y);
+            break;
+        
+        default:
+            break;
+        }
+        break;
+    }    
 }
 
 int main(int argc, char *argv[]) {
@@ -86,6 +125,8 @@ int main(int argc, char *argv[]) {
 
     glutDisplayFunc(render);
     glutMouseFunc(mouse);
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(keyboard_special);
 
     glutMainLoop();
 

@@ -4,6 +4,7 @@
 
 #include "render.h"
 #include "windowsize.h"
+#include "directions.h"
 
 #define FONT GLUT_BITMAP_9_BY_15
 #define FONT_HEIGHT (15 / (float) window_height())
@@ -90,7 +91,7 @@ void render_Circle(int size_px, float x_center, float y_center, Color color) {
 void render_Pacman(int size_px, float x_center, float y_center, Color color) {
     render_Circle(size_px, x_center, y_center, color);
 }
-void render_Pacman_mouth(int size_px, float x_center, float y_center, Color color, enum Direction direction) {
+void render_Pacman_mouth(int size_px, float x_center, float y_center, Color color, Direction direction) {
     glColor3ub(color.r, color.g, color.b);
     int n = (size_px/2-1)/2;
     if (direction == RIGHT) {
@@ -205,7 +206,7 @@ void render_Eyes(int size_px, float x_center, float y_center, enum Direction dir
     }
 }
 
-void render_Ghost(int size_px, float x_center, float y_center, Color color, enum Direction direction){
+void render_Ghost(int size_px, float x_center, float y_center, Color color, Direction direction){
     glColor3ub(color.r, color.g, color.b);
     int y = (int)(y_center * window_height() + size_px / 2);
     for (int i = size_px/5; i > 0; i--){

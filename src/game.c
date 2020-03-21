@@ -5,6 +5,7 @@
 
 #include "main.h"
 #include "windowsize.h"
+#include "directions.h"
 
 int game_alive = 0;
 int fps = 30;
@@ -27,7 +28,7 @@ struct Pacman {
     int mouth_opened;
     int mouth_count_in_frames;
     int move_count_in_frames;
-    enum Direction direction;
+    Direction direction;
 } *pacman;
 
 struct Ghost{
@@ -36,7 +37,7 @@ struct Ghost{
     float x;
     float y;
     int move_count_in_frames;
-    enum Direction direction;
+    Direction direction;
 } *ghost;
 
 
@@ -179,6 +180,13 @@ void mouse_Game(float x, float y) {
 
 }
 
+void keyboard_special_Game(int key, int x, int y) {
+    Direction new_direction = direction_from_special_key(key);
+    if (new_direction) {
+        pacman->direction = new_direction;
+    }
+}
+
 void init_Game() {
     pacman = (struct Pacman*) malloc(sizeof(struct Pacman));
     pacman->mouth_opened = 0;
@@ -197,6 +205,7 @@ void init_Game() {
 
 void free_Game() {
     free(pacman);
+    free(ghost);
 }
 
 

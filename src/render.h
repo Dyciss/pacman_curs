@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "windowsize.h"
+#include "directions.h"
 
 #define FONT GLUT_BITMAP_9_BY_15
 #define FONT_HEIGHT (15 / (float) window_height())
@@ -20,12 +21,6 @@ typedef struct {
     GLubyte b;
 } Color;
 
-enum Direction {
-    TOP,
-    BOTTOM,
-    RIGHT,
-    LEFT
-};
 
 enum Food {
     SMALL,
@@ -45,9 +40,9 @@ Button *new_Button(char *text);
 void *free_Button(Button *btn);
 
 void render_Pacman(int size_px, float x_center, float y_center, Color color);
-void render_Pacman_mouth(int size_px, float x_center, float y_center, Color color, enum Direction direction);
+void render_Pacman_mouth(int size_px, float x_center, float y_center, Color color, Direction direction);
 
-void render_Ghost(int size_px, float x_center, float y_center, Color color, enum Direction direction);
+void render_Ghost(int size_px, float x_center, float y_center, Color color, Direction direction);
 
 void render_Food(int size_px, float x_center, float y_center, Color color, enum Food food);
 
