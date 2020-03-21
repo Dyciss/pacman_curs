@@ -2,7 +2,7 @@
 
 enum Program_state{
     Menu,
-    Game,
+    Game_page,
     Settings,
     Scores,
     About,

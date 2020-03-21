@@ -46,7 +46,7 @@ void mouse_Menu(float x, float y) {
         set_program_state(Settings);
     }
     else if (in_button(game_btn, x, y)) {
-        set_program_state(Game);
+        set_program_state(Game_page);
     }
     else if (in_button(exit_btn, x, y)) {
         set_program_state(Exit);

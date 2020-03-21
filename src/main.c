@@ -38,7 +38,7 @@ void render() {
         exit_and_free(EXIT_SUCCESS);
         break;
     
-    case Game:
+    case Game_page:
         render_Game();
         break;
     
@@ -63,7 +63,7 @@ void mouse(int button, int state, int x, int y) {
     case About:
         mouse_About(fx, fy);
     
-    case Game:
+    case Game_page:
         mouse_Game(fx, fy);
 
     default:
@@ -99,7 +99,7 @@ void keyboard_special(int key, int x, int y) {
             // keyboard_special_Menu()
             break;
         
-        case Game:
+        case Game_page:
             keyboard_special_Game(key, x, y);
             break;
         
