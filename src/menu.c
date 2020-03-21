@@ -19,10 +19,10 @@ void init_Menu() {
 }
 
 void free_Menu() {
-    free(game_btn);
-    free(settings_btn);
-    free(about_btn);
-    free(exit_btn);
+    free_Button(game_btn);
+    free_Button(settings_btn);
+    free_Button(about_btn);
+    free_Button(exit_btn);
 }
 
 void render_Menu() {
