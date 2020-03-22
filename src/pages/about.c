@@ -1,5 +1,5 @@
 #include <GL/freeglut.h>
-#include "render.h"
+#include "./ui/render.h"
 #include "main.h"
 
 char about_text[] = 

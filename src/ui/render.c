@@ -6,11 +6,6 @@
 #include "windowsize.h"
 #include "directions.h"
 
-#define FONT GLUT_BITMAP_9_BY_15
-#define FONT_HEIGHT (15 / (float) window_height())
-#define FONT_HEIGHT_UPPER_CASE (FONT_HEIGHT * 2)
-#define FONT_WIDTH (9 / (float) window_width())
-
 typedef struct Button {
     // left-bottom
     float x1;

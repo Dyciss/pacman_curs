@@ -1,7 +1,7 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 
-#include "render.h"
+#include "./ui/render.h"
 #include "main.h"
 
 char menu_str[] = "Menu page";

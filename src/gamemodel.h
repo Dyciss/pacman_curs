@@ -1,7 +1,12 @@
 #pragma once
 
-#include "render.h"
 #include "directions.h"
+
+enum Food {
+    SMALL,
+    MEDIUM,
+    LARGE
+};
 
 struct creature {
     // x in range [1; width]

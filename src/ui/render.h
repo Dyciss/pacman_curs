@@ -1,10 +1,8 @@
 #pragma once
 
-#include <GL/freeglut.h>
-#include <string.h>
-
 #include "windowsize.h"
 #include "directions.h"
+#include "gamemodel.h"
 
 #define FONT GLUT_BITMAP_9_BY_15
 #define FONT_HEIGHT (15 / (float) window_height())
@@ -15,22 +13,14 @@
 #define GOLD ((Color) {245, 238, 0})
 #define RED ((Color) {255, 0, 0})
 #define BLACK ((Color) {0, 0, 0})
+
 typedef struct {
     GLubyte r;
     GLubyte g;
     GLubyte b;
 } Color;
 
-
-enum Food {
-    SMALL,
-    MEDIUM,
-    LARGE
-};
-
-
 typedef struct Button Button;
-
 
 void render_string(char *str, float x, float y, void *font, Color color);
 
@@ -47,5 +37,3 @@ void render_Ghost(int size_px, float x_center, float y_center, Color color, Dire
 void render_Food(int size_px, float x_center, float y_center, Color color, enum Food food);
 
 void render_Wall(int size_px, float x_center, float y_center, Color color);
-
-

@@ -4,10 +4,10 @@
 #include <GL/freeglut.h>
 
 #include "main.h"
-#include "about.h"
-#include "menu.h"
-#include "game.h"
-#include "windowsize.h"
+#include "pages/about.h"
+#include "pages/menu.h"
+#include "pages/game.h"
+#include "./ui/windowsize.h"
 
 enum Program_state program_state;
 

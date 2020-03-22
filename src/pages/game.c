@@ -1,14 +1,16 @@
 #include <GL/freeglut.h>
-#include "render.h"
 #include <stdio.h>
 #include <time.h>
 
 #include "main.h"
-#include "windowsize.h"
+
+#include "./ui/windowsize.h"
+#include "./ui/render.h"
+#include "./ui/gameui.h"
+
 #include "directions.h"
-#include "gameui.h"
-#include "gamesizing.h"
-#include "engine.h"
+#include "./ui/gamesizing.h"
+#include "./engine/engine.h"
 
 Game *game = NULL;
 
