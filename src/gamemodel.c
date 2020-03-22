@@ -42,7 +42,7 @@ void sync_sizing_props(Game *game) {
 
 void set_ghost_count(Game *game, int count) {
     game->ghost_count = count;
-    game->ghosts = (struct creature **) malloc(sizeof(struct creature)*count);
+    game->ghosts = (struct creature **) malloc(sizeof(struct creature *)*count);
 }
 
 void init_field(Game *game, int width, int height) {

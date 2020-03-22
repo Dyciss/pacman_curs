@@ -15,7 +15,6 @@ char escape_btn_text[] = "escape";
 Button *escape_btn = NULL;
 
 int fps = 30;
-int frame_n = 0;
 
 void animate_pacman() {
     if (!game->alive) return;

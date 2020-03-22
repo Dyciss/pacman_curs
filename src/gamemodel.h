@@ -5,7 +5,7 @@
 
 struct creature {
     // x in range [1; width]
-    // y in range [1; width]
+    // y in range [1; height]
     // (0, 0) - not in field position
     int x;
     int y;
@@ -40,7 +40,7 @@ typedef struct Game
 {
     int width;
     int height;
-    float window_x; // bottom left corner
+    float window_x; // bottom right corner
     float window_y;
     int alpha; // = f(window, width, height)
     int px_creature; // = f(alpha)
