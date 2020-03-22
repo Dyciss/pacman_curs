@@ -2,8 +2,11 @@
 
 #include "gamemodel.h"
 #include "render.h"
+#include "gamesizing.h"
 #include "directions.h"
 #include <stdio.h>
+
+
 void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float) window_width();
     float alpha_relative_y = game->alpha / (float) window_height();

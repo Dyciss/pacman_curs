@@ -54,6 +54,5 @@ typedef struct Game
     struct cell **field;
 } Game;
 
-void map_xy_to_window_xy(int alpha, int x, int y, float *xw, float *yw);
-void sync_sizing_props(Game *game);
-Game *canonical_game();
+void set_ghost_count(Game *game, int count);
+void init_field(Game *game, int width, int height);

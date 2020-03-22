@@ -6,8 +6,9 @@
 #include "main.h"
 #include "windowsize.h"
 #include "directions.h"
-#include "gamemodel.h"
 #include "gameui.h"
+#include "gamesizing.h"
+#include "engine.h"
 
 Game *game = NULL;
 
@@ -122,7 +123,7 @@ void keyboard_special_Game(int key, int x, int y) {
 }
 
 void init_Game() {
-    game = canonical_game();
+    game = new_Game();
     escape_btn = new_Button(escape_btn_text);
 }
 
