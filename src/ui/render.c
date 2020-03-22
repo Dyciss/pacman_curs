@@ -36,7 +36,10 @@ Button *new_Button(char *text) {
     return btn;
 }
 
-void *free_Button(Button *btn) { free(btn); }
+void *free_Button(Button *btn) {
+    free(btn);
+    return 0;
+}
 
 void render_button(Button *btn, float x_center, float y_center,
                    Color color_text, Color color_border) {
@@ -263,7 +266,7 @@ void render_Ghost(int size_px, float x_center, float y_center, Color color,
         glEnd();
         y--;
     }
-    for (y; y > (int)(y_center * window_height() - size_px * 0.6 / 2); y--) {
+    for (; y > (int)(y_center * window_height() - size_px * 0.6 / 2); y--) {
         glBegin(GL_LINES);
         glVertex2f(x_center - (size_px / 2) / (float)window_width(),
                    y / (float)window_height());

@@ -62,9 +62,11 @@ void mouse(int button, int state, int x, int y) {
 
     case About:
         mouse_About(fx, fy);
+        break;
 
     case Game_page:
         mouse_Game(fx, fy);
+        break;
 
     default:
         break;

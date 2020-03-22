@@ -12,7 +12,7 @@ add_executable(pacman main.c
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
-set(CMAKE_C_FLAGS "-pedantic -Werror")
+set(CMAKE_C_FLAGS "-pedantic -Werror -Wall -Wextra -Wno-unused-parameter")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
