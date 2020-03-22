@@ -1,5 +1,5 @@
-#include "gamemodel.h"
 #include "./ui/render.h"
+#include "gamemodel.h"
 
 #define CELL_CREATURE_PADDING 10
 
@@ -7,13 +7,14 @@ void map_xy_to_window_xy(int alpha, int x, int y, float *xw, float *yw) {
     x *= alpha;
     y *= alpha;
 
-    *xw = 2 * x / (float) window_width() - 1.0;
-    *yw = 1.0 - 2 * y / (float) window_height();
+    *xw = 2 * x / (float)window_width() - 1.0;
+    *yw = 1.0 - 2 * y / (float)window_height();
 }
 
 void _set_alpha(Game *game) {
-    int a1 = window_height()*(1 - FONT_HEIGHT) / game->height;
-    int a2 = window_width()*(1 - FONT_WIDTH*30) / game->width; // 30 symbols in right part of screen
+    int a1 = window_height() * (1 - FONT_HEIGHT) / game->height;
+    int a2 = window_width() * (1 - FONT_WIDTH * 30) /
+             game->width; // 30 symbols in right part of screen
     game->alpha = a1 < a2 ? a1 : a2;
 }
 
@@ -26,7 +27,8 @@ void _set_window_coordinates(Game *g, struct creature *c) {
 }
 
 void _set_window_xy(Game *g) {
-    map_xy_to_window_xy(g->alpha, g->width, g->height, &g->window_x, &g->window_y);
+    map_xy_to_window_xy(g->alpha, g->width, g->height, &g->window_x,
+                        &g->window_y);
 }
 
 void sync_sizing_props(Game *game) {

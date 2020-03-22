@@ -1,13 +1,13 @@
+#include "main.h"
+
+#include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <GL/freeglut.h>
-
-#include "main.h"
-#include "pages/about.h"
-#include "pages/menu.h"
-#include "pages/game.h"
 #include "./ui/windowsize.h"
+#include "pages/about.h"
+#include "pages/game.h"
+#include "pages/menu.h"
 
 enum Program_state program_state;
 
@@ -29,7 +29,7 @@ void render() {
     case Menu:
         render_Menu();
         break;
-    
+
     case About:
         render_About();
         break;
@@ -37,24 +37,24 @@ void render() {
     case Exit:
         exit_and_free(EXIT_SUCCESS);
         break;
-    
+
     case Game_page:
         render_Game();
         break;
-    
+
     default:
         exit_and_free(EXIT_FAILURE); // we cannot be here
         break;
-
     }
     glutSwapBuffers();
 }
 
 void mouse(int button, int state, int x, int y) {
-    if (state != GLUT_DOWN) return;
+    if (state != GLUT_DOWN)
+        return;
 
-    float fx = 2 * x / (float) window_width() - 1.0;
-    float fy = 1.0 - 2 * y / (float) window_height();
+    float fx = 2 * x / (float)window_width() - 1.0;
+    float fy = 1.0 - 2 * y / (float)window_height();
     switch (program_state) {
     case Menu:
         mouse_Menu(fx, fy);
@@ -62,7 +62,7 @@ void mouse(int button, int state, int x, int y) {
 
     case About:
         mouse_About(fx, fy);
-    
+
     case Game_page:
         mouse_Game(fx, fy);
 
@@ -72,20 +72,18 @@ void mouse(int button, int state, int x, int y) {
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    switch (program_state)
-    {
+    switch (program_state) {
     case Menu:
         // keyboard_Menu()
         break;
-        
+
     default:
         break;
     }
 }
 
 void keyboard_special(int key, int x, int y) {
-    switch (key)
-    {
+    switch (key) {
     case GLUT_KEY_F5:
         glutFullScreenToggle();
         break;
@@ -93,30 +91,29 @@ void keyboard_special(int key, int x, int y) {
         exit_and_free(EXIT_SUCCESS);
         break;
     default:
-        switch (program_state)
-        {
+        switch (program_state) {
         case Menu:
             // keyboard_special_Menu()
             break;
-        
+
         case Game_page:
             keyboard_special_Game(key, x, y);
             break;
-        
+
         default:
             break;
         }
         break;
-    }    
+    }
 }
 
 int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
-    
-	glutCreateWindow("Pacman");
+    glutInitDisplayMode(GLUT_DEPTH | GLUT_DOUBLE | GLUT_RGBA);
+
+    glutCreateWindow("Pacman");
     glutFullScreen(); // now we can:)
-    
+
     init_Menu();
     init_About();
     init_Game();

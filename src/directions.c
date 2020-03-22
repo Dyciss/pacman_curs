@@ -6,8 +6,7 @@ Direction direction_from_special_key(int key) {
     //
     // returns 0 (NONE_DIRECTION) if no direction with such key
     //
-    switch (key)
-    {
+    switch (key) {
     case GLUT_KEY_UP:
         return TOP;
     case GLUT_KEY_DOWN:
@@ -16,7 +15,7 @@ Direction direction_from_special_key(int key) {
         return RIGHT;
     case GLUT_KEY_LEFT:
         return LEFT;
-    
+
     default:
         return NONE_DIRECTION;
     }

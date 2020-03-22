@@ -3,7 +3,7 @@
 #include <GL/freeglut.h>
 
 typedef enum Direction {
-    NONE_DIRECTION=0,
+    NONE_DIRECTION = 0,
     TOP,
     BOTTOM,
     RIGHT,
