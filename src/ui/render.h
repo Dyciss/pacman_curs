@@ -28,7 +28,7 @@ void render_button(Button *btn, float x_center, float y_center,
                    Color color_text, Color color_border);
 int in_button(Button *btn, float x, float y);
 Button *new_Button(char *text);
-void *free_Button(Button *btn);
+void free_Button(Button *btn);
 
 void render_Pacman(int size_px, float x_center, float y_center, Color color);
 void render_Pacman_mouth(int size_px, float x_center, float y_center,

@@ -36,10 +36,7 @@ Button *new_Button(char *text) {
     return btn;
 }
 
-void *free_Button(Button *btn) {
-    free(btn);
-    return 0;
-}
+void free_Button(Button *btn) { free(btn); }
 
 void render_button(Button *btn, float x_center, float y_center,
                    Color color_text, Color color_border) {
