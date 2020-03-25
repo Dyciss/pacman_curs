@@ -9,10 +9,33 @@
 void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
     float alpha_relative_y = game->alpha / (float)window_height();
+    float right_part_starts_x = game->window_x + alpha_relative_x + FONT_WIDTH;
+    float top_starts_y = 1 - alpha_relative_y;
 
-    render_string("PACMAN GAME!",
-                  game->window_x + alpha_relative_x + FONT_WIDTH,
-                  1 - alpha_relative_y - FONT_HEIGHT_UPPER_CASE, FONT, WHITE);
+    int line_number = 1;
+
+    render_string("PACMAN GAME!", right_part_starts_x,
+                  top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
+                  WHITE);
+
+    line_number++;
+
+    char str[64] = {'\0'};
+    sprintf(str, "Your lifes count: %i", game->lives);
+    render_string(str, right_part_starts_x,
+                  top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
+                  WHITE);
+
+    line_number++;
+
+    if (game->countdown.active) {
+        sprintf(str, "We want you to calm down: %i -- %i",
+                game->countdown.current_n, game->countdown.n);
+        render_string(str, right_part_starts_x,
+                      top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
+                      WHITE);
+        line_number++;
+    }
 }
 
 void draw_background(Game *game) {

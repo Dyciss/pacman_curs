@@ -38,7 +38,17 @@ typedef struct Game {
     int px_creature; // = f(alpha)
 
     int ghost_count; // = f(field)
-    int alive;
+    int alive; // should the game be rendered, it's true if we are in game page
+    int lives; // pacman lives, lives==0 <=> game ended
+
+    struct {
+        int active;
+        int runned;
+        int ms; // countdown tick in ms
+        int n;  // countdown count of ticks
+        // when countdown_current_n > countdown_n countdown stops
+        int current_n;
+    } countdown;
 
     struct creature *pacman;
     struct creature **ghosts;
@@ -48,3 +58,5 @@ typedef struct Game {
 
 void set_ghost_count(Game *game, int count);
 void init_field(Game *game, int width, int height);
+void start_countdown(Game *game);
+void stop_countdown(Game *game);

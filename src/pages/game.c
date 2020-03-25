@@ -26,9 +26,16 @@ void animate_pacman() {
     glutTimerFunc(1000.0 / 3, animate_pacman, 0);
 }
 
+void rebirth_game() { rebirth(game); }
+
 void move_pacman() {
-    if (!game->alive)
+    if (!game->alive || !game->lives)
         return;
+
+    if (game->countdown.active) {
+        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+        return;
+    }
 
     int new_x = game->pacman->x;
     int new_y = game->pacman->y;
@@ -72,8 +79,13 @@ void move_pacman() {
         // no pacman
         game->pacman->x = 0;
         game->pacman->y = 0;
-        game->alive = 0; // maybe game->end = 1
-        // THE END
+        game->lives--;
+
+        if (game->lives) {
+            start_countdown(game);
+            glutTimerFunc(game->countdown.ms, rebirth_game, 0);
+        }
+
         break;
 
     default: // cant be here
@@ -82,18 +94,30 @@ void move_pacman() {
 
     map_xy_to_window_xy(game->alpha, game->pacman->x, game->pacman->y,
                         &game->pacman->window_x, &game->pacman->window_y);
-    printf("PACMAN -- (%i, %i) -- (%f, %f)\n", game->pacman->x, game->pacman->y,
-           game->pacman->window_x, game->pacman->window_y);
 
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+}
+
+void countdown() {
+    game->countdown.current_n++;
+    if (game->countdown.current_n > game->countdown.n) {
+        stop_countdown(game);
+        return;
+    }
+
+    glutTimerFunc(game->countdown.ms, countdown, 0);
 }
 
 void frame() {
     if (!game->alive)
         return;
 
+    if (game->countdown.active && !game->countdown.runned) {
+        game->countdown.runned = 1;
+        glutTimerFunc(game->countdown.ms, countdown, 0);
+    }
+
     glClear(GL_COLOR_BUFFER_BIT);
-    puts("draw");
     render_button(escape_btn, 1 - FONT_WIDTH * (sizeof escape_btn_text),
                   -1 + FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
     draw_game(game);

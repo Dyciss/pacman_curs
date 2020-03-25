@@ -16,3 +16,11 @@ void init_field(Game *game, int width, int height) {
             height, sizeof(struct cell)); // initialized with Nothing
     }
 }
+
+void start_countdown(Game *game) {
+    game->countdown.active = 1;
+    game->countdown.runned = 0;
+    game->countdown.current_n = 1;
+}
+
+void stop_countdown(Game *game) { game->countdown.active = 0; }
