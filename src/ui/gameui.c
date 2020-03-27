@@ -87,6 +87,11 @@ void draw_Pacman(Game *game, float x, float y) {
 void draw_Ghost(Game *game, float x, float y, int ghost_id) {
     render_Ghost(game->px_creature, x, y, RED,
                  game->ghosts[ghost_id]->direction);
+    int eyes_opened = game->ghosts[0]->animation_status;
+    if (eyes_opened){
+        render_Eyes(game->px_creature, x, y,
+                 game->ghosts[ghost_id]->direction);
+    }
 }
 
 void draw_game(Game *game) {

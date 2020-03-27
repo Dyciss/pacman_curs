@@ -292,7 +292,7 @@ void render_Ghost(int size_px, float x_center, float y_center, Color color,
     glVertex2f(x_center + (size_px / 2) / (float)window_width(),
                y_center - (size_px / 2) / (float)window_height());
     glEnd();
-    render_Eyes(size_px, x_center, y_center, direction);
+    //render_Eyes(size_px, x_center, y_center, direction);
 }
 void render_Food(int size_px, float x_center, float y_center, Color color,
                  enum Food food) {

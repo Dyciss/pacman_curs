@@ -36,6 +36,8 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
 
 void render_Ghost(int size_px, float x_center, float y_center, Color color,
                   Direction direction);
+void render_Eyes(int size_px, float x_center, float y_center,
+                 enum Direction direction);
 
 void render_Food(int size_px, float x_center, float y_center, Color color,
                  enum Food food);
