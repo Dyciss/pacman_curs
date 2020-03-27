@@ -46,7 +46,7 @@ void init_start_position(Game *game) {
 
     game->field[25][35].object = Food;
     game->field[25][35].food_type = LARGE;
-    game->field[0][1].object = Food;
+    game->field[0][2].object = Food;
     game->field[0][1].food_type = MEDIUM;
     game->field[9][8].object = Food;
     game->field[9][8].food_type = SMALL;

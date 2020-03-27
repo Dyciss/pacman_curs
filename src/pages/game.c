@@ -26,7 +26,7 @@ void animate_pacman() {
     glutTimerFunc(1000.0 / 3, animate_pacman, 0);
 }
 
-void animate_Ghost(){
+void animate_Ghost() {
     if (!game->alive)
         return;
     game->ghosts[0]->animation_status = !game->ghosts[0]->animation_status;
@@ -39,7 +39,7 @@ void move_pacman() {
     if (!game->alive || !game->lives)
         return;
 
-    if (game->countdown.active) {   
+    if (game->countdown.active) {
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
         return;
     }
@@ -105,11 +105,11 @@ void move_pacman() {
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
 
-void move_Ghost(){
+void move_Ghost() {
     if (!game->alive || !game->lives)
         return;
 
-    if (game->countdown.active) { 
+    if (game->countdown.active) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
         return;
     }
@@ -145,16 +145,23 @@ void move_Ghost(){
 
     switch (game->field[new_x - 1][new_y - 1].object) {
     case Nothing:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL;
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
         break;
     case Food:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL;
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
         // smt ++
         break;
         // case ghost???????????
     case Pacman:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL;
-        // smt ++
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
+        game->pacman->x = 0;
+        game->pacman->y = 0;
+        game->lives--;
+
+        if (game->lives) {
+            start_countdown(game);
+            glutTimerFunc(game->countdown.ms, rebirth_game, 0);
+        }
         break;
 
     default: // cant be here
