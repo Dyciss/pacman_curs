@@ -10,8 +10,6 @@ struct creature {
     // (0, 0) - not in field position
     int x;
     int y;
-    float window_x;
-    float window_y;
     Direction direction;
     int animation_status;
     int speed; // moves per minute

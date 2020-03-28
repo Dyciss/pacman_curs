@@ -99,9 +99,6 @@ void move_pacman() {
         break;
     }
 
-    map_xy_to_window_xy(game->alpha, game->pacman->x, game->pacman->y,
-                        &game->pacman->window_x, &game->pacman->window_y);
-
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
 
@@ -156,10 +153,6 @@ void move_Ghost(int id) {
             glutTimerFunc(game->countdown.ms, rebirth_game, 0);
         }
     }
-
-    map_xy_to_window_xy(game->alpha, game->ghosts[id]->x, game->ghosts[id]->y,
-                        &game->ghosts[id]->window_x,
-                        &game->ghosts[id]->window_y);
 
     glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
 }

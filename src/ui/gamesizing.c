@@ -22,10 +22,6 @@ void _set_px_creature(Game *game) {
     game->px_creature = game->alpha * 2 - CELL_CREATURE_PADDING;
 }
 
-void _set_window_coordinates(Game *g, struct creature *c) {
-    map_xy_to_window_xy(g->alpha, c->x, c->y, &(c->window_x), &(c->window_y));
-}
-
 void _set_window_xy(Game *g) {
     map_xy_to_window_xy(g->alpha, g->width, g->height, &g->window_x,
                         &g->window_y);
@@ -35,8 +31,4 @@ void sync_sizing_props(Game *game) {
     _set_alpha(game);
     _set_window_xy(game);
     _set_px_creature(game);
-    _set_window_coordinates(game, game->pacman);
-    for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
-        _set_window_coordinates(game, game->ghosts[ghost_id]);
-    }
 }
