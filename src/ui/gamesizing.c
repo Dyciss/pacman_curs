@@ -12,9 +12,10 @@ void map_xy_to_window_xy(int alpha, int x, int y, float *xw, float *yw) {
 }
 
 void _set_alpha(Game *game) {
-    int a1 = window_height() * (1 - FONT_HEIGHT) / game->height;
+    // +1 is game margin;
+    int a1 = window_height() * (1 - FONT_HEIGHT) / (game->height + 1);
     int a2 = window_width() * (1 - FONT_WIDTH * 30) /
-             game->width; // 30 symbols in right part of screen
+             (game->width + 1); // 30 symbols in right part of screen
     game->alpha = a1 < a2 ? a1 : a2;
 }
 
