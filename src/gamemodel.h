@@ -39,6 +39,7 @@ typedef struct Game {
     int px_creature; // = f(alpha)
 
     int ghost_count; // = f(field)
+
     int alive; // should the game be rendered, it's true if we are in game page
     int lives; // pacman lives, lives==0 <=> game ended
 
@@ -53,6 +54,7 @@ typedef struct Game {
 
     struct creature *pacman;
     struct creature **ghosts;
+    struct cell* ghosts_under; 
 
     struct cell **field;
 } Game;

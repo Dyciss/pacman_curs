@@ -138,36 +138,25 @@ void move_Ghost(int id) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
+    game->field[game->ghosts[id]->x - 1][game->ghosts[id]->y - 1] = game->ghosts_under[id];
 
-    game->field[game->ghosts[id]->x - 1][game->ghosts[id]->y - 1] =
-        NOTHING_CELL;
     game->ghosts[id]->x = new_x;
     game->ghosts[id]->y = new_y;
 
-    switch (game->field[new_x - 1][new_y - 1].object) {
-    case Nothing:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
-        break;
-    case Food:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
-        // smt ++
-        break;
-        // case ghost???????????
-    case Pacman:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
+    game->ghosts_under[id] = game->field[new_x - 1][new_y - 1];
+    game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
+
+    if (game->ghosts_under[id].object == Pacman){
         game->pacman->x = 0;
         game->pacman->y = 0;
         game->lives--;
 
         if (game->lives) {
             start_countdown(game);
-            glutTimerFunc(game->countdown.ms, rebirth_game, id);
+            glutTimerFunc(game->countdown.ms, rebirth_game, 0);
         }
-        break;
-
-    default: // cant be here
-        break;
     }
+
     map_xy_to_window_xy(game->alpha, game->ghosts[id]->x, game->ghosts[id]->y,
                         &game->ghosts[id]->window_x,
                         &game->ghosts[id]->window_y);

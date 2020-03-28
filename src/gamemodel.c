@@ -4,6 +4,8 @@ void set_ghost_count(Game *game, int count) {
     game->ghost_count = count;
     game->ghosts =
         (struct creature **)malloc(sizeof(struct creature *) * count);
+    game->ghosts_under =
+        (struct cell*) calloc(count, sizeof(struct cell));
 }
 
 void init_field(Game *game, int width, int height) {

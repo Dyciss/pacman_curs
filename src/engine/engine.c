@@ -32,9 +32,9 @@ void rebirth(Game *game) {
 
     game->pacman->animation_status = 0;
     game->pacman->direction = RIGHT;
-    game->pacman->speed = 900;
+    game->pacman->speed = 200;
 
-    game->ghosts[0]->speed = 450;
+    game->ghosts[0]->speed = 900;
     game->ghosts[0]->direction = LEFT;
     game->ghosts[0]->animation_status = 0;
 
@@ -60,6 +60,8 @@ void init_start_position(Game *game) {
     game->field[0][1].food_type = MEDIUM;
     game->field[9][8].object = Food;
     game->field[9][8].food_type = SMALL;
+    game->field[1][6].object = Food;
+    game->field[1][6].food_type = LARGE;
 
 
     game->pacman = (struct creature *)malloc(sizeof(struct creature));
@@ -75,7 +77,7 @@ Game *new_Game() {
 
     game->alive = 0;
     game->lives = 3;
-    game->countdown.ms = 10;
+    game->countdown.ms = 100;
     game->countdown.n = 10;
     start_countdown(game);
 
