@@ -27,6 +27,7 @@ struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int)
 #define NOTHING_CELL ((struct cell){.object = Nothing, .ghost_id = -1})
 #define PACMAN_CELL ((struct cell){.object = Pacman, .ghost_id = -1})
 #define GHOST_CELL(id) ((struct cell){.object = Ghost, .ghost_id = (id)})
+#define WALL_CELL ((struct cell){.object = Wall, .ghost_id = -1})
 
 typedef struct Game {
     int width;
