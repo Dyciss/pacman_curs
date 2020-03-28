@@ -25,6 +25,11 @@ void rebirth(Game *game) {
     game->ghosts[0]->x = 3;
     game->ghosts[0]->y = 3;
 
+    game->field[6][6].object = Ghost;
+    game->field[6][6].ghost_id = 1;
+    game->ghosts[1]->x = 7;
+    game->ghosts[1]->y = 7;
+
     game->pacman->animation_status = 0;
     game->pacman->direction = RIGHT;
     game->pacman->speed = 900;
@@ -32,6 +37,11 @@ void rebirth(Game *game) {
     game->ghosts[0]->speed = 450;
     game->ghosts[0]->direction = LEFT;
     game->ghosts[0]->animation_status = 0;
+
+
+    game->ghosts[1]->speed = 450;
+    game->ghosts[1]->direction = LEFT;
+    game->ghosts[1]->animation_status = 0;
 }
 
 void init_start_position(Game *game) {
@@ -54,6 +64,8 @@ void init_start_position(Game *game) {
 
     game->pacman = (struct creature *)malloc(sizeof(struct creature));
     game->ghosts[0] = (struct creature *)malloc(sizeof(struct creature));
+    game->ghosts[1] = (struct creature *)malloc(sizeof(struct creature));
+
 
     rebirth(game);
 }
@@ -63,11 +75,11 @@ Game *new_Game() {
 
     game->alive = 0;
     game->lives = 3;
-    game->countdown.ms = 1000;
+    game->countdown.ms = 10;
     game->countdown.n = 10;
     start_countdown(game);
 
-    set_ghost_count(game, 1);
+    set_ghost_count(game, 2);
     init_field(game, 28, 36);
     init_start_position(game);
 

@@ -26,11 +26,11 @@ void animate_pacman() {
     glutTimerFunc(1000.0 / 3, animate_pacman, 0);
 }
 
-void animate_Ghost() {
+void animate_Ghost(int id) {
     if (!game->alive)
         return;
-    game->ghosts[0]->animation_status = !game->ghosts[0]->animation_status;
-    glutTimerFunc(1000.0 / 3, animate_Ghost, 0);
+    game->ghosts[id]->animation_status = !game->ghosts[id]->animation_status;
+    glutTimerFunc(1000.0 / 3, animate_Ghost, id);
 }
 
 void rebirth_game() { rebirth(game); }
@@ -105,72 +105,74 @@ void move_pacman() {
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
 
-void move_Ghost() {
+void move_Ghost(int id) {
     if (!game->alive || !game->lives)
         return;
 
     if (game->countdown.active) {
-        glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
+        glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
-    int new_x = game->ghosts[0]->x;
-    int new_y = game->ghosts[0]->y;
+    int new_x = game->ghosts[id]->x;
+    int new_y = game->ghosts[id]->y;
 
-    switch (game->ghosts[0]->direction) {
+    switch (game->ghosts[id]->direction) {
     case TOP:
-        new_y = (game->height + game->ghosts[0]->y - 1 - 1) % game->height + 1;
+        new_y = (game->height + game->ghosts[id]->y - 1 - 1) % game->height + 1;
         break;
     case BOTTOM:
-        new_y = (game->height + game->ghosts[0]->y - 1 + 1) % game->height + 1;
+        new_y = (game->height + game->ghosts[id]->y - 1 + 1) % game->height + 1;
         break;
     case LEFT:
-        new_x = (game->width + game->ghosts[0]->x - 1 - 1) % game->width + 1;
+        new_x = (game->width + game->ghosts[id]->x - 1 - 1) % game->width + 1;
         break;
     case RIGHT:
-        new_x = (game->width + game->ghosts[0]->x - 1 + 1) % game->width + 1;
+        new_x = (game->width + game->ghosts[id]->x - 1 + 1) % game->width + 1;
         break;
     default:
-        glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
+        glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
 
     if (game->field[new_x - 1][new_y - 1].object == Wall) {
-        glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
+        glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
 
-    game->field[game->ghosts[0]->x - 1][game->ghosts[0]->y - 1] = NOTHING_CELL;
-    game->ghosts[0]->x = new_x;
-    game->ghosts[0]->y = new_y;
+    game->field[game->ghosts[id]->x - 1][game->ghosts[id]->y - 1] =
+        NOTHING_CELL;
+    game->ghosts[id]->x = new_x;
+    game->ghosts[id]->y = new_y;
 
     switch (game->field[new_x - 1][new_y - 1].object) {
     case Nothing:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
         break;
     case Food:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
         // smt ++
         break;
         // case ghost???????????
     case Pacman:
-        game->field[new_x - 1][new_y - 1] = GHOST_CELL(0);
+        game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
         game->pacman->x = 0;
         game->pacman->y = 0;
         game->lives--;
 
         if (game->lives) {
             start_countdown(game);
-            glutTimerFunc(game->countdown.ms, rebirth_game, 0);
+            glutTimerFunc(game->countdown.ms, rebirth_game, id);
         }
         break;
 
     default: // cant be here
         break;
     }
-    map_xy_to_window_xy(game->alpha, game->ghosts[0]->x, game->ghosts[0]->y,
-                        &game->ghosts[0]->window_x, &game->ghosts[0]->window_y);
+    map_xy_to_window_xy(game->alpha, game->ghosts[id]->x, game->ghosts[id]->y,
+                        &game->ghosts[id]->window_x,
+                        &game->ghosts[id]->window_y);
 
-    glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
+    glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
 }
 
 void countdown() {
@@ -206,10 +208,14 @@ void render_Game() {
     if (!game->alive) {
         game->alive = 1;
         animate_pacman();
-        animate_Ghost();
+        for (int i = 0; i < game->ghost_count; i++) {
+            animate_Ghost(i);
+        }
         frame();
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
-        glutTimerFunc(60 * 1000.0 / game->ghosts[0]->speed, move_Ghost, 0);
+        for (int i = 0; i < game->ghost_count; i++) {
+            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed, move_Ghost, i);
+        }
     }
 }
 
