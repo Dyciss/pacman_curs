@@ -1,7 +1,6 @@
 #include <GL/freeglut.h>
 
 #include "directions.h"
-#include "gamemodel.h"
 
 Direction direction_from_special_key(int key) {
     //
@@ -22,9 +21,15 @@ Direction direction_from_special_key(int key) {
     }
 }
 
-int set_new_xy(Game * game, struct creature* c, int* new_x, int* new_y){
-    // Returns 1 if xy changed else 0 
-    switch (c->direction) { 
+int set_new_xy(Game *game, struct creature *c, int *new_x, int *new_y) {
+    //
+    // Set new xy to next creature position (after move along creature direction)
+    // Returns 1 if xy changed else 0
+    //
+    *new_x = c->x;
+    *new_y = c->y;
+    
+    switch (c->direction) {
     case TOP:
         *new_y = (game->height + c->y - 1 - 1) % game->height + 1;
         return 1;
