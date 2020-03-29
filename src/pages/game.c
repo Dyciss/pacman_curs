@@ -47,9 +47,9 @@ void move_pacman() {
     int new_x;
     int new_y;
 
-    if (!set_new_xy(game, game->pacman, &new_x, &new_y)){
+    if (!set_new_xy(game, game->pacman, &new_x, &new_y)) {
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
-        return;  
+        return;
     }
 
     if (game->field[new_x - 1][new_y - 1].object == Wall) {
@@ -97,9 +97,9 @@ void move_Ghost(int id) {
     int new_x;
     int new_y;
 
-    if (!set_new_xy(game, game->ghosts[id], &new_x, &new_y)){
+    if (!set_new_xy(game, game->ghosts[id], &new_x, &new_y)) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_pacman, id);
-        return;  
+        return;
     }
 
     if (game->field[new_x - 1][new_y - 1].object == Wall) {
@@ -160,7 +160,8 @@ void frame() {
 
 void think_Ghost(int ghost_id) {
     set_Ghost_direction(game, ghost_id);
-    glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost, ghost_id);
+    glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost,
+                  ghost_id);
 }
 void render_Game() {
     sync_sizing_props(game);
@@ -169,7 +170,8 @@ void render_Game() {
         animate_pacman();
         for (int i = 0; i < game->ghost_count; i++) {
             animate_Ghost(i);
-            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost, i);
+            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost,
+                          i);
         }
         frame();
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
@@ -194,11 +196,11 @@ void keyboard_special_Game(int key, int x, int y) {
     }
 }
 
-void keyboard_game(unsigned char key, int x, int y){
+void keyboard_Game(unsigned char key, int x, int y) {
     Direction new_direction = direction_from_key(key);
-    //if (new_direction) {
+    if (new_direction) {
         game->pacman->direction = new_direction;
-   // }
+    }
 }
 void init_Game() {
     game = new_Game();

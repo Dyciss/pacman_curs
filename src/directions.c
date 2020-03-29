@@ -22,7 +22,7 @@ Direction direction_from_special_key(int key) {
 }
 
 Direction direction_from_key(unsigned char key){
-    switch (key) {
+    switch ((char) key) {
     case 'w':
         return TOP;
     case 'a':
@@ -44,7 +44,7 @@ int set_new_xy(Game *game, struct creature *c, int *new_x, int *new_y) {
     //
     *new_x = c->x;
     *new_y = c->y;
-    
+
     switch (c->direction) {
     case TOP:
         *new_y = (game->height + c->y - 1 - 1) % game->height + 1;

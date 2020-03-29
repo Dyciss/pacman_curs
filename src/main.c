@@ -79,7 +79,7 @@ void keyboard(unsigned char key, int x, int y) {
         // keyboard_Menu()
         break;
     case Game_page:
-        keyboard_game(key, x ,y);
+        keyboard_Game(key, x ,y);
         break;
 
 
