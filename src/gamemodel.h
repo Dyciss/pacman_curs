@@ -2,12 +2,19 @@
 
 #include "direction.h"
 
-enum Food { SMALL, MEDIUM, LARGE };
+enum Food { SMALL = 1, MEDIUM = 2, LARGE = 3 };
 
 struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int) |
             // Eaten_Food(type)
 {
-    enum { Nothing = 0, Wall, Food, Pacman, Ghost, Eaten_Food } object;
+    enum {
+        Nothing = 0,
+        Wall = 1,
+        Food = 2,
+        Pacman = 3,
+        Ghost = 4,
+        Eaten_Food = 5
+    } object;
     union {
         enum Food food_type;
         int ghost_id; // index in Game.ghosts [0, ghost_count]
@@ -73,3 +80,4 @@ void start_countdown(Game *game);
 void stop_countdown(Game *game);
 void start_pause(Game *game);
 void stop_pause(Game *game);
+int Game2file(Game *game, char *fname);

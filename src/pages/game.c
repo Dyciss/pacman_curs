@@ -191,6 +191,13 @@ void mouse_Game(float x, float y) {
 }
 
 void keyboard_special_Game(int key, int x, int y) {
+    if (key == GLUT_KEY_F1 && game->pause) {
+        char fname[] = "./saved/game.txt";
+        if(!Game2file(game, fname)) {
+            fprintf(stderr, "Error while saving game to %s\n", fname);
+        }
+        return;
+    }
     Direction new_direction = direction_from_special_key(key);
     if (new_direction) {
         game->pacman->direction = new_direction;
