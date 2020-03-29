@@ -1,1 +1,1 @@
-cppcheck --quiet --enable=all src
+cppcheck --quiet --enable=all --suppress=missingIncludeSystem src

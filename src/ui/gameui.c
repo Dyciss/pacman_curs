@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#define str_len 64
+#define current_y (top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE)
+#define render_str(str) (render_string((str), right_part_starts_x,current_y, FONT,WHITE));
+
 void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
     float alpha_relative_y = game->alpha / (float)window_height();
@@ -15,40 +19,38 @@ void draw_right_part(Game *game) {
 
     int line_number = 1;
 
-    render_string("PACMAN GAME!", right_part_starts_x,
-                  top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
-                  WHITE);
+    char str[str_len] = {'\0'};
+    strncpy(str, "PACMAN GAME!", str_len);
+    render_str(str);
 
     line_number++;
 
-#define str_len 64
-#define current_y (top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE)
-    char str[str_len] = {'\0'};
-    sprintf(str, "Your lifes count: %i", game->lives);
-    render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+
+    snprintf(str, str_len, "Your lifes count: %i", game->lives);
+    render_str(str);
 
     line_number++;
 
     if (game->countdown.active) {
-        sprintf(str, "We want you to calm down: %i -- %i",
+        snprintf(str, str_len, "We want you to calm down: %i -- %i",
                 game->countdown.current_n, game->countdown.n);
-        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        render_str(str);
         line_number++;
         strncpy(str, "Click [r] to start immediately", str_len);
-        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        render_str(str);
         line_number++;
     }
 
     if (game->pause) {
         strncpy(str, "Click [p] to stop pause", str_len);
-        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        render_str(str);
         line_number++;
         strncpy(str, "Click [F1] to save the game", str_len);
-        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        render_str(str);
         line_number++;
     } else {
         strncpy(str, "Click [p] to pause the game", str_len);
-        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        render_str(str);
         line_number++;
     }
 }
