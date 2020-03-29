@@ -7,10 +7,6 @@
 #define Y 32
 struct cell field[Y][X] = { 0 };
 
-struct start_position {
-    int x;
-    int y;
-} pacman_sp, *ghost_sp;
 
 void rebirth(Game *game) {
     //
@@ -18,14 +14,14 @@ void rebirth(Game *game) {
     //
     for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
         struct creature *ghost = game->ghosts[ghost_id];
-        game->field[ghost->x - 1][ghost->y - 1] = game->ghosts_under[ghost_id];
-        ghost->x = ghost_sp[ghost_id].x;
-        ghost->y = ghost_sp[ghost_id].y;
+        game->field[ghost->x - 1][ghost->y - 1] = game->ghosts[ghost_id]->under;
+        ghost->x = game->ghosts[ghost_id]->start_position.x;
+        ghost->y = game->ghosts[ghost_id]->start_position.y;
         game->field[ghost->x - 1][ghost->y - 1] = GHOST_CELL(ghost_id);
     }
     game->field[game->pacman->x - 1][game->pacman->y - 1] = NOTHING_CELL;
-    game->pacman->x = pacman_sp.x;
-    game->pacman->y = pacman_sp.y;
+    game->pacman->x = game->pacman->start_position.x;
+    game->pacman->y = game->pacman->start_position.y;
     game->field[game->pacman->x - 1][game->pacman->y - 1] = PACMAN_CELL;
 }
 
@@ -35,11 +31,11 @@ void set_level(Game *game) {
             game->field[x][y] = field[y][x];
         }
     }
-    game->pacman->x = pacman_sp.x;
-    game->pacman->y = pacman_sp.y;
+    game->pacman->x = game->pacman->start_position.x;
+    game->pacman->y = game->pacman->start_position.y;
     for (int i = 0; i < game->ghost_count; i++) {
-        game->ghosts[i]->x = ghost_sp[i].x;
-        game->ghosts[i]->y = ghost_sp[i].y;
+        game->ghosts[i]->x = game->ghosts[i]->start_position.x;
+        game->ghosts[i]->y = game->ghosts[i]->start_position.y;
         game->ghosts[i]->speed = 450;
         game->ghosts[i]->direction = LEFT;
         game->ghosts[i]->animation_status = 0;
@@ -286,6 +282,8 @@ Game *new_Game() {
     field[15][16] = GHOST_CELL(2);
     field[14][14] = GHOST_CELL(3);
 
+    field[15][15] = FOOD_CELL(SMALL);
+
 
     Game *game = (Game *)malloc(sizeof(Game));
     game->alive = 0;
@@ -300,15 +298,13 @@ Game *new_Game() {
             if (field[y][x].object == Ghost) {
                 ghost_count++;
             } else if (field[y][x].object == Pacman) {
-                pacman_sp.x = x + 1;
-                pacman_sp.y = y + 1;
+                game->pacman->start_position.x = x + 1;
+                game->pacman->start_position.y = y + 1;
             }
         }
     }
 
     set_ghost_count(game, ghost_count);
-    ghost_sp = (struct start_position *)malloc(sizeof(struct start_position) *
-                                               ghost_count);
 
     game->pacman = (struct creature *)malloc(sizeof(struct creature));
     for (int i = 0; i < ghost_count; i++) {
@@ -318,8 +314,8 @@ Game *new_Game() {
     for (int x = 0; x < X; x++) {
         for (int y = 0; y < Y; y++) {
             if (field[y][x].object == Ghost) {
-                ghost_sp[field[y][x].ghost_id].x = x + 1;
-                ghost_sp[field[y][x].ghost_id].y = y + 1;
+                game->ghosts[field[y][x].ghost_id]->start_position.x = x + 1;
+                game->ghosts[field[y][x].ghost_id]->start_position.y = y + 1;
             }
         }
     }

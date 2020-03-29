@@ -125,6 +125,8 @@ void draw_game(Game *game) {
             switch (c.object) {
             case Nothing:
                 break;
+            case Eaten_Food:
+                break;
             case Wall:
                 draw_Wall(game, x_window, y_window);
                 break;

@@ -4,6 +4,16 @@
 
 enum Food { SMALL, MEDIUM, LARGE };
 
+struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int) |
+            // Eaten_Food(type)
+{
+    enum { Nothing = 0, Wall, Food, Pacman, Ghost, Eaten_Food } object;
+    union {
+        enum Food food_type;
+        int ghost_id; // index in Game.ghosts [0, ghost_count]
+    };
+};
+
 struct creature {
     // x in range [1; width]
     // y in range [1; height]
@@ -13,15 +23,11 @@ struct creature {
     Direction direction;
     int animation_status;
     int speed; // moves per minute
-};
-
-struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int)
-{
-    enum { Nothing = 0, Wall, Food, Pacman, Ghost } object;
-    union {
-        enum Food food_type;
-        int ghost_id; // index in Game.ghosts [0, ghost_count]
-    };
+    struct cell under;
+    struct {
+        int x;
+        int y;
+    } start_position;
 };
 
 #define NOTHING_CELL ((struct cell){.object = Nothing, .ghost_id = -1})
@@ -46,8 +52,8 @@ typedef struct Game {
     struct {
         int active;
         int runned; // is current tick runned
-        int ms; // countdown tick in ms
-        int n;  // countdown count of ticks
+        int ms;     // countdown tick in ms
+        int n;      // countdown count of ticks
         // when countdown_current_n > countdown_n countdown stops
         int current_n;
     } countdown;
@@ -56,7 +62,6 @@ typedef struct Game {
 
     struct creature *pacman;
     struct creature **ghosts;
-    struct cell *ghosts_under;
 
     struct cell **field;
 } Game;

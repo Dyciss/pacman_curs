@@ -47,7 +47,7 @@ void move_pacman() {
     int new_x;
     int new_y;
 
-    if (!set_new_xy(game, game->pacman, &new_x, &new_y)) {
+    if (!set_new_xy(game, game->pacman, &new_x, &new_y)) { // new xy is new
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
         return;
     }
@@ -57,32 +57,33 @@ void move_pacman() {
         return;
     }
 
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = NOTHING_CELL;
+    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
     game->pacman->x = new_x;
     game->pacman->y = new_y;
 
-    switch (game->field[new_x - 1][new_y - 1].object) {
-    case Nothing:
-        game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
-        break;
-    case Food:
-        game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
-        // smt ++
-        break;
-    case Ghost:
+    game->pacman->under = game->field[new_x - 1][new_y - 1];
+    game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
+
+    if (game->pacman->under.object == Pacman) { // not creatures under pacman
+        game->pacman->under = NOTHING_CELL;     // can't be here(new xy is new)
+
+    }
+
+    else if (game->pacman->under.object == Ghost) {
+        int ghost_under_id = game->pacman->under.ghost_id;
+        game->pacman->under = game->ghosts[ghost_under_id]->under;
+        game->field[new_x - 1][new_y - 1] =
+            GHOST_CELL(game->pacman->under.ghost_id);
+
         game->lives--;
 
         if (game->lives) {
             start_countdown(game);
             glutTimerFunc(game->countdown.ms, rebirth_game, 0);
         }
-
-        break;
-
-    default: // cant be here
-        break;
+    } else if (game->pacman->under.object == Food) {
+        game->pacman->under.object = Eaten_Food;
     }
-
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
 
@@ -107,24 +108,25 @@ void move_Ghost(int id) {
         return;
     }
     game->field[game->ghosts[id]->x - 1][game->ghosts[id]->y - 1] =
-        game->ghosts_under[id];
+        game->ghosts[id]->under;
 
     game->ghosts[id]->x = new_x;
     game->ghosts[id]->y = new_y;
 
-    game->ghosts_under[id] = game->field[new_x - 1][new_y - 1];
+    game->ghosts[id]->under = game->field[new_x - 1][new_y - 1];
     game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
 
-    if (game->ghosts_under[id].object == Pacman) { // not creatures under ghost
-        game->ghosts_under[id] = NOTHING_CELL;
+    if (game->ghosts[id]->under.object == Pacman) { // not creatures under ghost
+        game->ghosts[id]->under = game->pacman->under;
         game->lives--;
 
         if (game->lives) {
             start_countdown(game);
             glutTimerFunc(game->countdown.ms, rebirth_game, 0);
         }
-    } else if (game->ghosts_under[id].object == Ghost) {
-        game->ghosts_under[id] = NOTHING_CELL;
+    } else if (game->ghosts[id]->under.object == Ghost) {
+        int ghost_under_id = game->ghosts[id]->under.ghost_id;
+        game->ghosts[id]->under = game->ghosts[ghost_under_id]->under;
     }
 
     glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
@@ -196,7 +198,7 @@ void keyboard_special_Game(int key, int x, int y) {
 }
 
 void keyboard_Game(unsigned char key, int x, int y) {
-    if (key == 'r' && game->countdown.active){
+    if (key == 'r' && game->countdown.active) {
         stop_countdown(game);
         return;
     }
