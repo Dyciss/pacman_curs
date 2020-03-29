@@ -135,7 +135,6 @@ void countdown_tick() {
     game->countdown.runned = 0;
     if (game->countdown.current_n > game->countdown.n) {
         stop_countdown(game);
-        return;
     }
 }
 
@@ -197,6 +196,10 @@ void keyboard_special_Game(int key, int x, int y) {
 }
 
 void keyboard_Game(unsigned char key, int x, int y) {
+    if (key == 'r' && game->countdown.active){
+        stop_countdown(game);
+        return;
+    }
     if (key == 'p') {
         if (game->pause) {
             stop_pause(game);

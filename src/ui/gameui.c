@@ -34,6 +34,9 @@ void draw_right_part(Game *game) {
                 game->countdown.current_n, game->countdown.n);
         render_string(str, right_part_starts_x, current_y, FONT, WHITE);
         line_number++;
+        strncpy(str, "Click [r] to start immediately", str_len);
+        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        line_number++;
     }
 
     if (game->pause) {
