@@ -184,6 +184,10 @@ void frame() {
     glutSwapBuffers();
 }
 
+void think_Ghost(int ghost_id) {
+    set_Ghost_direction(game, ghost_id);
+    glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost, ghost_id);
+}
 void render_Game() {
     sync_sizing_props(game);
     if (!game->alive) {
@@ -191,6 +195,7 @@ void render_Game() {
         animate_pacman();
         for (int i = 0; i < game->ghost_count; i++) {
             animate_Ghost(i);
+            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost, i);
         }
         frame();
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);

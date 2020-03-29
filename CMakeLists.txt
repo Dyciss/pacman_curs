@@ -2,12 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(pacman)
 
-include_directories(.)
-add_executable(pacman main.c 
-    ./pages/menu.c ./pages/about.c ./pages/game.c 
-    ./ui/render.c  ./ui/windowsize.c ./ui/gameui.c ./ui/gamesizing.c
-    ./engine/engine.c
-    directions.c gamemodel.c)
+include_directories(src)
+add_executable(pacman ./src/main.c 
+    ./src/pages/menu.c ./src/pages/about.c ./src/pages/game.c 
+    ./src/ui/render.c  ./src/ui/windowsize.c ./src/ui/gameui.c ./src/ui/gamesizing.c
+    ./src/engine/engine.c
+    ./src/directions.c ./src/gamemodel.c)
 
 
 set(CMAKE_BUILD_TYPE Debug)
