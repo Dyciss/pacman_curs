@@ -325,6 +325,7 @@ Game *new_Game() {
     }
 
     set_level(game);
+    init_countdown(game);
     start_countdown(game);
 
     return game;

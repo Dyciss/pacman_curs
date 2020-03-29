@@ -1,12 +1,11 @@
-#include <stdlib.h>
 #include "gamemodel.h"
+#include <stdlib.h>
 
 void set_ghost_count(Game *game, int count) {
     game->ghost_count = count;
     game->ghosts =
         (struct creature **)malloc(sizeof(struct creature *) * count);
-    game->ghosts_under =
-        (struct cell*) calloc(count, sizeof(struct cell));
+    game->ghosts_under = (struct cell *)calloc(count, sizeof(struct cell));
 }
 
 void init_field(Game *game, int width, int height) {
@@ -20,10 +19,21 @@ void init_field(Game *game, int width, int height) {
     }
 }
 
+void init_countdown(Game *game) { game->countdown.runned = 0; } // current tick is not run
+
 void start_countdown(Game *game) {
     game->countdown.active = 1;
-    game->countdown.runned = 0;
     game->countdown.current_n = 1;
 }
 
 void stop_countdown(Game *game) { game->countdown.active = 0; }
+
+void start_pause(Game *game) {
+    game->pause = 1;
+    stop_countdown(game);
+}
+
+void stop_pause(Game *game) {
+    start_countdown(game);
+    game->pause = 0;
+}

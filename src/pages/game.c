@@ -39,7 +39,7 @@ void move_pacman() {
     if (!game->alive || !game->lives)
         return;
 
-    if (game->countdown.active) {
+    if (game->countdown.active || game->pause) {
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
         return;
     }
@@ -90,7 +90,7 @@ void move_Ghost(int id) {
     if (!game->alive || !game->lives)
         return;
 
-    if (game->countdown.active) {
+    if (game->countdown.active || game->pause) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
@@ -130,14 +130,13 @@ void move_Ghost(int id) {
     glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
 }
 
-void countdown() {
+void countdown_tick() {
     game->countdown.current_n++;
+    game->countdown.runned = 0;
     if (game->countdown.current_n > game->countdown.n) {
         stop_countdown(game);
         return;
     }
-
-    glutTimerFunc(game->countdown.ms, countdown, 0);
 }
 
 void frame() {
@@ -146,7 +145,7 @@ void frame() {
 
     if (game->countdown.active && !game->countdown.runned) {
         game->countdown.runned = 1;
-        glutTimerFunc(game->countdown.ms, countdown, 0);
+        glutTimerFunc(game->countdown.ms, countdown_tick, 0);
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -163,6 +162,7 @@ void think_Ghost(int ghost_id) {
     glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost,
                   ghost_id);
 }
+
 void render_Game() {
     sync_sizing_props(game);
     if (!game->alive) {
@@ -197,9 +197,18 @@ void keyboard_special_Game(int key, int x, int y) {
 }
 
 void keyboard_Game(unsigned char key, int x, int y) {
+    if (key == 'p') {
+        if (game->pause) {
+            stop_pause(game);
+        } else {
+            start_pause(game);
+        }
+        return;
+    }
     Direction new_direction = direction_from_key(key);
     if (new_direction) {
         game->pacman->direction = new_direction;
+        return;
     }
 }
 void init_Game() {

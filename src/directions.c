@@ -22,7 +22,7 @@ Direction direction_from_special_key(int key) {
 }
 
 Direction direction_from_key(unsigned char key){
-    switch ((char) key) {
+    switch (key) {
     case 'w':
         return TOP;
     case 'a':

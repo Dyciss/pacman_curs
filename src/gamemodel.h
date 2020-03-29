@@ -45,12 +45,14 @@ typedef struct Game {
 
     struct {
         int active;
-        int runned;
+        int runned; // is current tick runned
         int ms; // countdown tick in ms
         int n;  // countdown count of ticks
         // when countdown_current_n > countdown_n countdown stops
         int current_n;
     } countdown;
+
+    int pause;
 
     struct creature *pacman;
     struct creature **ghosts;
@@ -61,5 +63,8 @@ typedef struct Game {
 
 void set_ghost_count(Game *game, int count);
 void init_field(Game *game, int width, int height);
+void init_countdown(Game *game);
 void start_countdown(Game *game);
 void stop_countdown(Game *game);
+void start_pause(Game *game);
+void stop_pause(Game *game);

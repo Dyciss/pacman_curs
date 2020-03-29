@@ -5,6 +5,7 @@
 #include "gamesizing.h"
 #include "render.h"
 #include <stdio.h>
+#include <string.h>
 
 void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
@@ -20,20 +21,31 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
-    char str[64] = {'\0'};
+#define str_len 64
+#define current_y (top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE)
+    char str[str_len] = {'\0'};
     sprintf(str, "Your lifes count: %i", game->lives);
-    render_string(str, right_part_starts_x,
-                  top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
-                  WHITE);
+    render_string(str, right_part_starts_x, current_y, FONT, WHITE);
 
     line_number++;
 
     if (game->countdown.active) {
         sprintf(str, "We want you to calm down: %i -- %i",
                 game->countdown.current_n, game->countdown.n);
-        render_string(str, right_part_starts_x,
-                      top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE, FONT,
-                      WHITE);
+        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        line_number++;
+    }
+
+    if (game->pause) {
+        strncpy(str, "Click [p] to stop pause", str_len);
+        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        line_number++;
+        strncpy(str, "Click [F1] to save the game", str_len);
+        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
+        line_number++;
+    } else {
+        strncpy(str, "Click [p] to pause the game", str_len);
+        render_string(str, right_part_starts_x, current_y, FONT, WHITE);
         line_number++;
     }
 }
@@ -85,14 +97,15 @@ void draw_Pacman(Game *game, float x, float y) {
 }
 
 void draw_Ghost(Game *game, float x, float y, int ghost_id) {
-    Color Ghost_colors[] = {(Color){250, 60, 60}, (Color){120, 120, 210}, (Color){250, 20, 147}, (Color){120, 210, 110}};
-    int Ghost_colors_len = sizeof(Ghost_colors)/sizeof(Ghost_colors[0]);
-    render_Ghost(game->px_creature, x, y, (Ghost_colors[ghost_id % Ghost_colors_len]),
+    Color Ghost_colors[] = {(Color){250, 60, 60}, (Color){120, 120, 210},
+                            (Color){250, 20, 147}, (Color){120, 210, 110}};
+    int Ghost_colors_len = sizeof(Ghost_colors) / sizeof(Ghost_colors[0]);
+    render_Ghost(game->px_creature, x, y,
+                 (Ghost_colors[ghost_id % Ghost_colors_len]),
                  game->ghosts[ghost_id]->direction);
     int eyes_opened = game->ghosts[0]->animation_status;
-    if (eyes_opened){
-        render_Eyes(game->px_creature, x, y,
-                 game->ghosts[ghost_id]->direction);
+    if (eyes_opened) {
+        render_Eyes(game->px_creature, x, y, game->ghosts[ghost_id]->direction);
     }
 }
 
