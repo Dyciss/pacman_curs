@@ -1,6 +1,6 @@
 #pragma once
 
-#include "directions.h"
+#include "direction.h"
 
 enum Food { SMALL, MEDIUM, LARGE };
 

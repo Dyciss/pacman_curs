@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "gamemodel.h"
 
 void set_ghost_count(Game *game, int count) {

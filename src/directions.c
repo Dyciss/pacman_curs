@@ -17,7 +17,7 @@ Direction direction_from_special_key(int key) {
     case GLUT_KEY_LEFT:
         return LEFT;
 
-    default:>ghost
+    default:
         return NONE_DIRECTION;
     }
 }
