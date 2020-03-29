@@ -70,10 +70,10 @@ void move_pacman() {
     }
 
     else if (game->pacman->under.object == Ghost) {
-        int ghost_under_id = game->pacman->under.ghost_id;
-        game->pacman->under = game->ghosts[ghost_under_id]->under;
         game->field[new_x - 1][new_y - 1] =
             GHOST_CELL(game->pacman->under.ghost_id);
+        int ghost_under_id = game->pacman->under.ghost_id;
+        game->pacman->under = game->ghosts[ghost_under_id]->under;
 
         game->lives--;
 

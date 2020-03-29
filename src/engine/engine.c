@@ -1,41 +1,45 @@
 #include "gamemodel.h"
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define X 28
 #define Y 32
-struct cell field[Y][X] = { 0 };
-
+struct cell field[Y][X] = {0};
 
 void rebirth(Game *game) {
     //
     // creatures position <- start position
     //
-    for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
-        struct creature *ghost = game->ghosts[ghost_id];
-        game->field[ghost->x - 1][ghost->y - 1] = game->ghosts[ghost_id]->under;
-        ghost->x = game->ghosts[ghost_id]->start_position.x;
-        ghost->y = game->ghosts[ghost_id]->start_position.y;
-        game->field[ghost->x - 1][ghost->y - 1] = GHOST_CELL(ghost_id);
+    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->field[game->ghosts[i]->x - 1][game->ghosts[i]->y - 1] =
+            game->ghosts[i]->under;
     }
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = NOTHING_CELL;
+    game->field[game->pacman->start_position.x - 1]
+               [game->pacman->start_position.y - 1] = PACMAN_CELL;
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->field[game->ghosts[i]->start_position.x - 1]
+                   [game->ghosts[i]->start_position.y - 1] = GHOST_CELL(i);
+        game->ghosts[i]->x = game->ghosts[i]->start_position.x;
+        game->ghosts[i]->y = game->ghosts[i]->start_position.y;
+    }
     game->pacman->x = game->pacman->start_position.x;
     game->pacman->y = game->pacman->start_position.y;
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = PACMAN_CELL;
+
 }
 
 void set_level(Game *game) {
+    rebirth(game);
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
-            game->field[x][y] = field[y][x];
+            if (game->field[x][y].object == Eaten_Food) {
+                game->field[x][y].object = Food;
+            }
         }
     }
-    game->pacman->x = game->pacman->start_position.x;
-    game->pacman->y = game->pacman->start_position.y;
+
     for (int i = 0; i < game->ghost_count; i++) {
-        game->ghosts[i]->x = game->ghosts[i]->start_position.x;
-        game->ghosts[i]->y = game->ghosts[i]->start_position.y;
         game->ghosts[i]->speed = 450;
         game->ghosts[i]->direction = LEFT;
         game->ghosts[i]->animation_status = 0;
@@ -51,9 +55,9 @@ void set_Ghost_direction(Game *game, int ghost_id) {
 }
 
 Game *new_Game() {
-    for (int x=0; x<X; x++) {
+    for (int x = 0; x < X; x++) {
         field[1][x] = WALL_CELL;
-        field[Y-1][x] = WALL_CELL;
+        field[Y - 1][x] = WALL_CELL;
         field[3][x] = WALL_CELL;
         field[4][x] = WALL_CELL;
         field[6][x] = WALL_CELL;
@@ -257,7 +261,6 @@ Game *new_Game() {
     field[27][15] = NOTHING_CELL;
     field[27][16] = NOTHING_CELL;
     field[27][17] = NOTHING_CELL;
-    field[27][18] = NOTHING_CELL;
     field[27][21] = NOTHING_CELL;
     field[27][26] = NOTHING_CELL;
     field[28][1] = NOTHING_CELL;
@@ -274,7 +277,6 @@ Game *new_Game() {
     field[29][26] = NOTHING_CELL;
     field[30][0] = WALL_CELL;
     field[30][27] = WALL_CELL;
-    
 
     field[24][14] = PACMAN_CELL;
     field[12][13] = GHOST_CELL(0);
@@ -284,7 +286,6 @@ Game *new_Game() {
 
     field[15][15] = FOOD_CELL(SMALL);
 
-
     Game *game = (Game *)malloc(sizeof(Game));
     game->alive = 0;
     game->lives = 3;
@@ -293,8 +294,10 @@ Game *new_Game() {
 
     init_field(game, X, Y);
     int ghost_count = 0;
+    game->pacman = (struct creature *)calloc(1, sizeof(struct creature));
     for (int x = 0; x < X; x++) {
         for (int y = 0; y < Y; y++) {
+            game->field[x][y] = field[y][x];
             if (field[y][x].object == Ghost) {
                 ghost_count++;
             } else if (field[y][x].object == Pacman) {
@@ -306,9 +309,8 @@ Game *new_Game() {
 
     set_ghost_count(game, ghost_count);
 
-    game->pacman = (struct creature *)malloc(sizeof(struct creature));
     for (int i = 0; i < ghost_count; i++) {
-        game->ghosts[i] = (struct creature *)malloc(sizeof(struct creature));
+        game->ghosts[i] = (struct creature *)calloc(1, sizeof(struct creature));
     }
 
     for (int x = 0; x < X; x++) {
@@ -319,7 +321,13 @@ Game *new_Game() {
             }
         }
     }
+    game->pacman->x = game->pacman->start_position.x;
+    game->pacman->y = game->pacman->start_position.y;
 
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->ghosts[i]->x = game->ghosts[i]->start_position.x;
+        game->ghosts[i]->y = game->ghosts[i]->start_position.y;
+    }
     set_level(game);
     init_countdown(game);
     start_countdown(game);
