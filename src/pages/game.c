@@ -194,6 +194,12 @@ void keyboard_special_Game(int key, int x, int y) {
     }
 }
 
+void keyboard_game(unsigned char key, int x, int y){
+    Direction new_direction = direction_from_key(key);
+    //if (new_direction) {
+        game->pacman->direction = new_direction;
+   // }
+}
 void init_Game() {
     game = new_Game();
     escape_btn = new_Button(escape_btn_text);

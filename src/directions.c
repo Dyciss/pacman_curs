@@ -21,6 +21,22 @@ Direction direction_from_special_key(int key) {
     }
 }
 
+Direction direction_from_key(unsigned char key){
+    switch (key) {
+    case 'w':
+        return TOP;
+    case 'a':
+        return LEFT;
+    case 's':
+        return BOTTOM;
+    case 'd':
+        return RIGHT;
+
+    default:
+        return NONE_DIRECTION;
+    }
+}
+
 int set_new_xy(Game *game, struct creature *c, int *new_x, int *new_y) {
     //
     // Set new xy to next creature position (after move along creature direction)
