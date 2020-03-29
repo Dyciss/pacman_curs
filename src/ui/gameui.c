@@ -85,7 +85,7 @@ void draw_Pacman(Game *game, float x, float y) {
 }
 
 void draw_Ghost(Game *game, float x, float y, int ghost_id) {
-    Color Ghost_colors[] = {(Color){250, 120, 120}, (Color){120, 120, 210}, (Color){230, 160, 160}, (Color){120, 210, 110}};
+    Color Ghost_colors[] = {(Color){250, 60, 60}, (Color){120, 120, 210}, (Color){250, 20, 147}, (Color){120, 210, 110}};
     int Ghost_colors_len = sizeof(Ghost_colors)/sizeof(Ghost_colors[0]);
     render_Ghost(game->px_creature, x, y, (Ghost_colors[ghost_id % Ghost_colors_len]),
                  game->ghosts[ghost_id]->direction);

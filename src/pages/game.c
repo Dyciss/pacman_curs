@@ -44,25 +44,12 @@ void move_pacman() {
         return;
     }
 
-    int new_x = game->pacman->x;
-    int new_y = game->pacman->y;
+    int new_x;
+    int new_y;
 
-    switch (game->pacman->direction) {
-    case TOP:
-        new_y = (game->height + game->pacman->y - 1 - 1) % game->height + 1;
-        break;
-    case BOTTOM:
-        new_y = (game->height + game->pacman->y - 1 + 1) % game->height + 1;
-        break;
-    case LEFT:
-        new_x = (game->width + game->pacman->x - 1 - 1) % game->width + 1;
-        break;
-    case RIGHT:
-        new_x = (game->width + game->pacman->x - 1 + 1) % game->width + 1;
-        break;
-    default:
+    if (!set_new_xy(game, game->pacman, &new_x, &new_y)){
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
-        return;
+        return;  
     }
 
     if (game->field[new_x - 1][new_y - 1].object == Wall) {
@@ -107,25 +94,12 @@ void move_Ghost(int id) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
-    int new_x = game->ghosts[id]->x;
-    int new_y = game->ghosts[id]->y;
+    int new_x;
+    int new_y;
 
-    switch (game->ghosts[id]->direction) {
-    case TOP:
-        new_y = (game->height + game->ghosts[id]->y - 1 - 1) % game->height + 1;
-        break;
-    case BOTTOM:
-        new_y = (game->height + game->ghosts[id]->y - 1 + 1) % game->height + 1;
-        break;
-    case LEFT:
-        new_x = (game->width + game->ghosts[id]->x - 1 - 1) % game->width + 1;
-        break;
-    case RIGHT:
-        new_x = (game->width + game->ghosts[id]->x - 1 + 1) % game->width + 1;
-        break;
-    default:
-        glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
-        return;
+    if (!set_new_xy(game, game->ghosts[id], &new_x, &new_y)){
+        glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_pacman, id);
+        return;  
     }
 
     if (game->field[new_x - 1][new_y - 1].object == Wall) {
