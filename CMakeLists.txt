@@ -4,7 +4,7 @@ project(pacman)
 
 include_directories(src)
 add_executable(pacman ./src/main.c 
-    ./src/pages/menu.c ./src/pages/about.c ./src/pages/game.c 
+    ./src/pages/menu.c ./src/pages/about.c ./src/pages/game.c ./src/pages/settings.c
     ./src/ui/render.c  ./src/ui/windowsize.c ./src/ui/gameui.c ./src/ui/gamesizing.c
     ./src/engine/engine.c
     ./src/directions.c ./src/gamemodel.c)

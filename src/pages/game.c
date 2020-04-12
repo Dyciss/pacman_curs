@@ -3,6 +3,7 @@
 #include <time.h>
 
 #include "main.h"
+#include "page.h"
 
 #include "./ui/gameui.h"
 #include "./ui/render.h"
@@ -164,7 +165,7 @@ void think_Ghost(int ghost_id) {
                   ghost_id);
 }
 
-void render_Game() {
+static void render() {
     sync_sizing_props(game);
     if (!game->alive) {
         game->alive = 1;
@@ -182,7 +183,7 @@ void render_Game() {
     }
 }
 
-void mouse_Game(float x, float y) {
+static void mouse(float x, float y) {
     if (in_button(escape_btn, x, y)) {
         game->alive = 0;
         set_program_state(Menu);
@@ -190,7 +191,7 @@ void mouse_Game(float x, float y) {
     }
 }
 
-void keyboard_special_Game(int key, int x, int y) {
+static void keyboard_special(int key, int x, int y) {
     if (key == GLUT_KEY_F1 && game->pause) {
         char fname[] = "./saved/game.txt";
         if(!Game2file(game, fname)) {
@@ -204,7 +205,7 @@ void keyboard_special_Game(int key, int x, int y) {
     }
 }
 
-void keyboard_Game(unsigned char key, int x, int y) {
+static void keyboard(unsigned char key, int x, int y) {
     if (key == 'r' && game->countdown.active) {
         stop_countdown(game);
         return;
@@ -223,7 +224,7 @@ void keyboard_Game(unsigned char key, int x, int y) {
         return;
     }
 }
-void init_Game() {
+static void init_Game_Page() {
     //game = new_Game();
     game = (Game*) malloc(sizeof(Game));
     char fname[] = "./saved/game.txt";
@@ -233,4 +234,13 @@ void init_Game() {
     escape_btn = new_Button(escape_btn_text);
 }
 
-void free_Game() { free_Button(escape_btn); }
+static void free_Game_Page() { free_Button(escape_btn); }
+
+Page game_Page() {
+    return (Page){.render = render,
+                  .mouse = mouse,
+                  .keyboard = keyboard,
+                  .keyboard_special = keyboard_special,
+                  .init_Page = init_Game_Page,
+                  .free_Page = free_Game_Page};
+}

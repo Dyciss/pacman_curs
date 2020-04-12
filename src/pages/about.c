@@ -1,5 +1,6 @@
 #include "./ui/render.h"
 #include "main.h"
+#include "page.h"
 #include <GL/freeglut.h>
 
 char about_text[] = "About program:\n"
@@ -8,19 +9,30 @@ char about_text[] = "About program:\n"
 
 Button *menu_btn;
 
-void render_About() {
+static void render() {
     glClear(GL_COLOR_BUFFER_BIT);
     render_string(about_text, -1 + FONT_WIDTH, 1.0 - FONT_HEIGHT_UPPER_CASE,
                   FONT, WHITE);
     render_button(menu_btn, 0, 0, WHITE, WHITE);
 }
 
-void mouse_About(float x, float y) {
+static void mouse(float x, float y) {
     if (in_button(menu_btn, x, y)) {
         set_program_state(Menu);
     }
 }
 
-void init_About() { menu_btn = new_Button("Go to Menu"); }
+static void keyboard_special(int key, int x, int y) {}
+static void keyboard(unsigned char key, int x, int y) {}
 
-void free_About() { free_Button(menu_btn); }
+static void init_About() { menu_btn = new_Button("Go to Menu"); }
+
+static void free_About() { free_Button(menu_btn); }
+
+Page about_Page() {
+    return (Page) {
+        .render = render, .mouse = mouse, .keyboard = keyboard,
+        .keyboard_special = keyboard_special, .init_Page = init_About,
+        .free_Page = free_About
+    };
+}

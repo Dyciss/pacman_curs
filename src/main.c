@@ -8,8 +8,11 @@
 #include "pages/about.h"
 #include "pages/game.h"
 #include "pages/menu.h"
+#include "pages/page.h"
+#include "pages/settings.h"
 
 enum Program_state program_state;
+Page pages[PROGRAM_STATES_COUNT] = {NULL};
 
 void set_program_state(enum Program_state new_ps) {
     program_state = new_ps;
@@ -17,35 +20,22 @@ void set_program_state(enum Program_state new_ps) {
 }
 
 void exit_and_free(int exit_code) {
-    free_Menu();
-    free_About();
-    free_Game();
+    for (int i = 0; i < PROGRAM_STATES_COUNT; i++) {
+        Page p = pages[i];
+        if (p.free_Page != NULL)
+            p.free_Page();
+    }
     exit(exit_code);
 }
 
 void render() {
     set_window_size();
-    switch (program_state) {
-    case Menu:
-        render_Menu();
-        break;
-
-    case About:
-        render_About();
-        break;
-
-    case Exit:
+    if (program_state == Exit)
         exit_and_free(EXIT_SUCCESS);
-        break;
-
-    case Game_page:
-        render_Game();
-        break;
-
-    default:
-        exit_and_free(EXIT_FAILURE); // we cannot be here
-        break;
-    }
+    Page p = pages[program_state];
+    if (p.render == NULL)
+        exit_and_free(EXIT_FAILURE);
+    p.render();
     glutSwapBuffers();
 }
 
@@ -55,40 +45,19 @@ void mouse(int button, int state, int x, int y) {
 
     float fx = 2 * x / (float)window_width() - 1.0;
     float fy = 1.0 - 2 * y / (float)window_height();
-    switch (program_state) {
-    case Menu:
-        mouse_Menu(fx, fy);
-        break;
-
-    case About:
-        mouse_About(fx, fy);
-        break;
-
-    case Game_page:
-        mouse_Game(fx, fy);
-        break;
-
-    default:
-        break;
-    }
+    Page p = pages[program_state];
+    if (p.mouse != NULL)
+        p.mouse(fx, fy);
 }
 
 void keyboard(unsigned char key, int x, int y) {
-    switch (program_state) {
-    case Menu:
-        // keyboard_Menu()
-        break;
-    case Game_page:
-        keyboard_Game(key, x ,y);
-        break;
-
-
-    default:
-        break;
-    }
+    Page p = pages[program_state];
+    if (p.keyboard != NULL)
+        p.keyboard(key, x, y);
 }
 
 void keyboard_special(int key, int x, int y) {
+    Page p = pages[program_state];
     switch (key) {
     case GLUT_KEY_F5:
         glutFullScreenToggle();
@@ -97,18 +66,8 @@ void keyboard_special(int key, int x, int y) {
         exit_and_free(EXIT_SUCCESS);
         break;
     default:
-        switch (program_state) {
-        case Menu:
-            // keyboard_special_Menu()
-            break;
-
-        case Game_page:
-            keyboard_special_Game(key, x, y);
-            break;
-
-        default:
-            break;
-        }
+        if (p.keyboard_special != NULL)
+            p.keyboard_special(key, x, y);
         break;
     }
 }
@@ -120,9 +79,16 @@ int main(int argc, char *argv[]) {
     glutCreateWindow("Pacman");
     glutFullScreen(); // now we can:)
 
-    init_Menu();
-    init_About();
-    init_Game();
+    pages[Menu] = menu_Page();
+    pages[About] = about_Page();
+    pages[Game_page] = game_Page();
+    pages[Settings] = settings_Page();
+
+    for (int i = 0; i < PROGRAM_STATES_COUNT; i++) {
+        Page p = pages[i];
+        if (p.init_Page != NULL)
+            p.init_Page();
+    }
 
     program_state = Menu;
 

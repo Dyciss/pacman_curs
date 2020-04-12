@@ -3,6 +3,7 @@
 
 #include "./ui/render.h"
 #include "main.h"
+#include "page.h"
 
 char menu_str[] = "Menu page";
 
@@ -11,21 +12,21 @@ Button *settings_btn = NULL;
 Button *about_btn = NULL;
 Button *exit_btn = NULL;
 
-void init_Menu() {
+static void init() {
     game_btn = new_Button("New game");
     settings_btn = new_Button("Settings");
     about_btn = new_Button("About");
     exit_btn = new_Button("Exit");
 }
 
-void free_Menu() {
+static void free_Menu() {
     free_Button(game_btn);
     free_Button(settings_btn);
     free_Button(about_btn);
     free_Button(exit_btn);
 }
 
-void render_Menu() {
+static void render() {
     glClear(GL_COLOR_BUFFER_BIT);
     float x = 0.0 - (sizeof menu_str - 1) * FONT_WIDTH; // center
     float y = 1.0 - FONT_HEIGHT_UPPER_CASE;             // on the top
@@ -38,7 +39,7 @@ void render_Menu() {
     render_button(exit_btn, 0, -FONT_HEIGHT_UPPER_CASE * 4, WHITE, WHITE);
 }
 
-void mouse_Menu(float x, float y) {
+static void mouse(float x, float y) {
     if (in_button(about_btn, x, y)) {
         set_program_state(About);
     } else if (in_button(settings_btn, x, y)) {
@@ -48,4 +49,16 @@ void mouse_Menu(float x, float y) {
     } else if (in_button(exit_btn, x, y)) {
         set_program_state(Exit);
     }
+}
+
+static void keyboard_special(int key, int x, int y) {}
+static void keyboard(unsigned char key, int x, int y) {}
+
+Page menu_Page() {
+    return (Page){.render = render,
+                  .mouse = mouse,
+                  .keyboard = keyboard,
+                  .keyboard_special = keyboard_special,
+                  .init_Page = init,
+                  .free_Page = free_Menu};
 }
