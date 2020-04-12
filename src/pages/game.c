@@ -224,7 +224,12 @@ void keyboard_Game(unsigned char key, int x, int y) {
     }
 }
 void init_Game() {
-    game = new_Game();
+    //game = new_Game();
+    game = (Game*) malloc(sizeof(Game));
+    char fname[] = "./saved/game.txt";
+    if (!file2Game(game, fname)) {
+        fprintf(stderr, "Error while loading game from %s\n", fname);
+    }
     escape_btn = new_Button(escape_btn_text);
 }
 
