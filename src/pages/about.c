@@ -3,11 +3,11 @@
 #include "page.h"
 #include <GL/freeglut.h>
 
-char about_text[] = "About program:\n"
+static char about_text[] = "About program:\n"
                     "There is smt interesting I think\n"
                     "PACMAN!!";
 
-Button *menu_btn;
+static Button *menu_btn = NULL;
 
 static void render() {
     glClear(GL_COLOR_BUFFER_BIT);

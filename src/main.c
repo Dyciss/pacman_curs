@@ -10,6 +10,7 @@
 #include "pages/menu.h"
 #include "pages/page.h"
 #include "pages/settings.h"
+#include "settings/settings.h"
 
 enum Program_state program_state;
 Page pages[PROGRAM_STATES_COUNT] = {NULL};
@@ -25,6 +26,7 @@ void exit_and_free(int exit_code) {
         if (p.free_Page != NULL)
             p.free_Page();
     }
+    settings_free();
     exit(exit_code);
 }
 
@@ -84,6 +86,7 @@ int main(int argc, char *argv[]) {
     pages[Game_page] = game_Page();
     pages[Settings] = settings_Page();
 
+    settings_init();
     for (int i = 0; i < PROGRAM_STATES_COUNT; i++) {
         Page p = pages[i];
         if (p.init_Page != NULL)

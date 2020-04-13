@@ -5,12 +5,12 @@
 #include "main.h"
 #include "page.h"
 
-char menu_str[] = "Menu page";
+static char menu_str[] = "Menu page";
 
-Button *game_btn = NULL;
-Button *settings_btn = NULL;
-Button *about_btn = NULL;
-Button *exit_btn = NULL;
+static Button *game_btn = NULL;
+static Button *settings_btn = NULL;
+static Button *about_btn = NULL;
+static Button *exit_btn = NULL;
 
 static void init() {
     game_btn = new_Button("New game");

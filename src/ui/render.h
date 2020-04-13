@@ -20,7 +20,21 @@ typedef struct {
     GLubyte b;
 } Color;
 
-typedef struct Button Button;
+typedef struct Button {
+    // left-bottom
+    float x1;
+    float y1;
+
+    // right-top
+    float x2;
+    float y2;
+
+    char *text;
+    size_t symbols; // strlen(text)
+} Button;
+
+// Input struct is the same
+typedef Button Input;
 
 void render_string(char *str, float x, float y, void *font, Color color);
 
@@ -29,6 +43,12 @@ void render_button(Button *btn, float x_center, float y_center,
 int in_button(Button *btn, float x, float y);
 Button *new_Button(char *text);
 void free_Button(Button *btn);
+
+Input *new_Input(char *text, size_t max_symbols);
+void free_Input(Input *inp);
+void render_input(Input *inp, float x_center, float y_center,
+                   Color color_text, Color color_border);
+int in_input(Input *inp, float x, float y);
 
 void render_Pacman(int size_px, float x_center, float y_center, Color color);
 void render_Pacman_mouth(int size_px, float x_center, float y_center,

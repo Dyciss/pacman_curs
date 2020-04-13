@@ -13,30 +13,30 @@
 #include "./ui/gamesizing.h"
 #include "directions.h"
 
-Game *game = NULL;
+static Game *game = NULL;
 
-char escape_btn_text[] = "escape";
-Button *escape_btn = NULL;
+static char escape_btn_text[] = "escape";
+static Button *escape_btn = NULL;
 
-int fps = 30;
+static int fps = 30;
 
-void animate_pacman() {
+static void animate_pacman() {
     if (!game->alive)
         return;
     game->pacman->animation_status = !game->pacman->animation_status;
     glutTimerFunc(1000.0 / 3, animate_pacman, 0);
 }
 
-void animate_Ghost(int id) {
+static void animate_Ghost(int id) {
     if (!game->alive)
         return;
     game->ghosts[id]->animation_status = !game->ghosts[id]->animation_status;
     glutTimerFunc(1000.0 / 3, animate_Ghost, id);
 }
 
-void rebirth_game() { rebirth(game); }
+static void rebirth_game() { rebirth(game); }
 
-void move_pacman() {
+static void move_pacman() {
     if (!game->alive || !game->lives)
         return;
 
@@ -88,7 +88,7 @@ void move_pacman() {
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
 
-void move_Ghost(int id) {
+static void move_Ghost(int id) {
     if (!game->alive || !game->lives)
         return;
 
@@ -141,7 +141,7 @@ void countdown_tick() {
     }
 }
 
-void frame() {
+static void frame() {
     if (!game->alive)
         return;
 
@@ -159,7 +159,7 @@ void frame() {
     glutSwapBuffers();
 }
 
-void think_Ghost(int ghost_id) {
+static void think_Ghost(int ghost_id) {
     set_Ghost_direction(game, ghost_id);
     glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost,
                   ghost_id);

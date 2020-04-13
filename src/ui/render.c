@@ -6,19 +6,6 @@
 #include "render.h"
 #include "windowsize.h"
 
-typedef struct Button {
-    // left-bottom
-    float x1;
-    float y1;
-
-    // right-top
-    float x2;
-    float y2;
-
-    char *text;
-    size_t symbols; // strlen(text)
-} Button;
-
 void render_string(char *str, float x, float y, void *font, Color color) {
     glColor3ub(color.r, color.g, color.b);
     glRasterPos2f(x, y);
@@ -29,14 +16,29 @@ int in_button(Button *btn, float x, float y) {
     return (x > btn->x1) && (x < btn->x2) && (y > btn->y1) && (y < btn->y2);
 }
 
+int in_input(Input *inp, float x, float y) { return in_button(inp, x, y); }
+
 Button *new_Button(char *text) {
+    // text won't be copied!
     Button *btn = (Button *)malloc(sizeof(Button));
     btn->symbols = strlen(text);
     btn->text = text;
     return btn;
 }
 
+Input *new_Input(char *text, size_t max_symbols) {
+    // text won't be copied!
+    Input *inp = (Input *)malloc(sizeof(Input));
+    inp->symbols = max_symbols;
+    inp->text = text;
+    return inp;
+}
+
 void free_Button(Button *btn) { free(btn); }
+
+void free_Input(Input *inp) {
+    free(inp);
+}
 
 void render_button(Button *btn, float x_center, float y_center,
                    Color color_text, Color color_border) {
@@ -56,6 +58,11 @@ void render_button(Button *btn, float x_center, float y_center,
     glVertex2f(btn->x2, btn->y2);
     glVertex2f(btn->x1, btn->y2);
     glEnd();
+}
+
+void render_input(Input *inp, float x_center, float y_center, Color color_text,
+                  Color color_border) {
+    render_button(inp, x_center, y_center, color_text, color_border);
 }
 
 void render_Circle(int size_px, float x_center, float y_center, Color color) {
@@ -292,7 +299,7 @@ void render_Ghost(int size_px, float x_center, float y_center, Color color,
     glVertex2f(x_center + (size_px / 2) / (float)window_width(),
                y_center - (size_px / 2) / (float)window_height());
     glEnd();
-    //render_Eyes(size_px, x_center, y_center, direction);
+    // render_Eyes(size_px, x_center, y_center, direction);
 }
 void render_Food(int size_px, float x_center, float y_center, Color color,
                  enum Food food) {
