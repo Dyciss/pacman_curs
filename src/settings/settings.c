@@ -4,13 +4,24 @@
 
 #include "settings.h"
 
+char settings_fname[] = ".pacman-settings";
+
 struct field Settings[LAST_FIELD];
 
 struct field *settings_field(enum setting_field f) {
     return &Settings[f];
 }
 
+#define CHECK(result, scanf)                                                   \
+    {                                                                          \
+        r = scanf;                                                             \
+        if (r == EOF) {                                                        \
+            fclose(file);                                                      \
+            return;                                                            \
+        }                                                                      \
+    }
 void settings_init() {
+    // change it below (fscanf, fprintf) also!
     Settings[Load_file].max_len = 64;
     Settings[User].max_len = 32;
     Settings[Level].max_len = 1;
@@ -19,9 +30,26 @@ void settings_init() {
         Settings[field].text =
             (char *)calloc(Settings[field].max_len + 1, sizeof(char));
     }
+
+    FILE *file = fopen(settings_fname, "r");
+    if (file == NULL)
+        return;
+
+    int r = 0;
+    CHECK(r, fscanf(file, "%1s", Settings[Level].text));
+    CHECK(r, fscanf(file, "%32s", Settings[User].text));
+    CHECK(r, fscanf(file, "%64s", Settings[Load_file].text));
+    fclose(file);
 }
+#undef CHECK
 
 void settings_free() {
+    FILE *file = fopen(settings_fname, "w");
+    fprintf(file, "%s\n", Settings[Level].text);
+    fprintf(file, "%s\n", Settings[User].text);
+    fprintf(file, "%s\n", Settings[Load_file].text);
+    fclose(file);
+
     for (int field = 0; field < LAST_FIELD; field++) {
         free(Settings[field].text);
     }

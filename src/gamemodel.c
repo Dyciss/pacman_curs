@@ -213,6 +213,7 @@ int file2Game(Game *game, char *fname) {
 
     // clang-format on
     fclose(f);
+    game->alive = 0; // we should run it
     return 1;
 }
 
