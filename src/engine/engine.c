@@ -26,7 +26,6 @@ void rebirth(Game *game) {
     }
     game->pacman->x = game->pacman->start_position.x;
     game->pacman->y = game->pacman->start_position.y;
-
 }
 
 void set_level(Game *game) {

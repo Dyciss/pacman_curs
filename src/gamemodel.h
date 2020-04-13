@@ -82,3 +82,4 @@ void start_pause(Game *game);
 void stop_pause(Game *game);
 int Game2file(Game *game, char *fname);
 int file2Game(Game *game, char *fname);
+void free_Game(Game *game);

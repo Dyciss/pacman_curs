@@ -212,10 +212,26 @@ int file2Game(Game *game, char *fname) {
     }
 
     // clang-format on
-    fclose(f);
     game->alive = 0; // we should run it
+    fclose(f);
     return 1;
 }
 
 #undef SCANF_WITH_CHECK
 #undef CHECK
+
+void free_Game(Game *game) {
+    for (int x = 0; x < game->width; x++) {
+        free(game->field[x]);
+    }
+    free(game->field);
+
+    for (int ghost_id=0; ghost_id < game->ghost_count; ghost_id++) {
+        free(game->ghosts[ghost_id]);
+    }
+    free(game->ghosts);
+
+    free(game->pacman);
+
+    free(game);
+}

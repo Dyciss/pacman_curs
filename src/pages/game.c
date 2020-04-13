@@ -21,23 +21,29 @@ static Button *escape_btn = NULL;
 static int fps = 30;
 
 static void animate_pacman() {
-    if (!game->alive)
+    if (!game || !game->alive)
         return;
     game->pacman->animation_status = !game->pacman->animation_status;
     glutTimerFunc(1000.0 / 3, animate_pacman, 0);
 }
 
 static void animate_Ghost(int id) {
-    if (!game->alive)
+    if (!game || !game->alive)
         return;
     game->ghosts[id]->animation_status = !game->ghosts[id]->animation_status;
     glutTimerFunc(1000.0 / 3, animate_Ghost, id);
 }
 
+static void escape_Game() {
+    free_Game(game);
+    game = NULL;
+    set_program_state(Menu);
+}
+
 static void rebirth_game() { rebirth(game); }
 
 static void move_pacman() {
-    if (!game->alive || !game->lives)
+    if (!game || !game->alive || !game->lives)
         return;
 
     if (game->countdown.active || game->pause) {
@@ -89,7 +95,7 @@ static void move_pacman() {
 }
 
 static void move_Ghost(int id) {
-    if (!game->alive || !game->lives)
+    if (!game || !game->alive || !game->lives)
         return;
 
     if (game->countdown.active || game->pause) {
@@ -142,7 +148,7 @@ void countdown_tick() {
 }
 
 static void frame() {
-    if (!game->alive)
+    if (!game || !game->alive)
         return;
 
     if (game->countdown.active && !game->countdown.runned) {
@@ -160,33 +166,49 @@ static void frame() {
 }
 
 static void think_Ghost(int ghost_id) {
+    if (!game || !game->alive)
+        return;
     set_Ghost_direction(game, ghost_id);
     glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost,
                   ghost_id);
 }
 
 static void render() {
+    if (game)
+        return;
+
+    // if game != NULL there is timeout with free last game (look mouse
+    // function) game = new_Game();
+    game = (Game *)malloc(sizeof(Game));
+    char fname[] = "./saved/game.txt";
+    if (!file2Game(game, fname)) {
+        fprintf(stderr, "Error while loading game from %s\n", fname);
+    }
     sync_sizing_props(game);
-    if (!game->alive) {
-        game->alive = 1;
-        animate_pacman();
-        for (int i = 0; i < game->ghost_count; i++) {
-            animate_Ghost(i);
-            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost,
-                          i);
-        }
-        frame();
-        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
-        for (int i = 0; i < game->ghost_count; i++) {
-            glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed, move_Ghost, i);
-        }
+    game->alive = 1;
+    animate_pacman();
+    for (int i = 0; i < game->ghost_count; i++) {
+        animate_Ghost(i);
+        glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost, i);
+    }
+    frame();
+    glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+    for (int i = 0; i < game->ghost_count; i++) {
+        glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed, move_Ghost, i);
     }
 }
 
 static void mouse(float x, float y) {
-    if (in_button(escape_btn, x, y)) {
-        game->alive = 0;
-        set_program_state(Menu);
+    // game->alive check prevents double click
+    if (in_button(escape_btn, x, y) && game->alive) {
+        game->alive = 0; // signal for stop
+        //
+        // We can't free_Game now because some timeout functions can use it
+        // Unfortunately we can't stop they directly. They will stop because of
+        // game->alive After 150ms second all such functions should end (all
+        // such function works faster then it)
+        //
+        glutTimerFunc(150, escape_Game, 0); // 150ms after signal
         return;
     }
 }
@@ -194,7 +216,7 @@ static void mouse(float x, float y) {
 static void keyboard_special(int key, int x, int y) {
     if (key == GLUT_KEY_F1 && game->pause) {
         char fname[] = "./saved/game.txt";
-        if(!Game2file(game, fname)) {
+        if (!Game2file(game, fname)) {
             fprintf(stderr, "Error while saving game to %s\n", fname);
         }
         return;
@@ -224,17 +246,15 @@ static void keyboard(unsigned char key, int x, int y) {
         return;
     }
 }
-static void init_Game_Page() {
-    //game = new_Game();
-    game = (Game*) malloc(sizeof(Game));
-    char fname[] = "./saved/game.txt";
-    if (!file2Game(game, fname)) {
-        fprintf(stderr, "Error while loading game from %s\n", fname);
-    }
-    escape_btn = new_Button(escape_btn_text);
-}
+static void init_Game_Page() { escape_btn = new_Button(escape_btn_text); }
 
-static void free_Game_Page() { free_Button(escape_btn); }
+static void free_Game_Page() {
+    free_Button(escape_btn);
+    if (game != NULL) {
+        game->alive = 0; // look at escape button click
+        glutTimerFunc(150, escape_Game, 0);
+    }
+}
 
 Page game_Page() {
     return (Page){.render = render,
