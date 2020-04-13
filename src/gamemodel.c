@@ -117,8 +117,10 @@ int Game2file(Game *game, char *fname) {
 }
 
 #define CHECK(result)                                                          \
-    if (result == EOF || result == 0)                                          \
-        return 0;
+    if (result == EOF || result == 0) {                                        \
+        fclose(f);                                                             \
+        return 0;                                                              \
+    }
 #define SCANF_WITH_CHECK(result, scanf)                                        \
     result = scanf;                                                            \
     CHECK(result);
