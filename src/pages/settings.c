@@ -10,10 +10,13 @@ static Button *menu_btn = NULL;
 
 static Input *level_inp = NULL;
 static Input *user_name_inp = NULL;
+static Input *load_from_inp = NULL;
 
 static Input *active_inp = NULL;
 
-static Color input_color(Input *inp) { return inp == active_inp ? RED : WHITE; }
+static Color input_color(Input *inp, enum setting_field f) {
+    return inp == active_inp ? GOLD : validate_field(f) ? WHITE : RED;
+}
 
 static void update_page() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -25,7 +28,7 @@ static void update_page() {
                   -FONT_HEIGHT, FONT, WHITE);
 
     render_input(level_inp, FONT_WIDTH * (level_inp->symbols), 0, WHITE,
-                 input_color(level_inp));
+                 input_color(level_inp, Level));
 
     char name_info[] = "Nickname: ";
     render_string(name_info, -2 * FONT_WIDTH * (sizeof name_info),
@@ -33,7 +36,15 @@ static void update_page() {
 
     render_input(user_name_inp, FONT_WIDTH * (user_name_inp->symbols),
                  -2 * FONT_HEIGHT_UPPER_CASE, WHITE,
-                 input_color(user_name_inp));
+                 input_color(user_name_inp, User));
+
+    char load_from[] = "Enter saved game/map: ";
+    render_string(load_from, -2 * FONT_WIDTH * (sizeof load_from),
+                  -4 * FONT_HEIGHT_UPPER_CASE - FONT_HEIGHT, FONT, WHITE);
+
+    render_input(load_from_inp, FONT_WIDTH * (load_from_inp->symbols),
+                 -4 * FONT_HEIGHT_UPPER_CASE, WHITE,
+                 input_color(load_from_inp, Load_file));
 
     glutSwapBuffers();
 }
@@ -45,6 +56,8 @@ static void mouse(float x, float y) {
         active_inp = level_inp;
     } else if (in_input(user_name_inp, x, y)) {
         active_inp = user_name_inp;
+    } else if (in_input(load_from_inp, x, y)) {
+        active_inp = load_from_inp;
     } else {
         active_inp = NULL;
 
@@ -81,11 +94,14 @@ static void init() {
 
     bind_input(&level_inp, Level);
     bind_input(&user_name_inp, User);
+    bind_input(&load_from_inp, Load_file);
 }
 
 static void free_Settings() {
     free_Button(menu_btn);
     free_Input(level_inp);
+    free_Input(user_name_inp);
+    free_Input(load_from_inp);
 }
 
 Page settings_Page() {
