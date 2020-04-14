@@ -9,9 +9,9 @@
 #include "ui/render.h"
 #include "ui/windowsize.h"
 
+#include "directions/directions.h"
 #include "engine/engine.h"
 #include "ui/gamesizing.h"
-#include "directions/directions.h"
 
 static Game *game = NULL;
 
@@ -174,8 +174,10 @@ static void think_Ghost(int ghost_id) {
 }
 
 static void render() {
-    if (game)
+    if (game) {
+        sync_sizing_props(game);
         return;
+    }
 
     // if game != NULL there is timeout with free last game (look mouse
     // function) game = new_Game();
