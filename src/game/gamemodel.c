@@ -4,13 +4,7 @@
 
 #include "settings/settings.h"
 
-void set_ghost_count(Game *game, int count) {
-    game->ghost_count = count;
-    game->ghosts =
-        (struct creature **)malloc(sizeof(struct creature *) * count);
-}
-
-void init_field(Game *game, int width, int height) {
+static void init_field(Game *game, int width, int height) {
     game->width = width;
     game->height = height;
 
@@ -21,7 +15,7 @@ void init_field(Game *game, int width, int height) {
     }
 }
 
-void init_countdown(Game *game) {
+static void init_countdown(Game *game) {
     game->countdown.runned = 0;
 } // current tick is not run
 
@@ -265,4 +259,45 @@ void free_Game(Game *game) {
 
     if (game)
         free(game);
+}
+
+void rebirth(Game *game) {
+    //
+    // creatures position <- start position
+    //
+    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->field[game->ghosts[i]->x - 1][game->ghosts[i]->y - 1] =
+            game->ghosts[i]->under;
+    }
+    game->field[game->pacman->start_position.x - 1]
+               [game->pacman->start_position.y - 1] = PACMAN_CELL;
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->field[game->ghosts[i]->start_position.x - 1]
+                   [game->ghosts[i]->start_position.y - 1] = GHOST_CELL(i);
+        game->ghosts[i]->x = game->ghosts[i]->start_position.x;
+        game->ghosts[i]->y = game->ghosts[i]->start_position.y;
+    }
+    game->pacman->x = game->pacman->start_position.x;
+    game->pacman->y = game->pacman->start_position.y;
+}
+
+void set_level(Game *game) {
+    rebirth(game);
+    for (int x = 0; x < game->width; x++) {
+        for (int y = 0; y < game->height; y++) {
+            if (game->field[x][y].object == Eaten_Food) {
+                game->field[x][y].object = Food;
+            }
+        }
+    }
+
+    for (int i = 0; i < game->ghost_count; i++) {
+        game->ghosts[i]->speed = 450;
+        game->ghosts[i]->direction = LEFT;
+        game->ghosts[i]->animation_status = 0;
+    }
+    game->pacman->animation_status = 0;
+    game->pacman->direction = RIGHT;
+    game->pacman->speed = 450;
 }

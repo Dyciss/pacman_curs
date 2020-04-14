@@ -183,7 +183,6 @@ static void render() {
         return;
     }
 
-    // function) game = new_Game();
     game = (Game *)calloc(1, sizeof(Game)); // NULL in pacman, ghosts, ...
     char *fname = settings_field(Load_file)->text;
     if (!file2Game(game, fname)) {

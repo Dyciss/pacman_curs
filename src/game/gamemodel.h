@@ -76,9 +76,6 @@ typedef struct Game {
     struct cell **field;
 } Game;
 
-void set_ghost_count(Game *game, int count);
-void init_field(Game *game, int width, int height);
-void init_countdown(Game *game);
 void start_countdown(Game *game);
 void stop_countdown(Game *game);
 void start_pause(Game *game);
@@ -86,3 +83,4 @@ void stop_pause(Game *game);
 int Game2file(Game *game, char *fname);
 int file2Game(Game *game, char *fname);
 void free_Game(Game *game);
+void rebirth(Game *game);
