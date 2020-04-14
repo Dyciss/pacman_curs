@@ -2,7 +2,7 @@
 
 #include <GL/freeglut.h>
 #include "direction.h"
-#include "gamemodel.h"
+#include "game/gamemodel.h"
 
 Direction direction_from_special_key(int key);
 Direction direction_from_key(unsigned char key);

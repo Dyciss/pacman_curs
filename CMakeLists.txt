@@ -7,7 +7,8 @@ add_executable(pacman ./src/main.c
     ./src/ui/render.c  ./src/ui/windowsize.c ./src/ui/gameui.c ./src/ui/gamesizing.c
     ./src/settings/settings.c
     ./src/engine/engine.c
-    ./src/directions.c ./src/gamemodel.c)
+    ./src/directions/directions.c 
+    ./src/game/gamemodel.c)
 
 target_include_directories(pacman PRIVATE ./src)
 
@@ -19,4 +20,4 @@ find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
 target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
 
-target_link_libraries(pacman  ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+target_link_libraries(pacman ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})

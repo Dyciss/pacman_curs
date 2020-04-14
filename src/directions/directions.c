@@ -1,6 +1,7 @@
 #include <GL/freeglut.h>
 
-#include "directions.h"
+#include "directions/directions.h"
+#include "game/gamemodel.h"
 
 Direction direction_from_special_key(int key) {
     //

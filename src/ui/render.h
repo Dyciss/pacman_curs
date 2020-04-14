@@ -1,8 +1,11 @@
 #pragma once
 
-#include "directions.h"
-#include "gamemodel.h"
-#include "windowsize.h"
+#include "direction.h"
+#include "game/gamemodel.h"
+#include "ui/windowsize.h"
+
+#include <string.h>
+#include <GL/freeglut.h>
 
 #define FONT GLUT_BITMAP_9_BY_15
 #define FONT_HEIGHT (15 / (float)window_height())

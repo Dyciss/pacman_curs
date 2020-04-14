@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "directions.h"
-#include "render.h"
-#include "windowsize.h"
+#include "ui/render.h"
+#include "ui/windowsize.h"
 
 void render_string(char *str, float x, float y, void *font, Color color) {
     glColor3ub(color.r, color.g, color.b);

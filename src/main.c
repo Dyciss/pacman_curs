@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "./ui/windowsize.h"
+#include "ui/windowsize.h"
 #include "pages/about.h"
 #include "pages/game.h"
 #include "pages/menu.h"

@@ -1,5 +1,5 @@
 #pragma once
 
-#include "gamemodel.h"
+#include "game/gamemodel.h"
 
 void draw_game(Game *game);

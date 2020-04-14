@@ -1,5 +1,5 @@
 #pragma once
-#include "gamemodel.h"
+#include "game/gamemodel.h"
 
 Game *new_Game();
 void rebirth(Game *game);

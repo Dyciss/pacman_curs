@@ -1,6 +1,6 @@
-#include "./ui/render.h"
+#include "ui/render.h"
 #include "main.h"
-#include "page.h"
+#include "pages/page.h"
 #include <GL/freeglut.h>
 
 static char about_text[] = "About program:\n"

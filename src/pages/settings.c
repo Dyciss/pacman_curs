@@ -1,6 +1,6 @@
 #include "settings/settings.h"
 #include "main.h"
-#include "page.h"
+#include "pages/page.h"
 #include "ui/render.h"
 
 #include <ctype.h>

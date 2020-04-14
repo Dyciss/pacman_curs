@@ -3,15 +3,15 @@
 #include <time.h>
 
 #include "main.h"
-#include "page.h"
+#include "pages/page.h"
 
-#include "./ui/gameui.h"
-#include "./ui/render.h"
-#include "./ui/windowsize.h"
+#include "ui/gameui.h"
+#include "ui/render.h"
+#include "ui/windowsize.h"
 
-#include "./engine/engine.h"
-#include "./ui/gamesizing.h"
-#include "directions.h"
+#include "engine/engine.h"
+#include "ui/gamesizing.h"
+#include "directions/directions.h"
 
 static Game *game = NULL;
 

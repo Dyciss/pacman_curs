@@ -1,4 +1,4 @@
 #pragma once
 
-#include "page.h"
+#include "pages/page.h"
 Page game_Page();

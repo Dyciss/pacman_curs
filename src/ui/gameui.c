@@ -1,8 +1,7 @@
 #include <GL/freeglut.h>
 
-#include "directions.h"
-#include "gamemodel.h"
-#include "gamesizing.h"
+#include "game/gamemodel.h"
+#include "ui/gamesizing.h"
 #include "render.h"
 #include <stdio.h>
 #include <string.h>
