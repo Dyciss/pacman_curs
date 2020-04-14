@@ -58,12 +58,9 @@ int Game2file(Game *game, char *fname) {
     // data
     fprintf(f, "[lives]: %i\n", game->lives);
 
-    // countdown, pause state
-    fprintf(f, "[countdown.active]: %i\n", game->countdown.active);
+    // countdown info
     fprintf(f, "[countdown.ms]: %i\n", game->countdown.ms);
     fprintf(f, "[countdown.n]: %i\n", game->countdown.n);
-    fprintf(f, "[countdown.current_n]: %i\n", game->countdown.current_n);
-    fprintf(f, "[pause]: %i\n", game->pause);
 
     // pacman
     fprintf(f, "[pacman.x]: %i\n", game->pacman->x);
@@ -146,12 +143,9 @@ int file2Game(Game *game, char *fname) {
     // data
     SCANF_WITH_CHECK(r, fscanf(f, "[lives]: %i\n", &game->lives));
 
-    // countdown, pause state
-    SCANF_WITH_CHECK(r, fscanf(f, "[countdown.active]: %i\n", &game->countdown.active));
+    // countdown info
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.ms]: %i\n", &game->countdown.ms));
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.n]: %i\n", &game->countdown.n));
-    SCANF_WITH_CHECK(r, fscanf(f, "[countdown.current_n]: %i\n", &game->countdown.current_n));
-    SCANF_WITH_CHECK(r, fscanf(f, "[pause]: %i\n", &game->pause));
     
     int temp = 0;
     // pacman
@@ -171,6 +165,7 @@ int file2Game(Game *game, char *fname) {
         SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.food_type]: %i\n", &temp));
         game->pacman->under.food_type = temp;
     }
+    game->pacman->animation_status = 1;
 
     // ghosts
     SCANF_WITH_CHECK(r, fscanf(f, "[ghost_count]: %i\n", &game->ghost_count));
@@ -193,6 +188,7 @@ int file2Game(Game *game, char *fname) {
             SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.food_type]: %i\n", &temp));
             game->ghosts[ghost_id]->under.food_type = temp;
         }
+        game->ghosts[ghost_id]->animation_status = 1; // just initialization
     }
 
     // field
@@ -213,6 +209,9 @@ int file2Game(Game *game, char *fname) {
 
     // clang-format on
     game->alive = 0; // we should run it
+    init_countdown(game);
+    stop_pause(game); // it will start countdown
+    
     fclose(f);
     return 1;
 }
