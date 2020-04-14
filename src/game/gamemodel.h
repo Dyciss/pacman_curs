@@ -56,6 +56,9 @@ typedef struct Game {
     int alive; // should the game be rendered, it's true if we are in game page
     int lives; // pacman lives, lives==0 <=> game ended
 
+    int level; // == stage
+    int difficalty; // - constant
+
     struct {
         int active;
         int runned; // is current tick runned

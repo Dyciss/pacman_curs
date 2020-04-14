@@ -58,6 +58,10 @@ int Game2file(Game *game, char *fname) {
     // data
     fprintf(f, "[lives]: %i\n", game->lives);
 
+    // level, difficalty
+    fprintf(f, "[level]: %i\n", game->level);
+    fprintf(f, "[difficalty]: %i\n", game->difficalty);
+
     // countdown info
     fprintf(f, "[countdown.ms]: %i\n", game->countdown.ms);
     fprintf(f, "[countdown.n]: %i\n", game->countdown.n);
@@ -143,10 +147,14 @@ int file2Game(Game *game, char *fname) {
     // data
     SCANF_WITH_CHECK(r, fscanf(f, "[lives]: %i\n", &game->lives));
 
+    // level, difficalty
+    SCANF_WITH_CHECK(r, fscanf(f, "[level]: %i\n", &game->level));
+    SCANF_WITH_CHECK(r, fscanf(f, "[difficalty]: %i\n", &game->difficalty));
+
     // countdown info
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.ms]: %i\n", &game->countdown.ms));
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.n]: %i\n", &game->countdown.n));
-    
+
     int temp = 0;
     // pacman
     game->pacman = (struct creature *)malloc(sizeof(struct creature));

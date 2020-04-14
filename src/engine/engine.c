@@ -327,6 +327,10 @@ Game *new_Game() {
         game->ghosts[i]->x = game->ghosts[i]->start_position.x;
         game->ghosts[i]->y = game->ghosts[i]->start_position.y;
     }
+
+    game->difficalty = 0; // todo: from settings
+    game->level = 1;
+    
     set_level(game);
     init_countdown(game);
     start_countdown(game);

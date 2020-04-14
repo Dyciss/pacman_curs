@@ -24,7 +24,7 @@ void settings_init() {
     // change it below (fscanf, fprintf) also!
     Settings[Load_file].max_len = 64;
     Settings[User].max_len = 32;
-    Settings[Level].max_len = 1;
+    Settings[Difficalty].max_len = 1;
 
     for (int field = 0; field < LAST_FIELD; field++) {
         Settings[field].text =
@@ -36,7 +36,7 @@ void settings_init() {
         return;
 
     int r = 0;
-    CHECK(r, fscanf(file, "%1s", Settings[Level].text));
+    CHECK(r, fscanf(file, "%1s", Settings[Difficalty].text));
     CHECK(r, fscanf(file, "%32s", Settings[User].text));
     CHECK(r, fscanf(file, "%64s", Settings[Load_file].text));
     fclose(file);
@@ -45,7 +45,7 @@ void settings_init() {
 
 void settings_free() {
     FILE *file = fopen(settings_fname, "w");
-    fprintf(file, "%s\n", Settings[Level].text);
+    fprintf(file, "%s\n", Settings[Difficalty].text);
     fprintf(file, "%s\n", Settings[User].text);
     fprintf(file, "%s\n", Settings[Load_file].text);
     fclose(file);
@@ -65,9 +65,9 @@ static int file_exist(char *f) {
 
 int validate_field(enum setting_field f) {
     switch (f) {
-    case Level:
-        return (Settings[Level].text[0] < '4' &&
-                Settings[Level].text[0] >= '0');
+    case Difficalty:
+        return (Settings[Difficalty].text[0] < '4' &&
+                Settings[Difficalty].text[0] >= '0');
     case User:
         return Settings[User].text[0] != '\0'; // len != 0
     case Load_file:

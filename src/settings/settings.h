@@ -2,7 +2,7 @@
 
 #include <string.h>
 
-enum setting_field { User, Level, Load_file, LAST_FIELD };
+enum setting_field { User, Difficalty, Load_file, LAST_FIELD };
 struct field {
     char *text;
     size_t max_len;

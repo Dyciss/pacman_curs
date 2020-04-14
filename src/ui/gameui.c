@@ -30,6 +30,16 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
+    snprintf(str, str_len, "Level: %i", game->level);
+    render_str(str);
+
+    line_number++;
+
+    snprintf(str, str_len, "Difficalty: %i", game->difficalty);
+    render_str(str);
+
+    line_number++;
+
     if (game->countdown.active) {
         snprintf(str, str_len, "We want you to calm down: %i -- %i",
                 game->countdown.current_n, game->countdown.n);
