@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "settings/settings.h"
+
 void set_ghost_count(Game *game, int count) {
     game->ghost_count = count;
     game->ghosts =
@@ -51,6 +53,9 @@ int Game2file(Game *game, char *fname) {
     // if you need to change something you should change it in file2Game also
 
     // clang-format off
+    // this file is not map, it is game saving.
+    fprintf(f, "SAVE: 1\n");
+
     // sizing
     fprintf(f, "[width]: %i\n", game->width);
     fprintf(f, "[height]: %i\n", game->height);
@@ -140,16 +145,27 @@ int file2Game(Game *game, char *fname) {
     int r = 0;
 
     // clang-format off
+    int is_save = 0;
+    SCANF_WITH_CHECK(r, fscanf(f, "SAVE: %i\n", &is_save));
+
     // sizing
     SCANF_WITH_CHECK(r, fscanf(f, "[width]: %i\n", &game->width));
     SCANF_WITH_CHECK(r, fscanf(f, "[height]: %i\n", &game->height));
     
     // data
+    // maybe it shouldn't be in the map, but maybe it should
     SCANF_WITH_CHECK(r, fscanf(f, "[lives]: %i\n", &game->lives));
 
     // level, difficalty
-    SCANF_WITH_CHECK(r, fscanf(f, "[level]: %i\n", &game->level));
-    SCANF_WITH_CHECK(r, fscanf(f, "[difficalty]: %i\n", &game->difficalty));
+    // it definitely shoudn't be in the map
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[level]: %i\n", &game->level));
+        SCANF_WITH_CHECK(r, fscanf(f, "[difficalty]: %i\n", &game->difficalty));
+    } else {
+        game->level = 1;
+        // without any validation, it's not worth an exception
+        game->difficalty = (settings_field(Difficalty)->text[0] + 256 - '0') % 4;
+    }
 
     // countdown info
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.ms]: %i\n", &game->countdown.ms));
