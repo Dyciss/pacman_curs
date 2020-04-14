@@ -158,6 +158,7 @@ int file2Game(Game *game, char *fname) {
     } else {
         game->level = 1;
         // without any validation, it's not worth an exception
+        // 256 mod 4 == 0 and needs because (negative) % 4 = negative
         game->difficalty = (settings_field(Difficalty)->text[0] + 256 - '0') % 4;
     }
 
