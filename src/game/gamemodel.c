@@ -219,7 +219,7 @@ int file2Game(Game *game, char *fname) {
     game->alive = 0; // we should run it
     init_countdown(game);
     stop_pause(game); // it will start countdown
-    
+
     fclose(f);
     return 1;
 }
@@ -228,17 +228,25 @@ int file2Game(Game *game, char *fname) {
 #undef CHECK
 
 void free_Game(Game *game) {
-    for (int x = 0; x < game->width; x++) {
-        free(game->field[x]);
+    if (game->field) {
+        for (int x = 0; x < game->width; x++) {
+            if (game->field[x])
+                free(game->field[x]);
+        }
+        free(game->field);
     }
-    free(game->field);
 
-    for (int ghost_id=0; ghost_id < game->ghost_count; ghost_id++) {
-        free(game->ghosts[ghost_id]);
+    if (game->ghosts) {
+        for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
+            if (game->ghosts[ghost_id])
+                free(game->ghosts[ghost_id]);
+        }
+        free(game->ghosts);
     }
-    free(game->ghosts);
 
-    free(game->pacman);
+    if (game->pacman)
+        free(game->pacman);
 
-    free(game);
+    if (game)
+        free(game);
 }

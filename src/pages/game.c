@@ -13,6 +13,8 @@
 #include "engine/engine.h"
 #include "ui/gamesizing.h"
 
+#include "settings/settings.h"
+
 static Game *game = NULL;
 
 static char escape_btn_text[] = "escape";
@@ -140,6 +142,8 @@ static void move_Ghost(int id) {
 }
 
 void countdown_tick() {
+    if (!game || !game->alive)
+        return;
     game->countdown.current_n++;
     game->countdown.runned = 0;
     if (game->countdown.current_n > game->countdown.n) {
@@ -179,12 +183,13 @@ static void render() {
         return;
     }
 
-    // if game != NULL there is timeout with free last game (look mouse
     // function) game = new_Game();
-    game = (Game *)malloc(sizeof(Game));
-    char fname[] = "./saved/game.txt";
+    game = (Game *)calloc(1, sizeof(Game)); // NULL in pacman, ghosts, ...
+    char *fname = settings_field(Load_file)->text;
     if (!file2Game(game, fname)) {
         fprintf(stderr, "Error while loading game from %s\n", fname);
+        escape_Game();
+        return;
     }
     sync_sizing_props(game);
     game->alive = 1;
@@ -217,10 +222,18 @@ static void mouse(float x, float y) {
 
 static void keyboard_special(int key, int x, int y) {
     if (key == GLUT_KEY_F1 && game->pause) {
-        char fname[] = "./saved/game.txt";
+        time_t t = time(NULL);
+        struct tm *t_info;
+        time(&t);
+        t_info = localtime(&t);
+        size_t fname_len = settings_field(Load_file)->max_len + 40;
+        char *fname = (char *) calloc (fname_len+1, sizeof(char));
+        snprintf(fname, fname_len, "%s%s.txt", settings_field(Load_file)->text, asctime(t_info));
         if (!Game2file(game, fname)) {
             fprintf(stderr, "Error while saving game to %s\n", fname);
         }
+
+        free(fname);
         return;
     }
     Direction new_direction = direction_from_special_key(key);

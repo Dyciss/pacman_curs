@@ -97,6 +97,7 @@ void render_Circle(int size_px, float x_center, float y_center, Color color) {
 void render_Pacman(int size_px, float x_center, float y_center, Color color) {
     render_Circle(size_px, x_center, y_center, color);
 }
+
 void render_Pacman_mouth(int size_px, float x_center, float y_center,
                          Color color, Direction direction) {
     glColor3ub(color.r, color.g, color.b);
@@ -121,7 +122,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glBegin(GL_LINES);
             glVertex2f(x_center + (size_px / 2.0 - i) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
-            glVertex2f(x_center + (size_px / 2.0) / (float)window_width(),
+            glVertex2f(x_center + (size_px / 2.0 + 1) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
             glEnd();
             i -= 2;
@@ -135,7 +136,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glBegin(GL_LINES);
             glVertex2f(x_center - (size_px / 2.0 - i) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
-            glVertex2f(x_center - (size_px / 2.0) / (float)window_width(),
+            glVertex2f(x_center - (size_px / 2.0 + 1) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
             glEnd();
             i += 2;
@@ -148,7 +149,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glBegin(GL_LINES);
             glVertex2f(x_center - (size_px / 2.0 - i) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
-            glVertex2f(x_center - (size_px / 2.0) / (float)window_width(),
+            glVertex2f(x_center - (size_px / 2.0 + 1) / (float)window_width(),
                        y_center + (size_px / 2.0 - y) / (float)window_height());
             glEnd();
             i -= 2;
@@ -163,7 +164,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
                        y_center - (size_px / 2.0 - i) / (float)window_height());
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
-                       y_center - (size_px / 2.0) / (float)window_height());
+                       y_center - (size_px / 2.0 + 1) / (float)window_height());
             glEnd();
             i += 2;
             y++;
@@ -176,7 +177,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
                        y_center - (size_px / 2.0 - i) / (float)window_height());
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
-                       y_center - (size_px / 2.0) / (float)window_height());
+                       y_center - (size_px / 2.0 + 1) / (float)window_height());
             glEnd();
             i -= 2;
             y++;
@@ -190,7 +191,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
                        y_center + (size_px / 2.0 - i) / (float)window_height());
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
-                       y_center + (size_px / 2.0) / (float)window_height());
+                       y_center + (size_px / 2.0 + 1) / (float)window_height());
             glEnd();
             i += 2;
             y++;
@@ -203,7 +204,7 @@ void render_Pacman_mouth(int size_px, float x_center, float y_center,
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
                        y_center + (size_px / 2.0 - i) / (float)window_height());
             glVertex2f(x_center + (size_px / 2.0 - y) / (float)window_width(),
-                       y_center + (size_px / 2.0) / (float)window_height());
+                       y_center + (size_px / 2.0 + 1) / (float)window_height());
             glEnd();
             i -= 2;
             y++;
