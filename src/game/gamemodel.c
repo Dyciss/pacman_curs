@@ -36,6 +36,34 @@ void stop_pause(Game *game) {
     game->pause = 0;
 }
 
+static void set_food_count_start(Game *game) {
+    game->foods.count_now = game->foods.count_start;
+}
+
+void check_fruits(Game *game) {
+    while (game->foods.next_fruit_index < game->fruits_count &&
+           game->fruits[game->foods.next_fruit_index].when_food_count >=
+               game->foods.count_now) {
+        // maybe new fruit will appear
+        int i = game->foods.next_fruit_index;
+        game->foods.next_fruit_index++;
+        if (game->fruits[i].is_eaten)
+            continue;
+        game->fruits[i].is_eaten = 1;
+        int x = game->fruits[i].x;
+        int y = game->fruits[i].y;
+        // Eaten food -> food
+        if (game->field[x - 1][y - 1].object == Ghost) {
+            int id = game->field[x - 1][y - 1].ghost_id;
+            game->ghosts[id]->under.object = Food;
+            game->foods.count_now++;
+        } else if (game->field[x - 1][y - 1].object == Eaten_Food) {
+            game->field[x - 1][y - 1].object = Food;
+            game->foods.count_now++;
+        }
+    }
+}
+
 int Game2file(Game *game, char *fname) {
     //
     // if success returns 1 else 0
@@ -256,7 +284,6 @@ int file2Game(Game *game, char *fname) {
                 SCANF_WITH_CHECK(r, fscanf(f, "[field.%*i.%*i.ghost_id]: %i\n", &c->ghost_id));
             } else if (c->object == Food || c->object == Eaten_Food) {
                 game->foods.count_start++;
-                if (c->object == Food) game->foods.count_now++;
                 SCANF_WITH_CHECK(r, fscanf(f, "[field.%*i.%*i.food_type]: %i\n", &temp));
                 c->food_type = temp;
             }
@@ -264,23 +291,8 @@ int file2Game(Game *game, char *fname) {
     }
 
     game->foods.count_start -= (game->fruits_count + 1); // minus fruits and extra live
-    while (game->foods.next_fruit_index < game->fruits_count && game->fruits[game->foods.next_fruit_index].when_food_count >= game->foods.count_now) {
-        int i = game->foods.next_fruit_index;
-        game->foods.next_fruit_index++;
-        if (game->fruits[i].is_eaten) continue;
-        game->fruits[i].is_eaten = 1;
-        int x = game->fruits[i].x;
-        int y = game->fruits[i].y;
-        // Eaten food -> food
-        if (game->field[x - 1][y - 1].object == Ghost) {
-            int id = game->field[x - 1][y - 1].ghost_id;
-            game->ghosts[id]->under.object = Food;
-            game->foods.count_now++;
-        } else if (game->field[x - 1][y - 1].object == Eaten_Food) {
-            game->field[x - 1][y - 1].object = Food;
-            game->foods.count_now++;
-        }
-    }
+    set_food_count_start(game);
+    check_fruits(game);
 
     // clang-format on
     game->alive = 0; // we should run it
@@ -345,10 +357,15 @@ void rebirth(Game *game) {
 
 void set_level(Game *game) {
     rebirth(game);
+    set_food_count_start(game);
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
             if (game->field[x][y].object == Eaten_Food) {
-                game->field[x][y].object = Food;
+                if (game->field[x][y].food_type != FRUIT &&
+                    (game->field[x][y].food_type != EXTRALIVE ||
+                     game->extra_live.when_level == game->level)) {
+                    game->field[x][y].object = Food;
+                }
             }
         }
     }
@@ -358,6 +375,11 @@ void set_level(Game *game) {
         game->ghosts[i]->direction = LEFT;
         game->ghosts[i]->animation_status = 0;
     }
+
+    for (int i = 0; i < game->fruits_count; i++) {
+        game->fruits[i].is_eaten = 0;
+    }
+
     game->pacman->animation_status = 0;
     game->pacman->direction = RIGHT;
     game->pacman->speed = 450;

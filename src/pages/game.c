@@ -43,6 +43,7 @@ static void escape_Game() {
 }
 
 static void rebirth_game() { rebirth(game); }
+static void set_level_game() { set_level(game); }
 
 static void move_pacman() {
     if (!game || !game->alive || !game->lives)
@@ -113,6 +114,11 @@ static void move_pacman() {
                 game->field[x - 1][y - 1].object = Food;
                 game->foods.count_now++;
             }
+        }
+        if (game->foods.count_now == 0) {
+            game->level++;
+            start_countdown(game);
+            glutTimerFunc(game->countdown.ms, set_level_game, 0);
         }
     }
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
