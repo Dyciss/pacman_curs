@@ -38,7 +38,6 @@ void stop_pause(Game *game) {
 
 static void set_food_to_start(Game *game) {
     game->foods.count_now = game->foods.count_start;
-    game->foods.next_fruit_index = 0;
 }
 
 void check_fruits(Game *game) {
@@ -96,12 +95,14 @@ int Game2file(Game *game, char *fname) {
     fprintf(f, "[countdown.n]: %i\n", game->countdown.n);
 
     // food
+    fprintf(f, "[foods.next_fruit_index]: %i\n", game->foods.next_fruit_index);
     fprintf(f, "[fruits_count]: %i\n", game->fruits_count);
     for (int i = 0; i < game->fruits_count; i++) {
         fprintf(f, "[fruits.%i.x]: %i\n", i, game->fruits[i].x);
         fprintf(f, "[fruits.%i.y]: %i\n", i, game->fruits[i].y);
         fprintf(f, "[fruits.%i.when_food_count]: %i\n", i, game->fruits[i].when_food_count);
         fprintf(f, "[fruits.%i.is_eaten]: %i\n", i, game->fruits[i].is_eaten);
+        fprintf(f, "[fruits.%i.moves_uneaten]: %i\n", i, game->fruits[i].moves_uneaten);
     }
 
     fprintf(f, "[extra_live.x]: %i\n", game->extra_live.x);
@@ -210,6 +211,11 @@ int file2Game(Game *game, char *fname) {
     SCANF_WITH_CHECK(r, fscanf(f, "[countdown.n]: %i\n", &game->countdown.n));
 
     // food
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[foods.next_fruit_index]: %i\n", &game->foods.next_fruit_index));
+    } else {
+        game->foods.next_fruit_index = 0;
+    }
     SCANF_WITH_CHECK(r, fscanf(f, "[fruits_count]: %i\n", &game->fruits_count));
     game->fruits = (struct fruit *)malloc(game->fruits_count * sizeof(struct fruit));
     for (int i = 0; i < game->fruits_count; i++) {
@@ -218,8 +224,10 @@ int file2Game(Game *game, char *fname) {
         SCANF_WITH_CHECK(r, fscanf(f, "[fruits.%*i.when_food_count]: %i\n", &game->fruits[i].when_food_count));
         if (is_save) {
             SCANF_WITH_CHECK(r, fscanf(f, "[fruits.%*i.is_eaten]: %i\n", &game->fruits[i].is_eaten));
+            SCANF_WITH_CHECK(r, fscanf(f, "[fruits.%*i.moves_uneaten]: %i\n", &game->fruits[i].moves_uneaten));
         } else {
             game->fruits[i].is_eaten = 0;
+            game->fruits[i].moves_uneaten = 0;
         }
     }
 
@@ -228,6 +236,10 @@ int file2Game(Game *game, char *fname) {
     SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.when_level]: %i\n", &game->extra_live.when_level));
 
     int temp = 0;
+
+    game->foods.count_start = 0;
+    game->foods.count_now = 0;
+
     // pacman
     game->pacman = (struct creature *)malloc(sizeof(struct creature));
     if (is_save) {
@@ -251,6 +263,7 @@ int file2Game(Game *game, char *fname) {
         } else if (game->pacman->under.object == Food || game->pacman->under.object == Eaten_Food) {
             SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.food_type]: %i\n", &temp));
             game->pacman->under.food_type = temp;
+            game->foods.count_start++;
         }
     } else {
         game->pacman->under = NOTHING_CELL;
@@ -285,6 +298,8 @@ int file2Game(Game *game, char *fname) {
                        game->ghosts[ghost_id]->under.object == Eaten_Food) {
                 SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.food_type]: %i\n", &temp));
                 game->ghosts[ghost_id]->under.food_type = temp;
+                game->foods.count_start++;
+                if (game->ghosts[ghost_id]->under.object == Food) game->foods.count_now++;
             }
         } else {
             game->ghosts[ghost_id]->under = NOTHING_CELL;
@@ -292,9 +307,6 @@ int file2Game(Game *game, char *fname) {
 
         game->ghosts[ghost_id]->animation_status = 1; // just initialization
     }
-
-    game->foods.count_start = 0;
-    game->foods.count_now = 0;
 
     // field
     init_field(game, game->width, game->height);
@@ -307,6 +319,7 @@ int file2Game(Game *game, char *fname) {
                 SCANF_WITH_CHECK(r, fscanf(f, "[field.%*i.%*i.ghost_id]: %i\n", &c->ghost_id));
             } else if (c->object == Food || c->object == Eaten_Food) {
                 game->foods.count_start++;
+                if (c->object == Food) game->foods.count_now++;
                 SCANF_WITH_CHECK(r, fscanf(f, "[field.%*i.%*i.food_type]: %i\n", &temp));
                 c->food_type = temp;
             }
@@ -314,7 +327,6 @@ int file2Game(Game *game, char *fname) {
     }
 
     game->foods.count_start -= (game->fruits_count + 1); // minus fruits and extra live
-    set_food_to_start(game);
     check_fruits(game);
 
     // clang-format on
@@ -383,6 +395,7 @@ void rebirth(Game *game) {
 void set_level(Game *game) {
     rebirth(game);
     set_food_to_start(game);
+    game->foods.next_fruit_index = 0;
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
             if (game->field[x][y].object == Eaten_Food) {
