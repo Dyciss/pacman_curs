@@ -45,6 +45,14 @@ static void escape_Game() {
 static void rebirth_game() { rebirth(game); }
 static void set_level_game() { set_level(game); }
 
+static void maybe_new_level() {
+    if (game->foods.count_now == 0) {
+        game->level++;
+        start_countdown(game);
+        glutTimerFunc(game->countdown.ms, set_level_game, 0);
+    }
+}
+
 static void move_pacman() {
     if (!game || !game->alive || !game->lives)
         return;
@@ -71,6 +79,20 @@ static void move_pacman() {
     game->pacman->x = new_x;
     game->pacman->y = new_y;
 
+    for (int i = 0; i < game->foods.next_fruit_index; i++) {
+        if (game->fruits[i].is_eaten)
+            continue;
+        game->fruits[i].moves_uneaten++;
+        if (game->fruits[i].moves_uneaten > (game->width + game->height)) {
+            game->fruits[i].is_eaten = 1;
+            game->foods.count_now--; // without score
+            int x = game->fruits[i].x;
+            int y = game->fruits[i].y;
+            game->field[x - 1][y - 1].object = Eaten_Food;
+        }
+        maybe_new_level();
+    }
+
     game->pacman->under = game->field[new_x - 1][new_y - 1];
     game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
 
@@ -94,12 +116,15 @@ static void move_pacman() {
     } else if (game->pacman->under.object == Food) {
         game->pacman->under.object = Eaten_Food;
         game->foods.count_now--;
-        check_fruits(game);
-        if (game->foods.count_now == 0) {
-            game->level++;
-            start_countdown(game);
-            glutTimerFunc(game->countdown.ms, set_level_game, 0);
+        if (game->pacman->under.food_type == FRUIT) {
+            for (int i = 0; i < game->foods.next_fruit_index; i++) {
+                if (game->fruits[i].x == new_x && game->fruits[i].y == new_y) {
+                    game->fruits[i].is_eaten = 1;
+                }
+            }
         }
+        check_fruits(game);
+        maybe_new_level();
     }
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }

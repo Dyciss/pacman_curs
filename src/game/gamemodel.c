@@ -36,8 +36,9 @@ void stop_pause(Game *game) {
     game->pause = 0;
 }
 
-static void set_food_count_start(Game *game) {
+static void set_food_to_start(Game *game) {
     game->foods.count_now = game->foods.count_start;
+    game->foods.next_fruit_index = 0;
 }
 
 void check_fruits(Game *game) {
@@ -49,7 +50,8 @@ void check_fruits(Game *game) {
         game->foods.next_fruit_index++;
         if (game->fruits[i].is_eaten)
             continue;
-        game->fruits[i].is_eaten = 1;
+        game->fruits[i].is_eaten = 0;
+        game->fruits[i].moves_uneaten = 0;
         int x = game->fruits[i].x;
         int y = game->fruits[i].y;
         // Eaten food -> food
@@ -273,6 +275,7 @@ int file2Game(Game *game, char *fname) {
             game->ghosts[ghost_id]->x = game->ghosts[ghost_id]->start_position.x;
             game->ghosts[ghost_id]->y = game->ghosts[ghost_id]->start_position.y;
         }
+
         if (is_save) {
             SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.object]: %i\n", &temp));
             game->ghosts[ghost_id]->under.object = temp;
@@ -292,7 +295,6 @@ int file2Game(Game *game, char *fname) {
 
     game->foods.count_start = 0;
     game->foods.count_now = 0;
-    game->foods.next_fruit_index = 0;
 
     // field
     init_field(game, game->width, game->height);
@@ -312,7 +314,7 @@ int file2Game(Game *game, char *fname) {
     }
 
     game->foods.count_start -= (game->fruits_count + 1); // minus fruits and extra live
-    set_food_count_start(game);
+    set_food_to_start(game);
     check_fruits(game);
 
     // clang-format on
@@ -380,7 +382,7 @@ void rebirth(Game *game) {
 
 void set_level(Game *game) {
     rebirth(game);
-    set_food_count_start(game);
+    set_food_to_start(game);
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
             if (game->field[x][y].object == Eaten_Food) {
@@ -401,6 +403,7 @@ void set_level(Game *game) {
 
     for (int i = 0; i < game->fruits_count; i++) {
         game->fruits[i].is_eaten = 0;
+        game->fruits[i].moves_uneaten = 0;
     }
 
     game->pacman->animation_status = 0;

@@ -48,6 +48,7 @@ struct fruit {
     int y;
     int when_food_count;
     int is_eaten;
+    int moves_uneaten; // moves of pacman
 };
 
 typedef struct Game {
