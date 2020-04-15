@@ -74,6 +74,9 @@ typedef struct Game {
         int x;
         int y;
         int when_level;
+        int moves_uneaten; // pacman moves
+        int moves_unvisible;
+        int eaten;
     } extra_live;
 
     struct {

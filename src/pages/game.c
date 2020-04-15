@@ -70,15 +70,6 @@ static void move_pacman() {
         return;
     }
 
-    if (game->field[new_x - 1][new_y - 1].object == Wall) {
-        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
-        return;
-    }
-
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
-    game->pacman->x = new_x;
-    game->pacman->y = new_y;
-
     for (int i = 0; i < game->foods.next_fruit_index; i++) {
         if (game->fruits[i].is_eaten)
             continue;
@@ -89,9 +80,39 @@ static void move_pacman() {
             int x = game->fruits[i].x;
             int y = game->fruits[i].y;
             game->field[x - 1][y - 1].object = Eaten_Food;
+            maybe_new_level();
         }
-        maybe_new_level();
     }
+
+    if (!game->extra_live.eaten && game->level == game->extra_live.when_level) {
+        int x = game->extra_live.x;
+        int y = game->extra_live.y;
+        if (game->field[x - 1][y - 1].object == Eaten_Food) {
+            game->extra_live.moves_unvisible++;
+            if (game->extra_live.moves_unvisible >=
+                (game->width + game->height)) {
+                game->field[x - 1][y - 1].object = Food;
+                game->foods.count_now++;
+            }
+        } else {
+            game->extra_live.moves_uneaten++;
+            if (game->extra_live.moves_uneaten >= (game->width + game->height)*2/3) {
+                game->field[x - 1][y - 1].object = Eaten_Food;
+                game->extra_live.eaten = 1;
+                game->foods.count_now--;
+                maybe_new_level();   
+            }
+        }
+    }
+
+    if (game->field[new_x - 1][new_y - 1].object == Wall) {
+        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+        return;
+    }
+
+    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    game->pacman->x = new_x;
+    game->pacman->y = new_y;
 
     game->pacman->under = game->field[new_x - 1][new_y - 1];
     game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
@@ -122,6 +143,9 @@ static void move_pacman() {
                     game->fruits[i].is_eaten = 1;
                 }
             }
+        } else if (game->pacman->under.food_type == EXTRALIVE && !game->extra_live.eaten) {
+            game->extra_live.eaten = 1;
+            game->lives++;
         }
         check_fruits(game);
         maybe_new_level();

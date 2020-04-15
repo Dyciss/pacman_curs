@@ -45,6 +45,22 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
+    if(game->level == game->extra_live.when_level && !game->extra_live.eaten) {
+        snprintf(str, str_len, "Extra life in this level!");
+        render_str(str);
+        line_number++;
+
+        int a = game->width + game->height - game->extra_live.moves_unvisible;
+        if (a > 0) {
+            snprintf(str, str_len, "%i moves before appearance", a);
+        } else {
+            a = (game->width + game->height)*2/3 - game->extra_live. moves_uneaten;;
+            snprintf(str, str_len, "%i moves before expires", a);
+        }
+        render_str(str);
+        line_number++;
+    }
+
     if (game->countdown.active) {
         snprintf(str, str_len, "We want you to calm down: %i -- %i",
                 game->countdown.current_n, game->countdown.n);

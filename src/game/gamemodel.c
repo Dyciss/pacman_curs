@@ -108,6 +108,9 @@ int Game2file(Game *game, char *fname) {
     fprintf(f, "[extra_live.x]: %i\n", game->extra_live.x);
     fprintf(f, "[extra_live.y]: %i\n", game->extra_live.y);
     fprintf(f, "[extra_live.when_level]: %i\n", game->extra_live.when_level);
+    fprintf(f, "[extra_live.moves_uneaten]: %i\n", game->extra_live.moves_uneaten);
+    fprintf(f, "[extra_live.moves_unvisible]: %i\n", game->extra_live.moves_unvisible);
+    fprintf(f, "[extra_live.moves_eaten]: %i\n", game->extra_live.eaten);
 
     // pacman
     fprintf(f, "[pacman.x]: %i\n", game->pacman->x);
@@ -234,6 +237,15 @@ int file2Game(Game *game, char *fname) {
     SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.x]: %i\n", &game->extra_live.x));
     SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.y]: %i\n", &game->extra_live.y));
     SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.when_level]: %i\n", &game->extra_live.when_level));
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.moves_uneaten]: %i\n", &game->extra_live.moves_uneaten));
+        SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.moves_unvisible]: %i\n", &game->extra_live.moves_unvisible));
+        SCANF_WITH_CHECK(r, fscanf(f, "[extra_live.moves_eaten]: %i\n", &game->extra_live.eaten));
+    } else {
+        game->extra_live.moves_uneaten = 0;
+        game->extra_live.moves_unvisible = 0;
+        game->extra_live.eaten = 0;
+    }
 
     int temp = 0;
 
@@ -398,12 +410,10 @@ void set_level(Game *game) {
     game->foods.next_fruit_index = 0;
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
-            if (game->field[x][y].object == Eaten_Food) {
-                if (game->field[x][y].food_type != FRUIT &&
-                    (game->field[x][y].food_type != EXTRALIVE ||
-                     game->extra_live.when_level == game->level)) {
-                    game->field[x][y].object = Food;
-                }
+            if (game->field[x][y].object == Eaten_Food &&
+                game->field[x][y].food_type != FRUIT &&
+                game->field[x][y].food_type != EXTRALIVE) {
+                game->field[x][y].object = Food;
             }
         }
     }
