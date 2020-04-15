@@ -40,6 +40,11 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
+    snprintf(str, str_len, "Food: %i", game->foods.count_now);
+    render_str(str);
+
+    line_number++;
+
     if (game->countdown.active) {
         snprintf(str, str_len, "We want you to calm down: %i -- %i",
                 game->countdown.current_n, game->countdown.n);
@@ -98,7 +103,8 @@ void draw_Wall(Game *game, float x, float y) {
 }
 
 void draw_Food(Game *game, float x, float y, enum Food type) {
-    render_Food(game->alpha * 2 - 1, x, y, GOLD, type);
+    Color c = type == EXTRALIVE ? (Color) {42,199,199} : GOLD;
+    render_Food(game->alpha * 2 - 1, x, y, c, type);
 }
 
 void draw_Pacman(Game *game, float x, float y) {
@@ -155,5 +161,5 @@ void draw_game(Game *game) {
             }
         }
     }
-    draw_grid(game);
+    //draw_grid(game);
 }

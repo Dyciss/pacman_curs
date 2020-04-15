@@ -92,6 +92,27 @@ static void move_pacman() {
         }
     } else if (game->pacman->under.object == Food) {
         game->pacman->under.object = Eaten_Food;
+        game->foods.count_now--;
+        while (game->foods.next_fruit_index < game->fruits_count &&
+               game->fruits[game->foods.next_fruit_index].when_food_count >=
+                   game->foods.count_now) {
+            game->foods.next_fruit_index++;
+            if (game->fruits[game->foods.next_fruit_index - 1].is_eaten)
+                continue;
+            game->fruits[game->foods.next_fruit_index - 1].is_eaten = 1;
+            int x = game->fruits[game->foods.next_fruit_index].x;
+            int y = game->fruits[game->foods.next_fruit_index].y;
+
+            // Eaten food -> food
+            if (game->field[x - 1][y - 1].object == Ghost) {
+                int id = game->field[x - 1][y - 1].ghost_id;
+                game->ghosts[id]->under.object = Food;
+                game->foods.count_now++;
+            } else if (game->field[x - 1][y - 1].object == Eaten_Food) {
+                game->field[x - 1][y - 1].object = Food;
+                game->foods.count_now++;
+            }
+        }
     }
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }
@@ -226,8 +247,9 @@ static void keyboard_special(int key, int x, int y) {
         time(&t);
         t_info = localtime(&t);
         size_t fname_len = settings_field(Load_file)->max_len + 40;
-        char *fname = (char *) calloc (fname_len+1, sizeof(char));
-        snprintf(fname, fname_len, "%s%s.txt", settings_field(Load_file)->text, asctime(t_info));
+        char *fname = (char *)calloc(fname_len + 1, sizeof(char));
+        snprintf(fname, fname_len, "%s%s.txt", settings_field(Load_file)->text,
+                 asctime(t_info));
         if (!Game2file(game, fname)) {
             fprintf(stderr, "Error while saving game to %s\n", fname);
         }

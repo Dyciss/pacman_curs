@@ -315,9 +315,9 @@ void render_Food(int size_px, float x_center, float y_center, Color color,
         glVertex2f(x_center - (size_px / 7) / (float)window_width(),
                    y_center - (size_px / 7) / (float)window_height());
         glEnd();
-    } else if (food == MEDIUM) {
+    } else if (food == ENERGIZER) {
         render_Circle(size_px / 2, x_center, y_center, color);
-    } else if (food == LARGE) {
+    } else if (food == FRUIT) {
         render_Circle(size_px * 0.3,
                       x_center + (size_px / 5) / (float)window_width(),
                       y_center + (size_px / 5) / (float)window_height(), color);
@@ -330,8 +330,10 @@ void render_Food(int size_px, float x_center, float y_center, Color color,
         render_Circle(size_px * 0.3,
                       x_center - (size_px / 5) / (float)window_width(),
                       y_center + (size_px / 5) / (float)window_height(), color);
+    } else if (food == EXTRALIVE) {
+        render_Circle(size_px / 2, x_center, y_center, color);
     }
-}
+} 
 void render_Wall(int size_px, float x_center, float y_center, Color color) {
     render_Circle(size_px, x_center, y_center, RED);
     size_px -= size_px / 4;

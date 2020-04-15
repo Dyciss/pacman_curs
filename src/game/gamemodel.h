@@ -2,7 +2,7 @@
 
 #include "direction.h"
 
-enum Food { SMALL = 1, MEDIUM = 2, LARGE = 3 };
+enum Food { SMALL = 1, ENERGIZER = 2, FRUIT = 3, EXTRALIVE = 4 };
 
 struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int) |
             // Eaten_Food(type)
@@ -43,6 +43,13 @@ struct creature {
 #define WALL_CELL ((struct cell){.object = Wall, .ghost_id = -1})
 #define FOOD_CELL(type) ((struct cell){.object = Food, .food_type = (type)})
 
+struct fruit {
+    int x;
+    int y;
+    int when_food_count;
+    int is_eaten;
+};
+
 typedef struct Game {
     int width;
     int height;
@@ -58,6 +65,21 @@ typedef struct Game {
 
     int level; // == stage
     int difficalty; // - constant
+
+    int fruits_count;
+    struct fruit* fruits; // should be sorted by when_food_count
+
+    struct {
+        int x;
+        int y;
+        int when_level;
+    } extra_live;
+
+    struct {
+        int count_start;
+        int count_now;
+        int next_fruit_index;
+    } foods;
 
     struct {
         int active;
