@@ -228,20 +228,30 @@ int file2Game(Game *game, char *fname) {
     int temp = 0;
     // pacman
     game->pacman = (struct creature *)malloc(sizeof(struct creature));
-    SCANF_WITH_CHECK(r, fscanf(f, "[pacman.x]: %i\n", &game->pacman->x));
-    SCANF_WITH_CHECK(r, fscanf(f, "[pacman.y]: %i\n", &game->pacman->y));
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[pacman.x]: %i\n", &game->pacman->x));
+        SCANF_WITH_CHECK(r, fscanf(f, "[pacman.y]: %i\n", &game->pacman->y));
+    }
     SCANF_WITH_CHECK(r, fscanf(f, "[pacman.direction]: %i\n", &temp));
     game->pacman->direction = temp;
     SCANF_WITH_CHECK(r, fscanf(f, "[pacman.speed]: %i\n", &game->pacman->speed));
     SCANF_WITH_CHECK(r, fscanf(f, "[pacman.start_position.x]: %i\n", &game->pacman->start_position.x));
     SCANF_WITH_CHECK(r, fscanf(f, "[pacman.start_position.y]: %i\n", &game->pacman->start_position.y));
-    SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.object]: %i\n", &temp));
-    game->pacman->under.object = temp;
-    if (game->pacman->under.object == Ghost) {
-        SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.ghost_id]: %i\n", &game->pacman->under.ghost_id));
-    } else if (game->pacman->under.object == Food || game->pacman->under.object == Eaten_Food) {
-        SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.food_type]: %i\n", &temp));
-        game->pacman->under.food_type = temp;
+    if (!is_save) {
+        game->pacman->x = game->pacman->start_position.x;
+        game->pacman->y = game->pacman->start_position.y;
+    }
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.object]: %i\n", &temp));
+        game->pacman->under.object = temp;
+        if (game->pacman->under.object == Ghost) {
+            SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.ghost_id]: %i\n", &game->pacman->under.ghost_id));
+        } else if (game->pacman->under.object == Food || game->pacman->under.object == Eaten_Food) {
+            SCANF_WITH_CHECK(r, fscanf(f, "[pacman.under.food_type]: %i\n", &temp));
+            game->pacman->under.food_type = temp;
+        }
+    } else {
+        game->pacman->under = NOTHING_CELL;
     }
     game->pacman->animation_status = 1;
 
@@ -250,22 +260,33 @@ int file2Game(Game *game, char *fname) {
     game->ghosts = (struct creature **)malloc(sizeof(struct creature *) * game->ghost_count);
     for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
         game->ghosts[ghost_id] = (struct creature *)malloc(sizeof(struct creature));
-        SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.x]: %i\n", &game->ghosts[ghost_id]->x));
-        SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.y]: %i\n", &game->ghosts[ghost_id]->y));
+        if (is_save) {
+            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.x]: %i\n", &game->ghosts[ghost_id]->x));
+            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.y]: %i\n", &game->ghosts[ghost_id]->y));
+        }
         SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.direction]: %i\n", &temp));
         game->ghosts[ghost_id]->direction = temp;
         SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.speed]: %i\n", &game->ghosts[ghost_id]->speed));
         SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.start_position.x]: %i\n", &game->ghosts[ghost_id]->start_position.x));
         SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.start_postition_y]: %i\n", &game->ghosts[ghost_id]->start_position.y));
-        SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.object]: %i\n", &temp));
-        game->ghosts[ghost_id]->under.object = temp;
-        if (game->ghosts[ghost_id]->under.object == Ghost) {
-            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.ghost_id]: %i\n", &game->ghosts[ghost_id]->under.ghost_id));
-        } else if (game->ghosts[ghost_id]->under.object == Food ||
-                   game->ghosts[ghost_id]->under.object == Eaten_Food) {
-            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.food_type]: %i\n", &temp));
-            game->ghosts[ghost_id]->under.food_type = temp;
+        if (!is_save) {
+            game->ghosts[ghost_id]->x = game->ghosts[ghost_id]->start_position.x;
+            game->ghosts[ghost_id]->y = game->ghosts[ghost_id]->start_position.y;
         }
+        if (is_save) {
+            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.object]: %i\n", &temp));
+            game->ghosts[ghost_id]->under.object = temp;
+            if (game->ghosts[ghost_id]->under.object == Ghost) {
+                SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.ghost_id]: %i\n", &game->ghosts[ghost_id]->under.ghost_id));
+            } else if (game->ghosts[ghost_id]->under.object == Food ||
+                       game->ghosts[ghost_id]->under.object == Eaten_Food) {
+                SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.under.food_type]: %i\n", &temp));
+                game->ghosts[ghost_id]->under.food_type = temp;
+            }
+        } else {
+            game->ghosts[ghost_id]->under = NOTHING_CELL;
+        }
+
         game->ghosts[ghost_id]->animation_status = 1; // just initialization
     }
 
@@ -339,9 +360,11 @@ void rebirth(Game *game) {
     // creatures position <- start position
     //
     game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    game->pacman->under = NOTHING_CELL;
     for (int i = 0; i < game->ghost_count; i++) {
         game->field[game->ghosts[i]->x - 1][game->ghosts[i]->y - 1] =
             game->ghosts[i]->under;
+        game->ghosts[i]->under = NOTHING_CELL;
     }
     game->field[game->pacman->start_position.x - 1]
                [game->pacman->start_position.y - 1] = PACMAN_CELL;

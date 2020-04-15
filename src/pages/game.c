@@ -94,27 +94,7 @@ static void move_pacman() {
     } else if (game->pacman->under.object == Food) {
         game->pacman->under.object = Eaten_Food;
         game->foods.count_now--;
-        while (game->foods.next_fruit_index < game->fruits_count &&
-               game->fruits[game->foods.next_fruit_index].when_food_count >=
-                   game->foods.count_now) {
-            int i = game->foods.next_fruit_index;
-            game->foods.next_fruit_index++;
-            if (game->fruits[i].is_eaten)
-                continue;
-            game->fruits[i].is_eaten = 1;
-            int x = game->fruits[i].x;
-            int y = game->fruits[i].y;
-
-            // Eaten food -> food
-            if (game->field[x - 1][y - 1].object == Ghost) {
-                int id = game->field[x - 1][y - 1].ghost_id;
-                game->ghosts[id]->under.object = Food;
-                game->foods.count_now++;
-            } else if (game->field[x - 1][y - 1].object == Eaten_Food) {
-                game->field[x - 1][y - 1].object = Food;
-                game->foods.count_now++;
-            }
-        }
+        check_fruits(game);
         if (game->foods.count_now == 0) {
             game->level++;
             start_countdown(game);
