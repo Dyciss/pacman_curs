@@ -137,7 +137,13 @@ static void move_pacman() {
     } else if (game->pacman->under.object == Food) {
         game->pacman->under.object = Eaten_Food;
         game->foods.count_now--;
-        if (game->pacman->under.food_type == FRUIT) {
+        if (game->pacman->under.food_type == SMALL) {
+            game->score += game->level;
+        } else if (game->pacman->under.food_type == ENERGIZER) {
+            game->score += game->level*game->level;
+        } else if (game->pacman->under.food_type == FRUIT) {
+            int l = game->level;
+            game->score += 44*l*l + 56*l + 0;
             for (int i = 0; i < game->foods.next_fruit_index; i++) {
                 if (game->fruits[i].x == new_x && game->fruits[i].y == new_y) {
                     game->fruits[i].is_eaten = 1;

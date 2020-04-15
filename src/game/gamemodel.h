@@ -67,6 +67,8 @@ typedef struct Game {
     int level; // == stage
     int difficalty; // - constant
 
+    int score;
+
     int fruits_count;
     struct fruit* fruits; // should be sorted by when_food_count
 

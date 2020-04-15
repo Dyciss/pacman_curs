@@ -85,6 +85,7 @@ int Game2file(Game *game, char *fname) {
 
     // data
     fprintf(f, "[lives]: %i\n", game->lives);
+    fprintf(f, "[score]: %i\n", game->score);
 
     // level, difficalty
     fprintf(f, "[level]: %i\n", game->level);
@@ -200,9 +201,11 @@ int file2Game(Game *game, char *fname) {
     // level, difficalty
     // it definitely shoudn't be in the map
     if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[score]: %i\n", &game->score));
         SCANF_WITH_CHECK(r, fscanf(f, "[level]: %i\n", &game->level));
         SCANF_WITH_CHECK(r, fscanf(f, "[difficalty]: %i\n", &game->difficalty));
     } else {
+        game->score = 0;
         game->level = 1;
         // without any validation, it's not worth an exception
         // 256 mod 4 == 0 and needs because (negative) % 4 = negative

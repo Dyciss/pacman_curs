@@ -34,6 +34,11 @@ void draw_right_part(Game *game) {
     render_str(str);
 
     line_number++;
+    
+    snprintf(str, str_len, "Score: %i", game->score);
+    render_str(str);
+
+    line_number++;
 
     snprintf(str, str_len, "Difficalty: %i", game->difficalty);
     render_str(str);
