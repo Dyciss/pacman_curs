@@ -96,12 +96,13 @@ static void move_pacman() {
         while (game->foods.next_fruit_index < game->fruits_count &&
                game->fruits[game->foods.next_fruit_index].when_food_count >=
                    game->foods.count_now) {
+            int i = game->foods.next_fruit_index;
             game->foods.next_fruit_index++;
-            if (game->fruits[game->foods.next_fruit_index - 1].is_eaten)
+            if (game->fruits[i].is_eaten)
                 continue;
-            game->fruits[game->foods.next_fruit_index - 1].is_eaten = 1;
-            int x = game->fruits[game->foods.next_fruit_index].x;
-            int y = game->fruits[game->foods.next_fruit_index].y;
+            game->fruits[i].is_eaten = 1;
+            int x = game->fruits[i].x;
+            int y = game->fruits[i].y;
 
             // Eaten food -> food
             if (game->field[x - 1][y - 1].object == Ghost) {
