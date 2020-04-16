@@ -439,7 +439,7 @@ void set_level(Game *game) {
     }
 
     for (int i = 0; i < game->ghost_count; i++) {
-        game->ghosts[i]->speed = 450;
+        game->ghosts[i]->speed += 30;
         game->ghosts[i]->direction = LEFT;
         game->ghosts[i]->animation_status = 0;
     }

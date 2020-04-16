@@ -49,7 +49,7 @@ static void maybe_new_level() {
     if (game->foods.count_now == 0) {
         game->level++;
         start_countdown(game);
-        glutTimerFunc(game->countdown.ms, set_level_game, 0);
+        set_level_game();
     }
 }
 
@@ -159,7 +159,7 @@ static void move_pacman() {
 
                 if (game->lives) {
                     start_countdown(game);
-                    glutTimerFunc(game->countdown.ms, rebirth_game, 0);
+                    rebirth_game();
                 }
                 break;
             }
@@ -242,7 +242,7 @@ static void move_Ghost(int id) {
 
         if (game->lives) {
             start_countdown(game);
-            glutTimerFunc(game->countdown.ms, rebirth_game, 0);
+            rebirth_game();
         }
     } else if (game->ghosts[id]->under.object == Ghost) {
         int ghost_under_id = game->ghosts[id]->under.ghost_id;
