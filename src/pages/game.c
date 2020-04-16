@@ -37,6 +37,7 @@ static void animate_Ghost(int id) {
 }
 
 static void escape_Game() {
+    free_engine();
     free_Game(game);
     game = NULL;
     set_program_state(Menu);
@@ -305,6 +306,7 @@ static void render() {
         return;
     }
     sync_sizing_props(game);
+    init_engine(game);
     game->alive = 1;
     animate_pacman();
     for (int i = 0; i < game->ghost_count; i++) {
