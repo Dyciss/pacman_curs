@@ -176,8 +176,10 @@ static void move_pacman() {
             int l = game->level;
             game->fear_moves_now = (int)(game->height + game->width) *
                                    (0.0089 * l * l - 0.208 * l + 1.2);
-            for (int i = 0; i < game->ghost_count; i++) {
-                game->ghost_fear[i] = 1;
+            if (game->fear_moves_now) {
+                for (int i = 0; i < game->ghost_count; i++) {
+                    game->ghost_fear[i] = 1;
+                }
             }
         } else if (game->pacman->under.food_type == FRUIT) {
             int l = game->level;
@@ -206,6 +208,8 @@ static void move_Ghost(int id) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
+
+    set_Ghost_direction(game, id);
     int new_x;
     int new_y;
 
@@ -280,14 +284,6 @@ static void frame() {
     glutSwapBuffers();
 }
 
-static void think_Ghost(int ghost_id) {
-    if (!game || !game->alive)
-        return;
-    set_Ghost_direction(game, ghost_id);
-    glutTimerFunc(60 * 1000.0 / game->ghosts[ghost_id]->speed / 2, think_Ghost,
-                  ghost_id);
-}
-
 static void render() {
     if (game) {
         sync_sizing_props(game);
@@ -306,7 +302,6 @@ static void render() {
     animate_pacman();
     for (int i = 0; i < game->ghost_count; i++) {
         animate_Ghost(i);
-        glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed / 2, think_Ghost, i);
     }
     frame();
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
