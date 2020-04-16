@@ -153,6 +153,13 @@ static void move_pacman() {
 
                 int l = game->level;
                 game->score += 5 * l * l;
+
+                for (int i = 0; i < game->ghost_count; i++) {
+                    if (game->ghosts[i]->x == game->pacman->x && game->ghosts[i]->y == game->pacman->y) {
+                        game->pacman->under = GHOST_CELL(i);
+                        break;
+                    }
+                }
             } else {
                 game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
                 game->lives--;
