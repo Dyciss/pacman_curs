@@ -71,6 +71,11 @@ static void mouse(float x, float y) {
 
 static void keyboard_special(int key, int x, int y) {}
 static void keyboard(unsigned char key, int x, int y) {
+    if (key == '\x1B') { //escape btn
+        set_program_state(Menu);
+        return;
+    }
+
     if (active_inp == NULL)
         return;
 
