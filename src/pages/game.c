@@ -46,12 +46,14 @@ static void escape_Game() {
 static void rebirth_game() { rebirth(game); }
 static void set_level_game() { set_level(game); }
 
-static void maybe_new_level() {
+static int maybe_new_level() {
     if (game->foods.count_now == 0) {
         game->level++;
         start_countdown(game);
         set_level_game();
+        return 1;
     }
+    return 0;
 }
 
 static void move_pacman() {
@@ -81,7 +83,10 @@ static void move_pacman() {
             int x = game->fruits[i].x;
             int y = game->fruits[i].y;
             game->field[x - 1][y - 1].object = Eaten_Food;
-            maybe_new_level();
+            if (maybe_new_level()) {
+                glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+                return;
+            }
         }
     }
 
@@ -102,7 +107,10 @@ static void move_pacman() {
                 game->field[x - 1][y - 1].object = Eaten_Food;
                 game->extra_live.eaten = 1;
                 game->foods.count_now--;
-                maybe_new_level();
+                if (maybe_new_level()) {
+                    glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+                    return;
+                }
             }
         }
     }
@@ -187,6 +195,7 @@ static void move_pacman() {
             if (game->fear_moves_now) {
                 for (int i = 0; i < game->ghost_count; i++) {
                     game->ghost_fear[i] = 1;
+                    game->ghosts[i]->direction = opposite_direciton(game->ghosts[i]->direction);
                 }
             }
         } else if (game->pacman->under.food_type == FRUIT) {
@@ -203,7 +212,10 @@ static void move_pacman() {
             game->lives++;
         }
         check_fruits(game);
-        maybe_new_level();
+        if (maybe_new_level()) {
+            glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+            return;
+        }
     }
     glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
 }

@@ -18,8 +18,9 @@ static int taxicab_metric(int x1, int y1, int x2, int y2) {
     return delta_x + delta_y;
 }
 
-static void l0(Game *game, struct creature *ghost, struct vertex *v,
-               Direction *d, int len) {
+static void l0(Game *game, int ghost_id, struct vertex *v, Direction *d,
+               int len) {
+    struct creature *ghost = game->ghosts[ghost_id];
     Direction d_without_opposite[4];
     int d_wo_len = 0;
     for (int i = 0; i < len; i++) {
@@ -31,28 +32,30 @@ static void l0(Game *game, struct creature *ghost, struct vertex *v,
     ghost->direction = d_without_opposite[rand() % d_wo_len];
 }
 
-static void l1(Game *game, struct creature *ghost, struct vertex *v,
-               Direction *d, int len) {
+static void l1(Game *game, int ghost_id, struct vertex *v, Direction *d,
+               int len) {
+    struct creature *ghost = game->ghosts[ghost_id];
+    int fear = game->ghost_fear[ghost_id];
     data.l1.mode_moves_count++;
     if (data.l1.mode == Random) {
-        l0(game, ghost, v, d, len);
-        if (data.l1.mode_moves_count > (game->height + game->width)*2) {
+        l0(game, ghost_id, v, d, len);
+        if (data.l1.mode_moves_count > (game->height + game->width) * 2) {
             data.l1.mode = Metric;
             data.l1.mode_moves_count = 0;
         }
         return;
     }
-    if (data.l1.mode_moves_count > (game->height + game->width)*2) {
+    if (data.l1.mode_moves_count > (game->height + game->width) * 2) {
         data.l1.mode = Random;
         data.l1.mode_moves_count = 0;
     }
     int result_i = 0;
-    int result_r = game->height + game->width + 1;
+    int result_r = fear ? -1 : game->height + game->width + 1;
     for (int i = 0; i < len; i++) {
         if (d[i] != opposite_direciton(ghost->direction)) {
             int r = taxicab_metric(v[i].x, v[i].y, game->pacman->x,
                                    game->pacman->y);
-            if (r < result_r) {
+            if ((!fear && r < result_r) || (fear && r > result_r)) {
                 result_r = r;
                 result_i = i;
             }
@@ -77,9 +80,9 @@ void set_Ghost_direction(Game *game, int ghost_id) {
     }
 
     if (game->difficalty == 0) {
-        l0(game, ghost, v, d, len);
+        l0(game, ghost_id, v, d, len);
     } else if (game->difficalty == 1) {
-        l1(game, ghost, v, d, len);
+        l1(game, ghost_id, v, d, len);
     }
 
     free(v);
