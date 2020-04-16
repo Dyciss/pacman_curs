@@ -93,3 +93,19 @@ int direction_to_new_xy(Game *game, Direction d, int x, int y, int *new_x,
         return 0;
     }
 }
+
+Direction opposite_direciton(Direction d) {
+    switch (d)
+    {
+    case LEFT:
+        return RIGHT;
+    case RIGHT:
+        return LEFT;
+    case TOP:
+        return BOTTOM;
+    case BOTTOM:
+        return TOP;
+    default:
+        return NONE_DIRECTION;
+    }
+}

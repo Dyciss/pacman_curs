@@ -10,4 +10,5 @@ struct vertex {
     int y;
 };
 
-struct vertex *possible_moves(Game *game, int x, int y, int *len);
+void possible_moves(Game *game, int x, int y, struct vertex **v, Direction **d,
+                    int *len);

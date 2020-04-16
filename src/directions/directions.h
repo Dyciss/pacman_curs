@@ -11,3 +11,5 @@ int direction_to_new_xy(Game *game, Direction d, int x, int y, int *new_x,
                         int *new_y);
 
 int set_new_xy(Game *game, struct creature *c, int *new_x, int *new_y);
+
+Direction opposite_direciton(Direction d);

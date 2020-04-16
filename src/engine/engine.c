@@ -7,10 +7,42 @@
 
 void set_Ghost_direction(Game *game, int ghost_id) {
     struct creature *ghost = game->ghosts[ghost_id];
-    int len = 0;
-    struct vertex* v = possible_moves(game, ghost->x, ghost->y, &len);
 
-    struct vertex target = v[rand() % len];
-    free(v);
-    ghost->direction = direction_between_points(game, ghost->x, ghost->y, target.x, target.y);
+
+    if (game->difficalty == 0) {
+        int len = 0;
+        struct vertex* v;
+        Direction *d;
+        possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+
+        Direction dir = d[rand() % len];
+        free(v);
+        free(d);
+
+        ghost->direction = dir;
+    } else if (game->difficalty == 1) {
+        int len = 0;
+        struct vertex* v;
+        Direction *d;
+        possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+
+        free(v);
+        if (len == 1) {
+            ghost->direction = d[0];
+            free(d);
+            return;
+        }
+
+        Direction d_without_opposite[4];
+        int d_wo_len = 0;
+        for (int i = 0; i < len; i++) {
+            if (d[i] != opposite_direciton(ghost->direction)) {
+                d_without_opposite[d_wo_len] = d[i];
+                d_wo_len++;
+            }
+        }
+
+        ghost->direction = d_without_opposite[rand() % d_wo_len];
+        free(d);
+    }
 }
