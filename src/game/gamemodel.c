@@ -144,7 +144,10 @@ int Game2file(Game *game, char *fname) {
                    game->ghosts[ghost_id]->under.object == Eaten_Food) {
             fprintf(f, "[ghosts.%i.under.food_type]: %i\n", ghost_id, game->ghosts[ghost_id]->under.food_type);
         }
+        fprintf(f, "[ghosts.%i.fear]: %i\n", ghost_id, game->ghost_fear[ghost_id]);
     }
+
+    fprintf(f, "[fear_moves_now]: %i\n", game->fear_moves_now);
 
     // field
     for (int x = 0; x < game->width; x++) {
@@ -288,6 +291,8 @@ int file2Game(Game *game, char *fname) {
     // ghosts
     SCANF_WITH_CHECK(r, fscanf(f, "[ghost_count]: %i\n", &game->ghost_count));
     game->ghosts = (struct creature **)malloc(sizeof(struct creature *) * game->ghost_count);
+    game->ghost_fear = (int *)calloc(game->ghost_count, sizeof(int));
+    game->fear_moves_now = 0;
     for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
         game->ghosts[ghost_id] = (struct creature *)malloc(sizeof(struct creature));
         if (is_save) {
@@ -319,8 +324,14 @@ int file2Game(Game *game, char *fname) {
         } else {
             game->ghosts[ghost_id]->under = NOTHING_CELL;
         }
-
+        if (is_save) {
+            SCANF_WITH_CHECK(r, fscanf(f, "[ghosts.%*i.fear]: %i\n", &game->ghost_fear[ghost_id]));
+        }
         game->ghosts[ghost_id]->animation_status = 1; // just initialization
+    }
+
+    if (is_save) {
+        SCANF_WITH_CHECK(r, fscanf(f, "[fear_moves_now]: %i\n", &game->fear_moves_now));
     }
 
     // field
@@ -369,6 +380,10 @@ void free_Game(Game *game) {
         free(game->fruits);
     }
 
+    if (game->ghost_fear) {
+        free(game->ghost_fear);
+    }
+
     if (game->ghosts) {
         for (int ghost_id = 0; ghost_id < game->ghost_count; ghost_id++) {
             if (game->ghosts[ghost_id])
@@ -394,7 +409,9 @@ void rebirth(Game *game) {
         game->field[game->ghosts[i]->x - 1][game->ghosts[i]->y - 1] =
             game->ghosts[i]->under;
         game->ghosts[i]->under = NOTHING_CELL;
+        game->ghost_fear[i] = 0;
     }
+    game->fear_moves_now = 0;
     game->field[game->pacman->start_position.x - 1]
                [game->pacman->start_position.y - 1] = PACMAN_CELL;
     for (int i = 0; i < game->ghost_count; i++) {

@@ -1,14 +1,15 @@
 #include <GL/freeglut.h>
 
 #include "game/gamemodel.h"
-#include "ui/gamesizing.h"
 #include "render.h"
+#include "ui/gamesizing.h"
 #include <stdio.h>
 #include <string.h>
 
 #define str_len 64
 #define current_y (top_starts_y - line_number * FONT_HEIGHT_UPPER_CASE)
-#define render_str(str) (render_string((str), right_part_starts_x,current_y, FONT,WHITE));
+#define render_str(str)                                                        \
+    (render_string((str), right_part_starts_x, current_y, FONT, WHITE));
 
 void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
@@ -24,7 +25,6 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
-
     snprintf(str, str_len, "Your lifes count: %i", game->lives);
     render_str(str);
 
@@ -34,7 +34,7 @@ void draw_right_part(Game *game) {
     render_str(str);
 
     line_number++;
-    
+
     snprintf(str, str_len, "Score: %i", game->score);
     render_str(str);
 
@@ -50,7 +50,7 @@ void draw_right_part(Game *game) {
 
     line_number++;
 
-    if(game->level == game->extra_live.when_level && !game->extra_live.eaten) {
+    if (game->level == game->extra_live.when_level && !game->extra_live.eaten) {
         snprintf(str, str_len, "Extra life in this level!");
         render_str(str);
         line_number++;
@@ -59,16 +59,25 @@ void draw_right_part(Game *game) {
         if (a > 0) {
             snprintf(str, str_len, "%i moves before appearance", a);
         } else {
-            a = (game->width + game->height)*2/3 - game->extra_live. moves_uneaten;;
+            a = (game->width + game->height) * 2 / 3 -
+                game->extra_live.moves_uneaten;
+            ;
             snprintf(str, str_len, "%i moves before expires", a);
         }
         render_str(str);
         line_number++;
     }
 
+    if (game->fear_moves_now) {
+        snprintf(str, str_len, "Fear! Moves you have: %i",
+                 game->fear_moves_now);
+        render_str(str);
+        line_number++;
+    }
+
     if (game->countdown.active) {
         snprintf(str, str_len, "We want you to calm down: %i -- %i",
-                game->countdown.current_n, game->countdown.n);
+                 game->countdown.current_n, game->countdown.n);
         render_str(str);
         line_number++;
         strncpy(str, "Click [r] to start immediately", str_len);
@@ -124,7 +133,7 @@ void draw_Wall(Game *game, float x, float y) {
 }
 
 void draw_Food(Game *game, float x, float y, enum Food type) {
-    Color c = type == EXTRALIVE ? (Color) {42,199,199} : GOLD;
+    Color c = type == EXTRALIVE ? (Color){42, 199, 199} : GOLD;
     render_Food(game->alpha * 2 - 1, x, y, c, type);
 }
 
@@ -141,9 +150,14 @@ void draw_Ghost(Game *game, float x, float y, int ghost_id) {
     Color Ghost_colors[] = {(Color){250, 60, 60}, (Color){120, 120, 210},
                             (Color){250, 20, 147}, (Color){120, 210, 110}};
     int Ghost_colors_len = sizeof(Ghost_colors) / sizeof(Ghost_colors[0]);
-    render_Ghost(game->px_creature, x, y,
-                 (Ghost_colors[ghost_id % Ghost_colors_len]),
-                 game->ghosts[ghost_id]->direction);
+    int gray =
+        (127 + 40) * (game->fear_moves_now) / (game->height + game->width) +
+        (128 - 40);
+    Color fear_color = {gray, gray, gray};
+    Color c = game->ghost_fear[ghost_id]
+                  ? (fear_color)
+                  : Ghost_colors[ghost_id % Ghost_colors_len];
+    render_Ghost(game->px_creature, x, y, c, game->ghosts[ghost_id]->direction);
     int eyes_opened = game->ghosts[0]->animation_status;
     if (eyes_opened) {
         render_Eyes(game->px_creature, x, y, game->ghosts[ghost_id]->direction);
@@ -182,5 +196,5 @@ void draw_game(Game *game) {
             }
         }
     }
-    //draw_grid(game);
+    // draw_grid(game);
 }

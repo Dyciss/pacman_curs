@@ -100,6 +100,8 @@ typedef struct Game {
 
     struct creature *pacman;
     struct creature **ghosts;
+    int *ghost_fear;
+    int fear_moves_now; // == 0 <=> no fear (moves of pacman)
 
     struct cell **field;
 } Game;
