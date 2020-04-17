@@ -37,7 +37,7 @@ static void animate_Ghost(int id) {
 }
 
 static void escape_Game() {
-    free_engine();
+    free_engine(game);
     free_Game(game);
     game = NULL;
     set_program_state(Menu);

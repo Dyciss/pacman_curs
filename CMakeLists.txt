@@ -6,7 +6,7 @@ add_executable(pacman ./src/main.c
     ./src/pages/menu.c ./src/pages/about.c ./src/pages/game.c ./src/pages/settings.c
     ./src/ui/render.c  ./src/ui/windowsize.c ./src/ui/gameui.c ./src/ui/gamesizing.c
     ./src/settings/settings.c
-    ./src/engine/engine.c
+    ./src/engine/engine.c ./src/engine/queue.c
     ./src/directions/directions.c 
     ./src/game/gamemodel.c ./src/game/gamegraph.c)
 
@@ -14,7 +14,7 @@ target_include_directories(pacman PRIVATE ./src)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
-set(CMAKE_C_FLAGS " -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter")
+set(CMAKE_C_FLAGS " -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
 
 find_package(OpenGL REQUIRED)
 find_package(GLUT REQUIRED)
