@@ -2,9 +2,8 @@
 
 struct vertex {
     //
-    // (0, 0) is like \0
-    // x in range [1, width]
-    // y in range [1, height]
+    // x in range [0, width)
+    // y in range [0, height)
     //
     int x;
     int y;

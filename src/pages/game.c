@@ -82,7 +82,7 @@ static void move_pacman() {
             game->foods.count_now--; // without score
             int x = game->fruits[i].x;
             int y = game->fruits[i].y;
-            game->field[x - 1][y - 1].object = Eaten_Food;
+            game->field[x][y].object = Eaten_Food;
             if (maybe_new_level()) {
                 glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
                 return;
@@ -93,18 +93,18 @@ static void move_pacman() {
     if (!game->extra_live.eaten && game->level == game->extra_live.when_level) {
         int x = game->extra_live.x;
         int y = game->extra_live.y;
-        if (game->field[x - 1][y - 1].object == Eaten_Food) {
+        if (game->field[x][y].object == Eaten_Food) {
             game->extra_live.moves_unvisible++;
             if (game->extra_live.moves_unvisible >=
                 (game->width + game->height)) {
-                game->field[x - 1][y - 1].object = Food;
+                game->field[x][y].object = Food;
                 game->foods.count_now++;
             }
         } else {
             game->extra_live.moves_uneaten++;
             if (game->extra_live.moves_uneaten >=
                 (game->width + game->height) * 2 / 3) {
-                game->field[x - 1][y - 1].object = Eaten_Food;
+                game->field[x][y].object = Eaten_Food;
                 game->extra_live.eaten = 1;
                 game->foods.count_now--;
                 if (maybe_new_level()) {
@@ -124,17 +124,17 @@ static void move_pacman() {
         }
     }
 
-    if (game->field[new_x - 1][new_y - 1].object == Wall) {
+    if (game->field[new_x][new_y].object == Wall) {
         glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
         return;
     }
 
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    game->field[game->pacman->x][game->pacman->y] = game->pacman->under;
     game->pacman->x = new_x;
     game->pacman->y = new_y;
 
-    game->pacman->under = game->field[new_x - 1][new_y - 1];
-    game->field[new_x - 1][new_y - 1] = PACMAN_CELL;
+    game->pacman->under = game->field[new_x][new_y];
+    game->field[new_x][new_y] = PACMAN_CELL;
 
     if (game->pacman->under.object == Pacman) { // not creatures under pacman
         game->pacman->under = NOTHING_CELL;     // can't be here(new xy is new)
@@ -155,8 +155,8 @@ static void move_pacman() {
                     continue;
                 }
 
-                game->ghosts[id]->under = game->field[start_x - 1][start_y - 1];
-                game->field[start_x - 1][start_y - 1] = GHOST_CELL(id);
+                game->ghosts[id]->under = game->field[start_x][start_y];
+                game->field[start_x][start_y] = GHOST_CELL(id);
                 game->ghosts[id]->x = start_x;
                 game->ghosts[id]->y = start_y;
 
@@ -170,7 +170,7 @@ static void move_pacman() {
                     }
                 }
             } else {
-                game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
+                game->field[new_x][new_y] = GHOST_CELL(id);
                 game->lives--;
 
                 if (game->lives) {
@@ -238,15 +238,15 @@ static void move_Ghost(int id) {
         return;
     }
 
-    if (game->field[new_x - 1][new_y - 1].object == Wall) {
+    if (game->field[new_x][new_y].object == Wall) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
-    game->field[game->ghosts[id]->x - 1][game->ghosts[id]->y - 1] =
+    game->field[game->ghosts[id]->x][game->ghosts[id]->y] =
         game->ghosts[id]->under;
 
     if (game->ghost_fear[id] &&
-        game->field[new_x - 1][new_y - 1].object == Pacman) {
+        game->field[new_x][new_y].object == Pacman) {
         new_x = game->ghosts[id]->start_position.x;
         new_y = game->ghosts[id]->start_position.y;
         game->ghost_fear[id] = 0;
@@ -257,8 +257,8 @@ static void move_Ghost(int id) {
     game->ghosts[id]->x = new_x;
     game->ghosts[id]->y = new_y;
 
-    game->ghosts[id]->under = game->field[new_x - 1][new_y - 1];
-    game->field[new_x - 1][new_y - 1] = GHOST_CELL(id);
+    game->ghosts[id]->under = game->field[new_x][new_y];
+    game->field[new_x][new_y] = GHOST_CELL(id);
 
     if (game->ghosts[id]->under.object == Pacman) { // not creatures under ghost
         game->ghosts[id]->under = game->pacman->under;

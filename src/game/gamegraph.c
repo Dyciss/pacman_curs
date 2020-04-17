@@ -10,7 +10,7 @@ static void push_if_possible(Game *game, struct vertex *v, Direction *d,
     int new_x = 0;
     int new_y = 0;
     if (direction_to_new_xy(game, current_direction, x, y, &new_x, &new_y) &&
-        game->field[new_x - 1][new_y - 1].object != Wall) {
+        game->field[new_x][new_y].object != Wall) {
         v[*i].x = new_x;
         v[*i].y = new_y;
         d[*i] = current_direction;

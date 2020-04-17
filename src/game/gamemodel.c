@@ -54,12 +54,12 @@ void check_fruits(Game *game) {
         int x = game->fruits[i].x;
         int y = game->fruits[i].y;
         // Eaten food -> food
-        if (game->field[x - 1][y - 1].object == Ghost) {
-            int id = game->field[x - 1][y - 1].ghost_id;
+        if (game->field[x][y].object == Ghost) {
+            int id = game->field[x][y].ghost_id;
             game->ghosts[id]->under.object = Food;
             game->foods.count_now++;
-        } else if (game->field[x - 1][y - 1].object == Eaten_Food) {
-            game->field[x - 1][y - 1].object = Food;
+        } else if (game->field[x][y].object == Eaten_Food) {
+            game->field[x][y].object = Food;
             game->foods.count_now++;
         }
     }
@@ -403,20 +403,20 @@ void rebirth(Game *game) {
     //
     // creatures position <- start position
     //
-    game->field[game->pacman->x - 1][game->pacman->y - 1] = game->pacman->under;
+    game->field[game->pacman->x][game->pacman->y] = game->pacman->under;
     game->pacman->under = NOTHING_CELL;
     for (int i = 0; i < game->ghost_count; i++) {
-        game->field[game->ghosts[i]->x - 1][game->ghosts[i]->y - 1] =
+        game->field[game->ghosts[i]->x][game->ghosts[i]->y] =
             game->ghosts[i]->under;
         game->ghosts[i]->under = NOTHING_CELL;
         game->ghost_fear[i] = 0;
     }
     game->fear_moves_now = 0;
-    game->field[game->pacman->start_position.x - 1]
-               [game->pacman->start_position.y - 1] = PACMAN_CELL;
+    game->field[game->pacman->start_position.x]
+               [game->pacman->start_position.y] = PACMAN_CELL;
     for (int i = 0; i < game->ghost_count; i++) {
-        game->field[game->ghosts[i]->start_position.x - 1]
-                   [game->ghosts[i]->start_position.y - 1] = GHOST_CELL(i);
+        game->field[game->ghosts[i]->start_position.x]
+                   [game->ghosts[i]->start_position.y] = GHOST_CELL(i);
         game->ghosts[i]->x = game->ghosts[i]->start_position.x;
         game->ghosts[i]->y = game->ghosts[i]->start_position.y;
     }
