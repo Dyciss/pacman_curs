@@ -94,7 +94,33 @@ void set_Ghost_direction(Game *game, int ghost_id) {
     }
 
     if (game->difficalty == 3) {
+        int fear = game->ghost_fear[ghost_id];
+        if (fear) {
+            puts("FEAR!!!");
+            possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+            if (len == 1) {
+                ghost->direction = d[0];
+                free(v);
+                free(d);
+                return;
+            }
 
+            int result_i = 0;
+            int result_r = -1;
+            for (int i = 0; i < len; i++) {
+                if (d[i] != opposite_direciton(ghost->direction)) {
+                    int r = taxicab_metric(v[i].x, v[i].y, game->pacman->x,
+                                    game->pacman->y);
+                    if (r > result_r) {
+                        result_r = r;
+                        result_i = i;
+                    }
+                }
+            }
+            
+            ghost->direction = d[result_i];
+            return;
+        }
         Direction one_move = direction_between_points(game, ghost->x, ghost->y, game->pacman->x, game->pacman->y);
         if (one_move) {
             ghost->direction = one_move;
