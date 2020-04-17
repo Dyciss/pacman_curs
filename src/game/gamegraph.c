@@ -40,3 +40,11 @@ void possible_moves(Game *game, int x, int y, struct vertex **v, Direction **d,
 
     *len = i;
 }
+
+int vertex2int(Game *game, struct vertex v) {
+    return v.x * game->height + v.y;
+}
+
+struct vertex int2vertex(Game *game, int i) {
+    return (struct vertex) {i / game->height, i % game->height};
+}

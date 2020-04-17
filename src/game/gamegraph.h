@@ -11,3 +11,6 @@ struct vertex {
 
 void possible_moves(Game *game, int x, int y, struct vertex **v, Direction **d,
                     int *len);
+
+int vertex2int(Game *game, struct vertex v);
+struct vertex int2vertex(Game *game, int i);
