@@ -25,12 +25,6 @@ static int taxicab_metric(int x1, int y1, int x2, int y2) {
     return delta_x + delta_y;
 }
 
-// static int euclid_metric (int x1, int y1, int x2, int y2) {
-//     int delta_x = x1 - x2 > 0 ? x1 - x2 : x2 - x1;
-//     int delta_y = y1 - y2 > 0 ? y1 - y2 : y2 - y1;
-//     return delta_x*delta_x + delta_y*delta_y;
-// }
-
 static void l0(Game *game, int ghost_id, struct vertex *v, Direction *d,
                int len) {
     struct creature *ghost = game->ghosts[ghost_id];
@@ -94,9 +88,20 @@ void set_Ghost_direction(Game *game, int ghost_id) {
     }
 
     if (game->difficalty == 3) {
+        int rand = random() % 100;
+        if (rand == 0) {
+            possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+            if (len == 1) {
+                ghost->direction = d[0];
+                free(v);
+                free(d);
+                return;
+            }
+            l0(game, ghost_id, v, d, len);
+            return;
+        }
         int fear = game->ghost_fear[ghost_id];
         if (fear) {
-            puts("FEAR!!!");
             possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
             if (len == 1) {
                 ghost->direction = d[0];
@@ -110,18 +115,20 @@ void set_Ghost_direction(Game *game, int ghost_id) {
             for (int i = 0; i < len; i++) {
                 if (d[i] != opposite_direciton(ghost->direction)) {
                     int r = taxicab_metric(v[i].x, v[i].y, game->pacman->x,
-                                    game->pacman->y);
+                                           game->pacman->y);
                     if (r > result_r) {
                         result_r = r;
                         result_i = i;
                     }
                 }
             }
-            
+
             ghost->direction = d[result_i];
             return;
         }
-        Direction one_move = direction_between_points(game, ghost->x, ghost->y, game->pacman->x, game->pacman->y);
+
+        Direction one_move = direction_between_points(
+            game, ghost->x, ghost->y, game->pacman->x, game->pacman->y);
         if (one_move) {
             ghost->direction = one_move;
             return;
@@ -130,26 +137,34 @@ void set_Ghost_direction(Game *game, int ghost_id) {
         int ghost_type = ghost_id % 4;
         struct vertex target;
         if (ghost_type == 0) {
-            target = (struct vertex) {(game->pacman->x + 1) % game->width, game->pacman->y};
+            target = (struct vertex){(game->pacman->x + 1) % game->width,
+                                     game->pacman->y};
         } else if (ghost_type == 1) {
-            target = (struct vertex) {(game->pacman->x - 1 + game->width) % game->width,game->pacman->y};
+            target = (struct vertex){(game->pacman->x - 1 + game->width) %
+                                         game->width,
+                                     game->pacman->y};
         } else if (ghost_type == 2) {
-            target = (struct vertex) {(game->pacman->x), (game->pacman->y + 1) % game->height};
+            target = (struct vertex){(game->pacman->x),
+                                     (game->pacman->y + 1) % game->height};
         } else if (ghost_type == 3) {
-            target = (struct vertex) {(game->pacman->x), (game->pacman->y - 1 + game->height) % game->height};
+            target = (struct vertex){(game->pacman->x),
+                                     (game->pacman->y - 1 + game->height) %
+                                         game->height};
         }
 
-        if (game->field[target.x][target.y].object == Wall){
-            target = (struct vertex) {game->pacman->x, game->pacman->y};
-        };
-        
-        int target_i =
-            vertex2int(game, target);
         int ghost_i = vertex2int(game, (struct vertex){ghost->x, ghost->y});
-
+        int target_i = vertex2int(game, target);
         int next_vertex_i = data.l3.table[target_i][ghost_i];
+
+        if (next_vertex_i < 0) {
+            target = (struct vertex){game->pacman->x, game->pacman->y};
+            target_i = vertex2int(game, target);
+            next_vertex_i = data.l3.table[target_i][ghost_i];
+        };
+
         struct vertex next_vertex = int2vertex(game, next_vertex_i);
-        ghost->direction = direction_between_points(game, ghost->x, ghost->y, next_vertex.x, next_vertex.y);
+        ghost->direction = direction_between_points(
+            game, ghost->x, ghost->y, next_vertex.x, next_vertex.y);
         return;
     }
 
