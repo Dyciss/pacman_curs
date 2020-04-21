@@ -6,167 +6,33 @@
 #include <stdlib.h>
 #include <string.h>
 
-union {
-    struct {
-        enum { Random, Metric } mode;
-        int mode_moves_count;
-    } l1;
-    struct {
-        Direction **table;
-    } l2;
-    struct {
-        int **table;
-    } l3;
+struct {
+    enum { Random, Metric } mode;
+    int mode_moves_count;
+    int **table;
 } data;
 
-static int taxicab_metric(int x1, int y1, int x2, int y2) {
+typedef int (*Metric_func)(Game *game, int x1, int y1, int x2, int y2);
+
+static int taxicab_metric(Game *game, int x1, int y1, int x2, int y2) {
     int delta_x = x1 - x2 > 0 ? x1 - x2 : x2 - x1;
     int delta_y = y1 - y2 > 0 ? y1 - y2 : y2 - y1;
     return delta_x + delta_y;
 }
 
-static void l0(Game *game, int ghost_id, struct vertex *v, Direction *d,
-               int len) {
-    struct creature *ghost = game->ghosts[ghost_id];
-    Direction d_without_opposite[4];
-    int d_wo_len = 0;
-    for (int i = 0; i < len; i++) {
-        if (d[i] != opposite_direciton(ghost->direction)) {
-            d_without_opposite[d_wo_len] = d[i];
-            d_wo_len++;
-        }
-    }
-    ghost->direction = d_without_opposite[rand() % d_wo_len];
+static int table_metric(Game *game, int x1, int y1, int x2, int y2) {
+    int vertex1_i = vertex2int(game, (struct vertex){x1, y1});
+    int vertex2_i = vertex2int(game, (struct vertex){x2, y2});
+    return data.table[vertex1_i][vertex2_i];
 }
 
-static void l1(Game *game, int ghost_id, struct vertex *v, Direction *d,
-               int len) {
-    struct creature *ghost = game->ghosts[ghost_id];
-    int fear = game->ghost_fear[ghost_id];
-    data.l1.mode_moves_count++;
-    if (data.l1.mode == Random) {
-        l0(game, ghost_id, v, d, len);
-        if (data.l1.mode_moves_count > (game->height + game->width) * 2) {
-            data.l1.mode = Metric;
-            data.l1.mode_moves_count = 0;
-        }
-        return;
-    }
-    if (data.l1.mode_moves_count > (game->height + game->width) * 2) {
-        data.l1.mode = Random;
-        data.l1.mode_moves_count = 0;
-    }
-    int result_i = 0;
-    int result_r = fear ? -1 : game->height + game->width + 1;
-    for (int i = 0; i < len; i++) {
-        if (d[i] != opposite_direciton(ghost->direction)) {
-            int r = taxicab_metric(v[i].x, v[i].y, game->pacman->x,
-                                   game->pacman->y);
-            if ((!fear && r < result_r) || (fear && r > result_r)) {
-                result_r = r;
-                result_i = i;
-            }
-        }
-    }
-
-    ghost->direction = d[result_i];
-    return;
-}
-
-void set_Ghost_direction(Game *game, int ghost_id) {
+static void set_direction_by_metric(Game *game, int ghost_id, Metric_func rho,
+                                    int target_x, int target_y,
+                                    int can_be_opposite) {
     struct creature *ghost = game->ghosts[ghost_id];
     int len = 0;
     struct vertex *v;
     Direction *d;
-
-    if (game->difficalty == 2) {
-        int ghost_i = vertex2int(game, (struct vertex){ghost->x, ghost->y});
-        int pacman_i =
-            vertex2int(game, (struct vertex){game->pacman->x, game->pacman->y});
-        ghost->direction = data.l2.table[ghost_i][pacman_i];
-        return;
-    }
-
-    if (game->difficalty == 3) {
-        int rand = random() % 100;
-        if (rand == 0) {
-            possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
-            if (len == 1) {
-                ghost->direction = d[0];
-                free(v);
-                free(d);
-                return;
-            }
-            l0(game, ghost_id, v, d, len);
-            return;
-        }
-        int fear = game->ghost_fear[ghost_id];
-        if (fear) {
-            possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
-            if (len == 1) {
-                ghost->direction = d[0];
-                free(v);
-                free(d);
-                return;
-            }
-
-            int result_i = 0;
-            int result_r = -1;
-            for (int i = 0; i < len; i++) {
-                if (d[i] != opposite_direciton(ghost->direction)) {
-                    int r = taxicab_metric(v[i].x, v[i].y, game->pacman->x,
-                                           game->pacman->y);
-                    if (r > result_r) {
-                        result_r = r;
-                        result_i = i;
-                    }
-                }
-            }
-
-            ghost->direction = d[result_i];
-            return;
-        }
-
-        Direction one_move = direction_between_points(
-            game, ghost->x, ghost->y, game->pacman->x, game->pacman->y);
-        if (one_move) {
-            ghost->direction = one_move;
-            return;
-        }
-
-        int ghost_type = ghost_id % 4;
-        struct vertex target;
-        if (ghost_type == 0) {
-            target = (struct vertex){(game->pacman->x + 1) % game->width,
-                                     game->pacman->y};
-        } else if (ghost_type == 1) {
-            target = (struct vertex){(game->pacman->x - 1 + game->width) %
-                                         game->width,
-                                     game->pacman->y};
-        } else if (ghost_type == 2) {
-            target = (struct vertex){(game->pacman->x),
-                                     (game->pacman->y + 1) % game->height};
-        } else if (ghost_type == 3) {
-            target = (struct vertex){(game->pacman->x),
-                                     (game->pacman->y - 1 + game->height) %
-                                         game->height};
-        }
-
-        int ghost_i = vertex2int(game, (struct vertex){ghost->x, ghost->y});
-        int target_i = vertex2int(game, target);
-        int next_vertex_i = data.l3.table[target_i][ghost_i];
-
-        if (next_vertex_i < 0) {
-            target = (struct vertex){game->pacman->x, game->pacman->y};
-            target_i = vertex2int(game, target);
-            next_vertex_i = data.l3.table[target_i][ghost_i];
-        };
-
-        struct vertex next_vertex = int2vertex(game, next_vertex_i);
-        ghost->direction = direction_between_points(
-            game, ghost->x, ghost->y, next_vertex.x, next_vertex.y);
-        return;
-    }
 
     possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
     if (len == 1) {
@@ -176,14 +42,104 @@ void set_Ghost_direction(Game *game, int ghost_id) {
         return;
     }
 
-    if (game->difficalty == 0) {
-        l0(game, ghost_id, v, d, len);
-    } else if (game->difficalty == 1) {
-        l1(game, ghost_id, v, d, len);
+    int fear = game->ghost_fear[ghost_id];
+    int result_i = 0;
+    int result_r = fear ? -1 : game->height + game->width + 1;
+    for (int i = 0; i < len; i++) {
+        if (can_be_opposite || d[i] != opposite_direciton(ghost->direction)) {
+            int r = rho(game, v[i].x, v[i].y, game->pacman->x, game->pacman->y);
+            if ((!fear && r < result_r) || (fear && r > result_r)) {
+                result_r = r;
+                result_i = i;
+            }
+        }
     }
 
+    ghost->direction = d[result_i];
     free(v);
     free(d);
+}
+
+static void l0(Game *game, int ghost_id) {
+    struct creature *ghost = game->ghosts[ghost_id];
+    int len = 0;
+    struct vertex *v;
+    Direction *d;
+    possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+    if (len == 1) {
+        ghost->direction = d[0];
+        free(v);
+        free(d);
+        return;
+    }
+
+    Direction d_without_opposite[4];
+    int d_wo_len = 0;
+
+    for (int i = 0; i < len; i++) {
+        if (d[i] != opposite_direciton(ghost->direction)) {
+            d_without_opposite[d_wo_len] = d[i];
+            d_wo_len++;
+        }
+    }
+    ghost->direction = d_without_opposite[rand() % d_wo_len];
+    free(v);
+    free(d);
+}
+
+static void l1(Game *game, int ghost_id) {
+    data.mode_moves_count++;
+
+    if (data.mode == Random) {
+        l0(game, ghost_id);
+        if (data.mode_moves_count > (game->height + game->width) * 2) {
+            data.mode = Metric;
+            data.mode_moves_count = 0;
+        }
+    } else if (data.mode == Metric) {
+        set_direction_by_metric(game, ghost_id, taxicab_metric, game->pacman->x,
+                                game->pacman->y, 0);
+        if (data.mode_moves_count > (game->height + game->width) * 2) {
+            data.mode = Random;
+            data.mode_moves_count = 0;
+        }
+    }
+}
+
+static void l3(Game *game, int ghost_id) {
+    data.mode_moves_count++;
+
+    if (data.mode == Random) {
+        l0(game, ghost_id);
+        if (data.mode_moves_count > (game->height + game->width)*2) {
+            data.mode = Metric;
+            data.mode_moves_count = 0;
+        }
+    } else if (data.mode == Metric) {
+        set_direction_by_metric(game, ghost_id, table_metric, game->pacman->x,
+                                game->pacman->y, 1);
+        if (data.mode_moves_count > (game->height + game->width) * 4) {
+            data.mode = Random;
+            data.mode_moves_count = 0;
+        }
+    }
+}
+
+void set_Ghost_direction(Game *game, int ghost_id) {
+    switch (game->difficalty) {
+    case 0:
+        l0(game, ghost_id);
+        break;
+    case 1:
+        l1(game, ghost_id);
+        break;
+    case 3:
+        l3(game, ghost_id);
+        break;
+
+    default:
+        break;
+    }
 }
 
 #define FORALL_G_AND_P(game)                                                   \
@@ -194,115 +150,12 @@ void set_Ghost_direction(Game *game, int ghost_id) {
     }                                                                          \
     }
 
-static void l2_init(Game *game) {
-    data.l2.table =
-        (Direction **)malloc(sizeof(Direction *) * game->width * game->height);
+static void init_table(Game *game) {
+    data.table = (int **)malloc(sizeof(int *) * game->width * game->height);
     for (int i = 0; i < game->width * game->height; i++) {
-        data.l2.table[i] =
-            (Direction *)calloc(game->width * game->height, sizeof(Direction));
-    }
-
-    // radius here is optional
-    int radius = 8;
-
-    // parent index
-    int *visited = (int *)malloc(game->width * game->height * sizeof(int));
-    // set nothing was visited
-    memset(visited, 0xff,
-           game->width * game->height * sizeof(int)); // 0xfffff... is -1
-
-    FORALL_G_AND_P(game)
-
-    queue_int_t *qi_v = new_qi();
-    queue_int_t *qi_r = new_qi();
-
-    struct vertex ghost_v = int2vertex(game, ghost);
-    struct vertex pacman_v = int2vertex(game, pacman);
-
-    if (game->field[ghost_v.x][ghost_v.y].object == Wall ||
-        game->field[pacman_v.x][pacman_v.y].object == Wall) {
-        continue;
-    }
-
-    // the vertex that we want to be
-    int min_distance = game->width + game->height + 1;
-    struct vertex min_vertex = ghost_v;
-
-    push_qi(qi_v, ghost);
-    push_qi(qi_r, 0);
-
-    visited[ghost] = ghost;
-    while (qi_v->first->prev) {
-        int current_vertex_i = pop_qi(&qi_v);
-        struct vertex current_v = int2vertex(game, current_vertex_i);
-        int current_r = pop_qi(&qi_r);
-        int current_distance =
-            taxicab_metric(current_v.x, current_v.y, pacman_v.x, pacman_v.y);
-
-        // if distance in children vertexes can never be less then minimal
-        // distance now
-        if (current_distance - (radius - current_r) >= min_distance)
-            break;
-
-        // pacman is inside circle
-        if (current_distance <= 1) {
-            min_distance = 0;
-            min_vertex.x = current_v.x;
-            min_vertex.y = current_v.y;
-            break;
-        }
-
-        // border
-        if (current_r >= radius) {
-            // here curren_distance < min_distance -- we checked it above:
-            // current distance - (r - r) >= min_distance -- is false
-            min_distance = current_distance;
-            min_vertex.x = current_v.x;
-            min_vertex.y = current_v.y;
-        } else {
-            int len = 0;
-            struct vertex *vs;
-            Direction *ds;
-            possible_moves(game, current_v.x, current_v.y, &vs, &ds, &len);
-            for (int i = 0; i < len; i++) {
-                int v_int = vertex2int(game, vs[i]);
-                if (visited[v_int] < 0) {
-                    push_qi(qi_v, v_int);
-                    push_qi(qi_r, current_r + 1);
-                    visited[v_int] = current_vertex_i;
-                }
-            }
-            free(vs);
-            free(ds);
-        }
-    }
-    // here we found min_vertex
-
-    // backtracking
-    int min_vertex_i = vertex2int(game, min_vertex);
-    while (visited[min_vertex_i] != ghost) {
-        min_vertex_i = visited[min_vertex_i];
-    }
-
-    min_vertex = int2vertex(game, min_vertex_i);
-    data.l2.table[ghost][pacman] = direction_between_points(
-        game, ghost_v.x, ghost_v.y, min_vertex.x, min_vertex.y);
-
-    // remove visited, free queues
-    memset(visited, 0xff, game->width * game->height * sizeof(int));
-    free_qi(qi_r);
-    free_qi(qi_v);
-    END_FORALL
-    free(visited);
-}
-
-static void l3_init(Game *game) {
-    data.l3.table = (int **)malloc(sizeof(int *) * game->width * game->height);
-    for (int i = 0; i < game->width * game->height; i++) {
-        data.l3.table[i] =
-            (int *)malloc(game->width * game->height * sizeof(int));
-        memset(data.l3.table[i], 0xff,
-               game->width * game->height * sizeof(int));
+        data.table[i] = (int *)malloc(game->width * game->height * sizeof(int));
+        memset(data.table[i], 0xff,
+               game->width * game->height * sizeof(int)); // -1
     }
 
     for (int pacman = 0; pacman < game->height * game->width; pacman++) {
@@ -315,7 +168,8 @@ static void l3_init(Game *game) {
         queue_int_t *qi_v = new_qi();
         push_qi(qi_v, pacman);
 
-        data.l3.table[pacman][pacman] = pacman;
+        // data.l3.table[pacman][pacman] = pacman;
+        data.table[pacman][pacman] = 0;
         while (qi_v->first->prev) {
             int current_vertex_i = pop_qi(&qi_v);
             struct vertex current_vertex = int2vertex(game, current_vertex_i);
@@ -330,10 +184,12 @@ static void l3_init(Game *game) {
             for (int i = 0; i < len; i++) {
                 int vs_i = vertex2int(game, vs[i]);
                 // if visited
-                if (data.l3.table[pacman][vs_i] >= 0)
+                if (data.table[pacman][vs_i] >= 0)
                     continue;
 
-                data.l3.table[pacman][vs_i] = current_vertex_i;
+                // data.l3.table[pacman][vs_i] = current_vertex_i;
+                data.table[pacman][vs_i] =
+                    data.table[pacman][current_vertex_i] + 1;
                 push_qi(qi_v, vs_i);
             }
 
@@ -345,26 +201,27 @@ static void l3_init(Game *game) {
 }
 
 void init_engine(Game *game) {
-    if (game->difficalty == 1) {
-        data.l1.mode_moves_count = 0;
-        data.l1.mode = Random;
-    } else if (game->difficalty == 2) {
-        l2_init(game);
-    } else if (game->difficalty == 3) {
-        l3_init(game);
+    data.mode_moves_count = 0;
+    data.mode = Random;
+    if (game->difficalty >= 2) {
+        init_table(game);
     }
 }
 
+static void free_table(Game *game) {
+    if (!data.table)
+        return;
+    for (int i = 0; i < game->width * game->height; i++) {
+        if (!data.table[i])
+            continue;
+        free(data.table[i]);
+    }
+    free(data.table);
+    data.table = NULL;
+}
+
 void free_engine(Game *game) {
-    if (game->difficalty == 2) {
-        for (int i = 0; i < game->width * game->height; i++) {
-            free(data.l2.table[i]);
-        }
-        free(data.l2.table);
-    } else if (game->difficalty == 3) {
-        for (int i = 0; i < game->width * game->height; i++) {
-            free(data.l3.table[i]);
-        }
-        free(data.l3.table);
+    if (game->difficalty >= 2) {
+        free_table(game);
     }
 }
