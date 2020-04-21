@@ -14,6 +14,7 @@
 #include "ui/gamesizing.h"
 
 #include "settings/settings.h"
+#include "score/score.h"
 
 static Game *game = NULL;
 
@@ -37,6 +38,7 @@ static void animate_Ghost(int id) {
 }
 
 static void escape_Game() {
+    add_to_scoreboard(game);
     free_engine(game);
     free_Game(game);
     game = NULL;
@@ -49,6 +51,10 @@ static void set_level_game() { set_level(game); }
 static int maybe_new_level() {
     if (game->foods.count_now == 0) {
         game->level++;
+        if (game->level > 10){
+            game->alive = 0;
+            escape_Game();
+        }
         start_countdown(game);
         set_level_game();
         return 1;

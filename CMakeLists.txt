@@ -8,7 +8,8 @@ add_executable(pacman ./src/main.c
     ./src/settings/settings.c
     ./src/engine/engine.c ./src/engine/queue.c
     ./src/directions/directions.c 
-    ./src/game/gamemodel.c ./src/game/gamegraph.c)
+    ./src/game/gamemodel.c ./src/game/gamegraph.c
+    ./src/score/score.c)
 
 target_include_directories(pacman PRIVATE ./src)
 
