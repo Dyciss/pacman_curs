@@ -28,7 +28,8 @@ static int table_metric(Game *game, int x1, int y1, int x2, int y2) {
 
 static void set_direction_by_metric(Game *game, int ghost_id, Metric_func rho,
                                     int target_x, int target_y,
-                                    int can_be_opposite) {
+                                    int can_be_opposite, int can_be_ghost,
+                                    int clever_fear) {
     struct creature *ghost = game->ghosts[ghost_id];
     int len = 0;
     struct vertex *v;
@@ -43,10 +44,19 @@ static void set_direction_by_metric(Game *game, int ghost_id, Metric_func rho,
     }
 
     int fear = game->ghost_fear[ghost_id];
+    if (clever_fear &&
+        game->fear_moves_now <
+            rho(game, ghost->x, ghost->y, game->pacman->x, game->pacman->y)) {
+        fear = 0;
+    }
     int result_i = 0;
     int result_r = fear ? -1 : game->height + game->width + 1;
     for (int i = 0; i < len; i++) {
-        if (can_be_opposite || d[i] != opposite_direciton(ghost->direction)) {
+        int filter_opposite =
+            can_be_opposite || d[i] != opposite_direciton(ghost->direction);
+        int filter_ghost =
+            can_be_ghost || game->field[v[i].x][v[i].y].object != Ghost;
+        if (filter_opposite && filter_ghost) {
             int r = rho(game, v[i].x, v[i].y, game->pacman->x, game->pacman->y);
             if ((!fear && r < result_r) || (fear && r > result_r)) {
                 result_r = r;
@@ -98,7 +108,7 @@ static void l1(Game *game, int ghost_id) {
         }
     } else if (data.mode == Metric) {
         set_direction_by_metric(game, ghost_id, taxicab_metric, game->pacman->x,
-                                game->pacman->y, 0);
+                                game->pacman->y, 0, 1, 0);
         if (data.mode_moves_count > (game->height + game->width) * 2) {
             data.mode = Random;
             data.mode_moves_count = 0;
@@ -111,15 +121,15 @@ static void l3(Game *game, int ghost_id) {
 
     if (data.mode == Random) {
         l0(game, ghost_id);
-        if (data.mode_moves_count > (game->height + game->width)*2) {
+        if (data.mode_moves_count > (game->height + game->width) * 2) {
             data.mode = Metric;
             data.mode_moves_count = 0;
         }
     } else if (data.mode == Metric) {
         set_direction_by_metric(game, ghost_id, table_metric, game->pacman->x,
-                                game->pacman->y, 1);
+                                game->pacman->y, 1, 0, 1);
         if (data.mode_moves_count > (game->height + game->width) * 4) {
-            data.mode = Random;
+            // data.mode = Random;
             data.mode_moves_count = 0;
         }
     }
