@@ -341,13 +341,7 @@ static void mouse(float x, float y) {
     // game->alive check prevents double click
     if (in_button(escape_btn, x, y) && game->alive) {
         game->alive = 0; // signal for stop
-        //
-        // We can't free_Game now because some timeout functions can use it
-        // Unfortunately we can't stop they directly. They will stop because of
-        // game->alive After 150ms second all such functions should end (all
-        // such function works faster then it)
-        //
-        glutTimerFunc(150, escape_Game, 0); // 150ms after signal
+        escape_Game();
         return;
     }
 }
@@ -399,8 +393,8 @@ static void init_Game_Page() { escape_btn = new_Button(escape_btn_text); }
 static void free_Game_Page() {
     free_Button(escape_btn);
     if (game != NULL) {
-        game->alive = 0; // look at escape button click
-        glutTimerFunc(150, escape_Game, 0);
+        game->alive = 0;
+        escape_Game();
     }
 }
 

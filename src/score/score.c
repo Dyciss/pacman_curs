@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define scoreboard_len 10
+#define scoreboard_len 5
 
 struct Record {
     char *name;
@@ -54,7 +54,9 @@ void add_to_scoreboard(Game *game) {
             fputs(record2str(r), tmp);
             added = 1;
         }
-        fputs(line, tmp);
+        if (i + added < scoreboard_len) {
+            fputs(line, tmp);
+        }
     }
     if (!added && i < scoreboard_len) {
         fputs(record2str(r), tmp);
