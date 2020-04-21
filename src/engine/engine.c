@@ -74,12 +74,10 @@ static void set_direction_by_metric(Game *game, int ghost_id, Metric_func rho,
 static void l0(Game *game, int ghost_id) {
     struct creature *ghost = game->ghosts[ghost_id];
     int len = 0;
-    struct vertex *v;
     Direction *d;
-    possible_moves(game, ghost->x, ghost->y, &v, &d, &len);
+    possible_moves(game, ghost->x, ghost->y, NULL, &d, &len);
     if (len == 1) {
         ghost->direction = d[0];
-        free(v);
         free(d);
         return;
     }
@@ -94,7 +92,6 @@ static void l0(Game *game, int ghost_id) {
         }
     }
     ghost->direction = d_without_opposite[rand() % d_wo_len];
-    free(v);
     free(d);
 }
 
@@ -176,14 +173,6 @@ void set_Ghost_direction(Game *game, int ghost_id) {
     }
 }
 
-#define FORALL_G_AND_P(game)                                                   \
-    for (int ghost = 0; ghost < game->width * game->height; ghost++) {         \
-        for (int pacman = 0; pacman < game->width * game->height; pacman++) {
-
-#define END_FORALL                                                             \
-    }                                                                          \
-    }
-
 static void init_table(Game *game) {
     data.table = (int **)malloc(sizeof(int *) * game->width * game->height);
     for (int i = 0; i < game->width * game->height; i++) {
@@ -210,11 +199,9 @@ static void init_table(Game *game) {
 
             int len = 0;
             struct vertex *vs;
-            Direction *ds;
-            possible_moves(game, current_vertex.x, current_vertex.y, &vs, &ds,
+            possible_moves(game, current_vertex.x, current_vertex.y, &vs, NULL,
                            &len);
 
-            free(ds);
             for (int i = 0; i < len; i++) {
                 int vs_i = vertex2int(game, vs[i]);
                 // if visited

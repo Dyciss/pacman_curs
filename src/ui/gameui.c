@@ -11,7 +11,7 @@
 #define render_str(str)                                                        \
     (render_string((str), right_part_starts_x, current_y, FONT, WHITE));
 
-void draw_right_part(Game *game) {
+static void draw_right_part(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
     float alpha_relative_y = game->alpha / (float)window_height();
     float right_part_starts_x = game->window_x + alpha_relative_x + FONT_WIDTH;
@@ -99,7 +99,7 @@ void draw_right_part(Game *game) {
     }
 }
 
-void draw_background(Game *game) {
+static void draw_background(Game *game) {
     float alpha_relative_x = game->alpha / (float)window_width();
     float alpha_relative_y = game->alpha / (float)window_height();
 
@@ -128,16 +128,16 @@ void draw_grid(Game *game) {
     }
 }
 
-void draw_Wall(Game *game, float x, float y) {
+static void draw_Wall(Game *game, float x, float y) {
     render_Wall(game->alpha * 2, x, y, GAME_BG);
 }
 
-void draw_Food(Game *game, float x, float y, enum Food type) {
+static void draw_Food(Game *game, float x, float y, enum Food type) {
     Color c = type == EXTRALIVE ? (Color){42, 199, 199} : GOLD;
     render_Food(game->alpha * 2 - 1, x, y, c, type);
 }
 
-void draw_Pacman(Game *game, float x, float y) {
+static void draw_Pacman(Game *game, float x, float y) {
     render_Pacman(game->px_creature, x, y, GOLD);
     int mouth_opened = game->pacman->animation_status;
     if (mouth_opened) {
@@ -146,7 +146,7 @@ void draw_Pacman(Game *game, float x, float y) {
     }
 }
 
-void draw_Ghost(Game *game, float x, float y, int ghost_id) {
+static void draw_Ghost(Game *game, float x, float y, int ghost_id) {
     Color Ghost_colors[] = {(Color){250, 60, 60}, (Color){120, 120, 210},
                             (Color){250, 20, 147}, (Color){120, 210, 110}};
     int Ghost_colors_len = sizeof(Ghost_colors) / sizeof(Ghost_colors[0]);

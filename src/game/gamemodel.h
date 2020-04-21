@@ -17,7 +17,7 @@ struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int) |
     } object;
     union {
         enum Food food_type;
-        int ghost_id; // index in Game.ghosts [0, ghost_count]
+        int ghost_id; // index in Game.ghosts [0, ghost_count)
     };
 };
 
