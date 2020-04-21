@@ -1,12 +1,11 @@
 #pragma once
 
 struct queue_int {
-    struct queue_int *prev;
+    struct queue_int *next;
     int data;
 };
 
 typedef struct {
-
     struct queue_int *first;
     struct queue_int *last;
 } queue_int_t;

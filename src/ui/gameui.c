@@ -167,6 +167,7 @@ static void draw_Ghost(Game *game, float x, float y, int ghost_id) {
 void draw_game(Game *game) {
     draw_background(game);
     draw_right_part(game);
+    draw_grid(game);
     for (int x = 0; x < game->width; x++) {
         for (int y = 0; y < game->height; y++) {
             struct cell c = game->field[x][y];
@@ -196,5 +197,4 @@ void draw_game(Game *game) {
             }
         }
     }
-    // draw_grid(game);
 }

@@ -4,7 +4,7 @@
 queue_int_t *new_qi() {
     queue_int_t *qi = (queue_int_t *)malloc(sizeof(queue_int_t));
     qi->first = (struct queue_int *)malloc(sizeof(struct queue_int));
-    qi->first->prev = NULL;
+    qi->first->next = NULL;
     qi->last = qi->first;
     return qi;
 }
@@ -14,13 +14,14 @@ queue_int_t *push_qi(queue_int_t *qi, int data) {
     struct queue_int *new =
         (struct queue_int *)malloc(sizeof(struct queue_int));
     new->data = data;
-    if (qi->last->prev == NULL) {
-        new->prev = qi->last;
+    // no elements, new is first
+    if (qi->last->next == NULL) {
+        new->next = qi->last;
         qi->last = new;
         qi->first = new;
     } else {
-        new->prev = qi->last->prev;
-        qi->last->prev = new;
+        new->next = qi->last->next;
+        qi->last->next = new;
         qi->last = new;
     }
 
@@ -30,9 +31,9 @@ queue_int_t *push_qi(queue_int_t *qi, int data) {
 int pop_qi(queue_int_t **qi) {
     int data = (*qi)->first->data;
     struct queue_int *first = (*qi)->first;
-    (*qi)->first = first->prev;
+    (*qi)->first = first->next;
     free(first);
-    if ((*qi)->first->prev == NULL) {
+    if ((*qi)->first->next == NULL) {
         (*qi)->last = (*qi)->first;
     }
     return data;
@@ -41,7 +42,7 @@ int pop_qi(queue_int_t **qi) {
 void free_qi(queue_int_t *qi) {
     struct queue_int *first = NULL;
     while (qi->first) {
-        first = qi->first->prev;
+        first = qi->first->next;
         free(qi->first);
         qi->first = first;
     }

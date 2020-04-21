@@ -47,7 +47,7 @@ static void set_direction_by_metric(Game *game, int ghost_id, Metric_func rho,
     int fear = game->ghost_fear[ghost_id];
     if (options & CLEVER_FEAR &&
         game->fear_moves_now <
-            rho(game, ghost->x, ghost->y, game->pacman->x, game->pacman->y)) {
+            (rho(game, ghost->x, ghost->y, game->pacman->x, game->pacman->y)) / 2) {
         fear = 0;
     }
     int result_i = 0;
@@ -191,9 +191,8 @@ static void init_table(Game *game) {
         queue_int_t *qi_v = new_qi();
         push_qi(qi_v, pacman);
 
-        // data.l3.table[pacman][pacman] = pacman;
         data.table[pacman][pacman] = 0;
-        while (qi_v->first->prev) {
+        while (qi_v->first->next) {
             int current_vertex_i = pop_qi(&qi_v);
             struct vertex current_vertex = int2vertex(game, current_vertex_i);
 
@@ -208,7 +207,6 @@ static void init_table(Game *game) {
                 if (data.table[pacman][vs_i] >= 0)
                     continue;
 
-                // data.l3.table[pacman][vs_i] = current_vertex_i;
                 data.table[pacman][vs_i] =
                     data.table[pacman][current_vertex_i] + 1;
                 push_qi(qi_v, vs_i);
@@ -224,6 +222,7 @@ static void init_table(Game *game) {
 void init_engine(Game *game) {
     data.mode_moves_count = 0;
     data.mode = Random;
+    data.table = NULL;
     if (game->difficalty >= 2) {
         init_table(game);
     }
