@@ -155,8 +155,8 @@ static void move_pacman() {
     game->pacman->under = game->field[new_x][new_y];
     game->field[new_x][new_y] = PACMAN_CELL;
 
-    if (game->pacman->under.object == Pacman) { // not creatures under pacman
-        game->pacman->under = NOTHING_CELL;     // can't be here(new xy is new)
+    if (game->pacman->under.object == Pacman) {
+        game->pacman->under = NOTHING_CELL;
     }
 
     else if (game->pacman->under.object == Ghost) {
@@ -169,7 +169,7 @@ static void move_pacman() {
                 int start_y = game->ghosts[id]->start_position.y;
                 game->ghost_fear[id] = 0;
 
-                if (start_x == new_x && start_y == new_y) { // lol
+                if (start_x == new_x && start_y == new_y) {
                     game->pacman->under = game->ghosts[id]->under;
                     continue;
                 }
@@ -204,7 +204,7 @@ static void move_pacman() {
             }
         }
     }
-    // not else if because under feared may be Food.
+    // not else if because under feared ghost may be Food.
     if (game->pacman->under.object == Food) {
         game->pacman->under.object = Eaten_Food;
         game->foods.count_now--;
@@ -286,7 +286,7 @@ static void move_Ghost(int id) {
     game->ghosts[id]->under = game->field[new_x][new_y];
     game->field[new_x][new_y] = GHOST_CELL(id);
 
-    if (game->ghosts[id]->under.object == Pacman) { // not creatures under ghost
+    if (game->ghosts[id]->under.object == Pacman) {
         game->ghosts[id]->under = game->pacman->under;
         game->lives--;
 
