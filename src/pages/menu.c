@@ -11,12 +11,14 @@ static Button *game_btn = NULL;
 static Button *settings_btn = NULL;
 static Button *about_btn = NULL;
 static Button *exit_btn = NULL;
+static Button *score_btn = NULL;
 
 static void init() {
     game_btn = new_Button("New game");
     settings_btn = new_Button("Settings");
     about_btn = new_Button("About");
     exit_btn = new_Button("Exit");
+    score_btn = new_Button("Scores");
 }
 
 static void free_Menu() {
@@ -24,6 +26,7 @@ static void free_Menu() {
     free_Button(settings_btn);
     free_Button(about_btn);
     free_Button(exit_btn);
+    free_Button(score_btn);
 }
 
 static void render() {
@@ -35,8 +38,9 @@ static void render() {
 
     render_button(game_btn, 0, FONT_HEIGHT_UPPER_CASE * 2, WHITE, WHITE);
     render_button(settings_btn, 0, 0, WHITE, WHITE);
-    render_button(about_btn, 0, -FONT_HEIGHT_UPPER_CASE * 2, WHITE, WHITE);
-    render_button(exit_btn, 0, -FONT_HEIGHT_UPPER_CASE * 4, WHITE, WHITE);
+    render_button(score_btn, 0, -FONT_HEIGHT_UPPER_CASE * 2, WHITE, WHITE);
+    render_button(about_btn, 0, -FONT_HEIGHT_UPPER_CASE * 4, WHITE, WHITE);
+    render_button(exit_btn, 0, -FONT_HEIGHT_UPPER_CASE * 6, WHITE, WHITE);
 }
 
 static void mouse(float x, float y) {
@@ -48,6 +52,8 @@ static void mouse(float x, float y) {
         set_program_state(Game_page);
     } else if (in_button(exit_btn, x, y)) {
         set_program_state(Exit);
+    } else if (in_button(score_btn, x, y)) {
+        set_program_state(Score_page);
     }
 }
 
