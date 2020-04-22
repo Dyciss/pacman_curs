@@ -120,7 +120,7 @@ void print_scores() {
             break;
         }
         struct Record current = str2record(line);
-        snprintf(text, 255, "%i) %i - %s", i+1, current.score, current.name);
+        snprintf(text, 255, "%i) %i - %s", i + 1, current.score, current.name);
         render_string(text, -FONT_WIDTH * strlen(text),
                       1 - FONT_HEIGHT_UPPER_CASE * (i + 1), FONT, WHITE);
     }

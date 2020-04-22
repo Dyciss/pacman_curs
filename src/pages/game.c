@@ -394,7 +394,6 @@ static void keyboard_special(int key, int x, int y) {
                  time_info_str);
         if (!Game2file(game, fname)) {
             fprintf(stderr, "Error while saving game to %s\n", fname);
-
         }
 
         free(time_info_str);

@@ -1,9 +1,9 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 
-#include "ui/render.h"
 #include "main.h"
 #include "pages/page.h"
+#include "ui/render.h"
 
 static char menu_str[] = "Menu page";
 

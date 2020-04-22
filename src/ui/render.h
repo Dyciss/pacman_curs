@@ -4,8 +4,8 @@
 #include "game/gamemodel.h"
 #include "ui/windowsize.h"
 
-#include <string.h>
 #include <GL/freeglut.h>
+#include <string.h>
 
 #define FONT GLUT_BITMAP_9_BY_15
 #define FONT_HEIGHT (15 / (float)window_height())
@@ -49,8 +49,8 @@ void free_Button(Button *btn);
 
 Input *new_Input(char *text, size_t max_symbols);
 void free_Input(Input *inp);
-void render_input(Input *inp, float x_center, float y_center,
-                   Color color_text, Color color_border);
+void render_input(Input *inp, float x_center, float y_center, Color color_text,
+                  Color color_border);
 int in_input(Input *inp, float x, float y);
 
 void render_Pacman(int size_px, float x_center, float y_center, Color color);

@@ -35,9 +35,7 @@ Input *new_Input(char *text, size_t max_symbols) {
 
 void free_Button(Button *btn) { free(btn); }
 
-void free_Input(Input *inp) {
-    free(inp);
-}
+void free_Input(Input *inp) { free(inp); }
 
 void render_button(Button *btn, float x_center, float y_center,
                    Color color_text, Color color_border) {
@@ -333,7 +331,7 @@ void render_Food(int size_px, float x_center, float y_center, Color color,
     } else if (food == EXTRALIVE) {
         render_Circle(size_px / 2, x_center, y_center, color);
     }
-} 
+}
 void render_Wall(int size_px, float x_center, float y_center, Color color) {
     render_Circle(size_px, x_center, y_center, RED);
     size_px -= size_px / 4;

@@ -1,5 +1,5 @@
-#include "ui/render.h"
 #include "game/gamemodel.h"
+#include "ui/render.h"
 
 #define CELL_CREATURE_PADDING 10
 

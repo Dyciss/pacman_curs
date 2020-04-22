@@ -1,11 +1,11 @@
-#include "ui/render.h"
 #include "main.h"
 #include "pages/page.h"
+#include "ui/render.h"
 #include <GL/freeglut.h>
 
 static char about_text[] = "About program:\n"
-                    "There is smt interesting I think\n"
-                    "PACMAN!!";
+                           "There is smt interesting I think\n"
+                           "PACMAN!!";
 
 static Button *menu_btn = NULL;
 
@@ -30,9 +30,10 @@ static void init_About() { menu_btn = new_Button("Go to Menu"); }
 static void free_About() { free_Button(menu_btn); }
 
 Page about_Page() {
-    return (Page) {
-        .render = render, .mouse = mouse, .keyboard = keyboard,
-        .keyboard_special = keyboard_special, .init_Page = init_About,
-        .free_Page = free_About
-    };
+    return (Page){.render = render,
+                  .mouse = mouse,
+                  .keyboard = keyboard,
+                  .keyboard_special = keyboard_special,
+                  .init_Page = init_About,
+                  .free_Page = free_About};
 }

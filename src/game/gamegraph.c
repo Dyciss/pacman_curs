@@ -41,10 +41,10 @@ void possible_moves(Game *game, int x, int y, struct vertex **v, Direction **d,
         *d = (Direction *)calloc(4, sizeof(Direction));
     int i = 0;
 
-    push_if_possible(game, v ? *v : NULL, d ? *d: NULL, RIGHT, x, y, &i);
-    push_if_possible(game, v ? *v : NULL, d ? *d: NULL, LEFT, x, y, &i);
-    push_if_possible(game, v ? *v : NULL, d ? *d: NULL, TOP, x, y, &i);
-    push_if_possible(game, v ? *v : NULL, d ? *d: NULL, BOTTOM, x, y, &i);
+    push_if_possible(game, v ? *v : NULL, d ? *d : NULL, RIGHT, x, y, &i);
+    push_if_possible(game, v ? *v : NULL, d ? *d : NULL, LEFT, x, y, &i);
+    push_if_possible(game, v ? *v : NULL, d ? *d : NULL, TOP, x, y, &i);
+    push_if_possible(game, v ? *v : NULL, d ? *d : NULL, BOTTOM, x, y, &i);
 
     *len = i;
 }

@@ -27,8 +27,8 @@ static void update_page() {
     render_string(level_info, -2 * FONT_WIDTH * (sizeof level_info),
                   -FONT_HEIGHT, FONT, WHITE);
 
-    render_input(difficulty_inp, FONT_WIDTH * (difficulty_inp->symbols), 0, WHITE,
-                 input_color(difficulty_inp, Difficulty));
+    render_input(difficulty_inp, FONT_WIDTH * (difficulty_inp->symbols), 0,
+                 WHITE, input_color(difficulty_inp, Difficulty));
 
     char name_info[] = "Nickname: ";
     render_string(name_info, -2 * FONT_WIDTH * (sizeof name_info),
@@ -71,7 +71,7 @@ static void mouse(float x, float y) {
 
 static void keyboard_special(int key, int x, int y) {}
 static void keyboard(unsigned char key, int x, int y) {
-    if (key == '\x1B') { //escape btn
+    if (key == '\x1B') { // escape btn
         set_program_state(Menu);
         return;
     }
