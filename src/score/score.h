@@ -2,3 +2,4 @@
 #include "game/gamemodel.h"
 
 int add_to_scoreboard(Game *game);
+void print_scores();

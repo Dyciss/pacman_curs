@@ -9,6 +9,7 @@ static Button *menu_btn = NULL;
 static void render() {
     glClear(GL_COLOR_BUFFER_BIT);
     render_button(menu_btn, 0, -1 + 2*FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
+    print_scores();
 }
 
 static void mouse(float x, float y) {
