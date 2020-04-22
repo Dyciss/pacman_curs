@@ -7,5 +7,4 @@ Makefile
 pacman
 pacman.exe
 saved
-.pacman-settings
 .score*
