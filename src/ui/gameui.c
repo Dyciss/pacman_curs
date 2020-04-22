@@ -113,7 +113,7 @@ static void draw_background(Game *game) {
     glEnd();
 }
 
-void draw_grid(Game *game) {
+static void draw_grid(Game *game) {
     glColor3ub(WHITE.r, WHITE.g, WHITE.b);
     glPointSize(3);
     for (int i = 1; i <= game->width; i++) {

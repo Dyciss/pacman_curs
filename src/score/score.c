@@ -26,7 +26,10 @@ static struct Record str2record(char *str) {
     return r;
 }
 
-void add_to_scoreboard(Game *game) {
+int add_to_scoreboard(Game *game) {
+    //
+    // returns place in scoreboard, 0 if no place
+    //
     struct Record r = (struct Record){.name = settings_field(User)->text,
                                       .score = game->score,
                                       .difficulty = game->difficulty};
@@ -36,14 +39,18 @@ void add_to_scoreboard(Game *game) {
     FILE *tmp = tmpfile();
     if (score_file == NULL) {
         score_file = fopen(fname, "w");
-        fputs(record2str(r), score_file);
+        char *r_line = record2str(r);
+        fputs(r_line, score_file);
+        free(r_line);
         fclose(score_file);
-        return;
+        fclose(tmp);
+        return 1;
     }
     char *line = (char *)calloc(
         settings_field(User)->max_len + 1 + 20 + 15 + 15, sizeof(char));
     int added = 0;
     int i;
+    int place = 0;
     for (i = 0; i < scoreboard_len; i++) {
         if (fgets(line, settings_field(User)->max_len + 20 + 15 + 15,
                   score_file) == NULL) {
@@ -51,15 +58,25 @@ void add_to_scoreboard(Game *game) {
         }
         struct Record current = str2record(line);
         if (!added && r.score >= current.score) {
-            fputs(record2str(r), tmp);
+            char *r_line = record2str(r);
+            fputs(r_line, tmp);
+            free(r_line);
             added = 1;
+            place = i + 1;
         }
         if (i + added < scoreboard_len) {
             fputs(line, tmp);
         }
     }
+
+    free(line);
+    line = NULL;
+
     if (!added && i < scoreboard_len) {
-        fputs(record2str(r), tmp);
+        place = i + 1;
+        char *r_line = record2str(r);
+        fputs(r_line, tmp);
+        free(r_line);
     }
     fclose(score_file);
     score_file = fopen(fname, "wb");
@@ -71,4 +88,5 @@ void add_to_scoreboard(Game *game) {
     }
     fclose(tmp);
     fclose(score_file);
+    return place;
 }

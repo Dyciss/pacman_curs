@@ -10,6 +10,7 @@
 #include "pages/menu.h"
 #include "pages/page.h"
 #include "pages/settings.h"
+#include "pages/result.h"
 #include "settings/settings.h"
 
 enum Program_state program_state;
@@ -85,6 +86,7 @@ int main(int argc, char *argv[]) {
     pages[About] = about_Page();
     pages[Game_page] = game_Page();
     pages[Settings] = settings_Page();
+    pages[Result_page] = result_Page();
 
     settings_init();
     for (int i = 0; i < PROGRAM_STATES_COUNT; i++) {

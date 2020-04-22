@@ -12,9 +12,10 @@
 #include "directions/directions.h"
 #include "engine/engine.h"
 #include "ui/gamesizing.h"
+#include "pages/result.h"
 
-#include "settings/settings.h"
 #include "score/score.h"
+#include "settings/settings.h"
 
 static Game *game = NULL;
 
@@ -38,11 +39,16 @@ static void animate_Ghost(int id) {
 }
 
 static void escape_Game() {
-    add_to_scoreboard(game);
+    if (game->level > 10) {
+        game->score += game->lives * 10000;
+    }
+    int place = add_to_scoreboard(game);
+    int score = game->score;
     free_engine(game);
     free_Game(game);
     game = NULL;
-    set_program_state(Menu);
+    set_result(place, score);
+    set_program_state(Result_page);
 }
 
 static void rebirth_game() { rebirth(game); }
@@ -51,9 +57,10 @@ static void set_level_game() { set_level(game); }
 static int maybe_new_level() {
     if (game->foods.count_now == 0) {
         game->level++;
-        if (game->level > 10){
+        if (game->level > 10) {
             game->alive = 0;
             escape_Game();
+            return 1;
         }
         start_countdown(game);
         set_level_game();
@@ -90,7 +97,10 @@ static void move_pacman() {
             int y = game->fruits[i].y;
             game->field[x][y].object = Eaten_Food;
             if (maybe_new_level()) {
-                glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+                if (game && game->alive) {
+                    glutTimerFunc(60 * 1000.0 / game->pacman->speed,
+                                  move_pacman, 0);
+                }
                 return;
             }
         }
@@ -114,7 +124,10 @@ static void move_pacman() {
                 game->extra_live.eaten = 1;
                 game->foods.count_now--;
                 if (maybe_new_level()) {
-                    glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+                    if (game && game->alive) {
+                        glutTimerFunc(60 * 1000.0 / game->pacman->speed,
+                                      move_pacman, 0);
+                    }
                     return;
                 }
             }
@@ -170,7 +183,8 @@ static void move_pacman() {
                 game->score += 5 * l * l;
 
                 for (int i = 0; i < game->ghost_count; i++) {
-                    if (game->ghosts[i]->x == game->pacman->x && game->ghosts[i]->y == game->pacman->y) {
+                    if (game->ghosts[i]->x == game->pacman->x &&
+                        game->ghosts[i]->y == game->pacman->y) {
                         game->pacman->under = GHOST_CELL(i);
                         break;
                     }
@@ -182,6 +196,9 @@ static void move_pacman() {
                 if (game->lives) {
                     start_countdown(game);
                     rebirth_game();
+                } else {
+                    escape_Game();
+                    return;
                 }
                 break;
             }
@@ -201,7 +218,8 @@ static void move_pacman() {
             if (game->fear_moves_now) {
                 for (int i = 0; i < game->ghost_count; i++) {
                     game->ghost_fear[i] = 1;
-                    game->ghosts[i]->direction = opposite_direciton(game->ghosts[i]->direction);
+                    game->ghosts[i]->direction =
+                        opposite_direciton(game->ghosts[i]->direction);
                 }
             }
         } else if (game->pacman->under.food_type == FRUIT) {
@@ -219,7 +237,10 @@ static void move_pacman() {
         }
         check_fruits(game);
         if (maybe_new_level()) {
-            glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+            if (game && game->alive) {
+                glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman,
+                              0);
+            }
             return;
         }
     }
@@ -251,8 +272,7 @@ static void move_Ghost(int id) {
     game->field[game->ghosts[id]->x][game->ghosts[id]->y] =
         game->ghosts[id]->under;
 
-    if (game->ghost_fear[id] &&
-        game->field[new_x][new_y].object == Pacman) {
+    if (game->ghost_fear[id] && game->field[new_x][new_y].object == Pacman) {
         new_x = game->ghosts[id]->start_position.x;
         new_y = game->ghosts[id]->start_position.y;
         game->ghost_fear[id] = 0;
@@ -273,6 +293,9 @@ static void move_Ghost(int id) {
         if (game->lives) {
             start_countdown(game);
             rebirth_game();
+        } else {
+            escape_Game();
+            return;
         }
     } else if (game->ghosts[id]->under.object == Ghost) {
         int ghost_under_id = game->ghosts[id]->under.ghost_id;
