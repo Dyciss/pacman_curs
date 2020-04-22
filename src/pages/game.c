@@ -11,8 +11,8 @@
 
 #include "directions/directions.h"
 #include "engine/engine.h"
-#include "ui/gamesizing.h"
 #include "pages/result.h"
+#include "ui/gamesizing.h"
 
 #include "score/score.h"
 #include "settings/settings.h"
@@ -375,14 +375,29 @@ static void keyboard_special(int key, int x, int y) {
         struct tm *t_info;
         time(&t);
         t_info = localtime(&t);
-        size_t fname_len = settings_field(Load_file)->max_len + 40;
+
+        size_t time_info_len = 40;
+        size_t fname_len = settings_field(Load_file)->max_len + time_info_len;
+
+        char *time_info_str = (char *)calloc(time_info_len + 1, sizeof(char));
         char *fname = (char *)calloc(fname_len + 1, sizeof(char));
+
+        // year, day: 1-365, hours, minutes, seconds
+        if (!strftime(time_info_str, time_info_len, "%Y%j%H%M%S", t_info)) {
+            fprintf(stderr, "Error while saving game to %s\n", fname);
+            fprintf(stderr, "Probably bad time");
+            free(time_info_str);
+            free(fname);
+            return;
+        }
         snprintf(fname, fname_len, "%s%s.txt", settings_field(Load_file)->text,
-                 asctime(t_info));
+                 time_info_str);
         if (!Game2file(game, fname)) {
             fprintf(stderr, "Error while saving game to %s\n", fname);
+
         }
 
+        free(time_info_str);
         free(fname);
         return;
     }
