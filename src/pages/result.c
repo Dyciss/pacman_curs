@@ -31,7 +31,7 @@ static void render() {
     render_button(game_btn, 0, 0 - 2*FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
     render_button(settings_btn, 0, 0 - 4*FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
     if (place) {
-        render_button(score_btn, 0, current_y, WHITE, GOLD);
+        render_button(score_btn, 0, 0 - 6*FONT_HEIGHT_UPPER_CASE, WHITE, GOLD);
     }
 }
 
@@ -54,7 +54,7 @@ static void init_Result() {
     menu_btn = new_Button("Go to Menu");
     game_btn = new_Button("New game");
     settings_btn = new_Button("Settings");
-    score_btn = new_Button("Socores");
+    score_btn = new_Button("Scores");
 }
 
 static void free_Result() { 
