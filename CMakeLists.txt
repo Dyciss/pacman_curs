@@ -11,14 +11,17 @@ add_executable(pacman ./src/main.c
     ./src/game/gamemodel.c ./src/game/gamegraph.c
     ./src/score/score.c)
 
-target_include_directories(pacman PRIVATE ./src)
+add_subdirectory(FreeGLUT/freeglut/freeglut)
+
+target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
-set(CMAKE_C_FLAGS " -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
 
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
-target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS})
-
+target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS})
 target_link_libraries(pacman ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
+
+
+target_link_libraries(pacman freeglut_static)
