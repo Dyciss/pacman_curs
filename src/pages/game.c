@@ -47,8 +47,12 @@ static void escape_Game() {
     free_engine(game);
     free_Game(game);
     game = NULL;
-    set_result(place, score);
-    set_program_state(Result_page);
+    if (score != 0) {
+        set_result(place, score);
+        set_program_state(Result_page);
+    } else {
+        set_program_state(Menu);
+    }
 }
 
 static void rebirth_game() { rebirth(game); }
