@@ -87,9 +87,9 @@ int Game2file(Game *game, char *fname) {
     fprintf(f, "[lives]: %i\n", game->lives);
     fprintf(f, "[score]: %i\n", game->score);
 
-    // level, difficalty
+    // level, difficulty
     fprintf(f, "[level]: %i\n", game->level);
-    fprintf(f, "[difficalty]: %i\n", game->difficalty);
+    fprintf(f, "[difficulty]: %i\n", game->difficulty);
 
     // countdown info
     fprintf(f, "[countdown.ms]: %i\n", game->countdown.ms);
@@ -201,18 +201,18 @@ int file2Game(Game *game, char *fname) {
     // maybe it shouldn't be in the map, but maybe it should
     SCANF_WITH_CHECK(r, fscanf(f, "[lives]: %i\n", &game->lives));
 
-    // level, difficalty
+    // level, difficulty
     // it definitely shoudn't be in the map
     if (is_save) {
         SCANF_WITH_CHECK(r, fscanf(f, "[score]: %i\n", &game->score));
         SCANF_WITH_CHECK(r, fscanf(f, "[level]: %i\n", &game->level));
-        SCANF_WITH_CHECK(r, fscanf(f, "[difficalty]: %i\n", &game->difficalty));
+        SCANF_WITH_CHECK(r, fscanf(f, "[difficulty]: %i\n", &game->difficulty));
     } else {
         game->score = 0;
         game->level = 1;
         // without any validation, it's not worth an exception
         // 256 mod 4 == 0 and needs because (negative) % 4 = negative
-        game->difficalty = (settings_field(Difficalty)->text[0] + 256 - '0') % 4;
+        game->difficulty = (settings_field(Difficulty)->text[0] + 256 - '0') % 4;
     }
 
     // countdown info

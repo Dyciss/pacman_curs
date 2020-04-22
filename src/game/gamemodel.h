@@ -64,7 +64,7 @@ typedef struct Game {
     int lives; // pacman lives, lives==0 <=> game ended
 
     int level; // == stage
-    int difficalty; // - constant
+    int difficulty; // - constant
 
     int score;
 

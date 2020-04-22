@@ -154,7 +154,7 @@ static void l3(Game *game, int ghost_id) {
 }
 
 void set_Ghost_direction(Game *game, int ghost_id) {
-    switch (game->difficalty) {
+    switch (game->difficulty) {
     case 0:
         l0(game, ghost_id);
         break;
@@ -223,7 +223,7 @@ void init_engine(Game *game) {
     data.mode_moves_count = 0;
     data.mode = Random;
     data.table = NULL;
-    if (game->difficalty >= 2) {
+    if (game->difficulty >= 2) {
         init_table(game);
     }
 }
@@ -241,7 +241,7 @@ static void free_table(Game *game) {
 }
 
 void free_engine(Game *game) {
-    if (game->difficalty >= 2) {
+    if (game->difficulty >= 2) {
         free_table(game);
     }
 }

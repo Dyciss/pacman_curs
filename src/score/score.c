@@ -29,9 +29,9 @@ static struct Record str2record(char *str) {
 void add_to_scoreboard(Game *game) {
     struct Record r = (struct Record){.name = settings_field(User)->text,
                                       .score = game->score,
-                                      .difficulty = game->difficalty};
+                                      .difficulty = game->difficulty};
     char fname[8] = ".score";
-    strncat(fname, settings_field(Difficalty)->text, 1);
+    strncat(fname, settings_field(Difficulty)->text, 1);
     FILE *score_file = fopen(fname, "r");
     FILE *tmp = tmpfile();
     if (score_file == NULL) {

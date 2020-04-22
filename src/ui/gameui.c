@@ -40,7 +40,7 @@ static void draw_right_part(Game *game) {
 
     line_number++;
 
-    snprintf(str, str_len, "Difficalty: %i", game->difficalty);
+    snprintf(str, str_len, "Difficulty: %i", game->difficulty);
     render_str(str);
 
     line_number++;
