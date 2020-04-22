@@ -21,7 +21,15 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -Wextra -Wpedantic -Wno-unused
 
 find_package(OpenGL REQUIRED)
 target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS})
+
 target_link_libraries(pacman ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
-
-
 target_link_libraries(pacman freeglut_static)
+
+install(TARGETS pacman DESTINATION bin)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/canonical DESTINATION data)
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/.pacman-settings DESTINATION bin)
+set(CPACK_PACKAGE_NAME "Pacman")
+set(CPACK_PACKAGE_DESCRIPTION "Coursework. Pacman.")
+
+
+include(CPack)
