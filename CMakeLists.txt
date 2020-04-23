@@ -11,7 +11,7 @@ add_executable(pacman ./src/main.c
     ./src/game/gamemodel.c ./src/game/gamegraph.c
     ./src/score/score.c)
 
-add_subdirectory(FreeGLUT/freeglut/freeglut)
+add_subdirectory(FreeGLUT/freeglut/freeglut EXCLUDE_FROM_ALL)
 
 target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
