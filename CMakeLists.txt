@@ -17,9 +17,15 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FreeGLUT/freeglut/freeglut EXCLUDE_
 
 target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-set(CMAKE_BUILD_TYPE Debug)
-set(CMAKE_BUILD_TYPE RelWithDebInfo)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
+if(MSVC)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+endif()
+
+if(NOT MSVC)
+    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_BUILD_TYPE RelWithDebInfo)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
+endif()
 
 find_package(OpenGL REQUIRED)
 target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS})
