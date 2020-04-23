@@ -13,7 +13,7 @@ add_executable(pacman ./src/main.c
 
 set(FREEGLUT_BUILD_SHARED_LIBS OFF CACHE BOOL "freeglut shared")
 set(FREEGLUT_BUILD_DEMOS OFF CACHE BOOL "freeglut demos")
-add_subdirectory(FreeGLUT/freeglut/freeglut EXCLUDE_FROM_ALL)
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FreeGLUT/freeglut/freeglut EXCLUDE_FROM_ALL)
 
 target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
