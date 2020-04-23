@@ -29,6 +29,7 @@ endif()
 
 find_package(OpenGL REQUIRED)
 target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS})
+target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/FreeGLUT/freeglut/freeglut/include)
 
 target_link_libraries(pacman ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 target_link_libraries(pacman freeglut_static)
