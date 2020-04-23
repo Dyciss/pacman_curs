@@ -22,9 +22,7 @@ if(MSVC)
 endif()
 
 if(NOT MSVC)
-    set(CMAKE_BUILD_TYPE Debug)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter -Og -ggdb -g3")
+    target_compile_options(pacman PRIVATE -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter)
 endif()
 
 find_package(OpenGL REQUIRED)
