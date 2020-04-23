@@ -115,7 +115,10 @@ static void draw_background(Game *game) {
 
 static void draw_grid(Game *game) {
     glColor3ub(WHITE.r, WHITE.g, WHITE.b);
-    glPointSize(3);
+    int size = game->alpha / 8;
+    if (!size)
+        return;
+    glPointSize(size);
     for (int i = 1; i <= game->width; i++) {
         for (int j = 1; j <= game->height; j++) {
             float x;
