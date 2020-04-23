@@ -11,6 +11,8 @@ add_executable(pacman ./src/main.c
     ./src/game/gamemodel.c ./src/game/gamegraph.c
     ./src/score/score.c)
 
+set(FREEGLUT_BUILD_SHARED_LIBS OFF CACHE BOOL "freeglut shared")
+set(FREEGLUT_BUILD_DEMOS OFF CACHE BOOL "freeglut demos")
 add_subdirectory(FreeGLUT/freeglut/freeglut EXCLUDE_FROM_ALL)
 
 target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -26,10 +28,13 @@ target_link_libraries(pacman ${OPENGL_LIBRARIES} ${GLUT_LIBRARY})
 target_link_libraries(pacman freeglut_static)
 
 install(TARGETS pacman DESTINATION bin)
-install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/canonical DESTINATION data)
+
+install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/data/canonical DESTINATION bin/data)
 install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/.pacman-settings DESTINATION bin)
+
 set(CPACK_PACKAGE_NAME "Pacman")
 set(CPACK_PACKAGE_DESCRIPTION "Coursework. Pacman.")
 
+set(CPACK_NSIS_MUI_ICON ${CMAKE_CURRENT_SOURCE_DIR}/data/icon.ico)
 
 include(CPack)
