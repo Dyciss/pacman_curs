@@ -12,7 +12,7 @@
 #define FONT_HEIGHT_UPPER_CASE (FONT_HEIGHT * 2)
 #define FONT_WIDTH (9 / (float)window_width())
 #define WHITE ((Color){234, 220, 177})
-#define GAME_BG ((Color){42, 30, 120})
+#define GAME_BG ((Color){0, 0, 0})
 #define GOLD ((Color){245, 238, 0})
 #define RED ((Color){255, 0, 0})
 #define BLACK ((Color){0, 0, 0})
