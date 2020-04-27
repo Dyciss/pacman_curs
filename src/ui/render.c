@@ -333,7 +333,7 @@ void render_Food(int size_px, float x_center, float y_center, Color color,
     }
 }
 void render_Wall(int size_px, float x_center, float y_center, Color color) {
-    render_Circle(size_px, x_center, y_center, RED);
+    render_Circle(size_px, x_center, y_center, WALL_COLOR);
     size_px -= size_px / 4;
     glColor3ub(color.r, color.g, color.b);
     glBegin(GL_POLYGON);

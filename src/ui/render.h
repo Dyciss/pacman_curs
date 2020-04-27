@@ -15,6 +15,7 @@
 #define GAME_BG ((Color){0, 0, 0})
 #define GOLD ((Color){245, 238, 0})
 #define RED ((Color){255, 0, 0})
+#define WALL_COLOR ((Color){64, 64, 64})
 #define BLACK ((Color){0, 0, 0})
 
 typedef struct {
