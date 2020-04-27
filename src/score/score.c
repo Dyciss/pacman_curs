@@ -75,6 +75,7 @@ int add_to_scoreboard(Game *game) {
         if (i + added < scoreboard_len) {
             fputs(line, tmp);
         }
+        free(current.name);
     }
 
     free(line);
@@ -123,6 +124,7 @@ void print_scores() {
         snprintf(text, 255, "%i) %i - %s", i + 1, current.score, current.name);
         render_string(text, -FONT_WIDTH * strlen(text),
                       1 - FONT_HEIGHT_UPPER_CASE * (i + 1), FONT, WHITE);
+        free(current.name);
     }
     fclose(score_file);
     free(line);
