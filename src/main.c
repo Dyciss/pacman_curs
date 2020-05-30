@@ -82,6 +82,7 @@ int main(int argc, char *argv[]) {
 
     glutCreateWindow("Pacman");
     glutFullScreen();
+    srand(time(NULL));
 
     pages[Menu] = menu_Page();
     pages[About] = about_Page();
