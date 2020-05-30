@@ -21,9 +21,9 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-if(NOT MSVC)
-    target_compile_options(pacman PRIVATE -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter)
-endif()
+# if(NOT MSVC)
+#     target_compile_options(pacman PRIVATE -Werror -Wall -Wextra -Wpedantic -Wno-unused-parameter)
+# endif()
 
 find_package(OpenGL REQUIRED)
 target_include_directories(pacman PRIVATE ${OPENGL_INCLUDE_DIRS})
