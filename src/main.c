@@ -3,6 +3,7 @@
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "ui/windowsize.h"
 #include "pages/about.h"
