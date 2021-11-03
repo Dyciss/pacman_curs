@@ -1,21 +1,24 @@
+extern "C" {
+    #include "ui/gameui.h"
+    #include "ui/render.h"
+    #include "ui/windowsize.h"
+
+    #include "directions/directions.h"
+    #include "engine/engine.h"
+    #include "ui/gamesizing.h"
+
+    #include "score/score.h"
+    #include "settings/settings.h"
+}
+
 #include <GL/freeglut.h>
 #include <stdio.h>
 #include <time.h>
 
-#include "main.h"
-#include "pages/page.h"
+#include "main.hpp"
+#include "pages/game.hpp"
+#include "pages/result.hpp"
 
-#include "ui/gameui.h"
-#include "ui/render.h"
-#include "ui/windowsize.h"
-
-#include "directions/directions.h"
-#include "engine/engine.h"
-#include "pages/result.h"
-#include "ui/gamesizing.h"
-
-#include "score/score.h"
-#include "settings/settings.h"
 
 static Game *game = NULL;
 
@@ -28,7 +31,7 @@ static void animate_pacman() {
     if (!game || !game->alive)
         return;
     game->pacman->animation_status = !game->pacman->animation_status;
-    glutTimerFunc(1000.0 / 3, animate_pacman, 0);
+    glutTimerFunc(1000.0 / 3, reinterpret_cast<void (*)(int)>(animate_pacman), 0);
 }
 
 static void animate_Ghost(int id) {
@@ -78,7 +81,7 @@ static void move_pacman() {
         return;
 
     if (game->countdown.active || game->pause) {
-        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+        glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman), 0);
         return;
     }
 
@@ -86,7 +89,7 @@ static void move_pacman() {
     int new_y;
 
     if (!set_new_xy(game, game->pacman, &new_x, &new_y)) { // new xy is new
-        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+        glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman), 0);
         return;
     }
 
@@ -99,11 +102,11 @@ static void move_pacman() {
             game->foods.count_now--; // without score
             int x = game->fruits[i].x;
             int y = game->fruits[i].y;
-            game->field[x][y].object = Eaten_Food;
+            game->field[x][y].object = cell::type::Eaten_Food;
             if (maybe_new_level()) {
                 if (game && game->alive) {
                     glutTimerFunc(60 * 1000.0 / game->pacman->speed,
-                                  move_pacman, 0);
+                                  reinterpret_cast<void (*)(int)>(move_pacman), 0);
                 }
                 return;
             }
@@ -113,24 +116,24 @@ static void move_pacman() {
     if (!game->extra_live.eaten && game->level == game->extra_live.when_level) {
         int x = game->extra_live.x;
         int y = game->extra_live.y;
-        if (game->field[x][y].object == Eaten_Food) {
+        if (game->field[x][y].object ==  cell::type::Eaten_Food) {
             game->extra_live.moves_unvisible++;
             if (game->extra_live.moves_unvisible >=
                 (game->width + game->height)) {
-                game->field[x][y].object = Food;
+                game->field[x][y].object = cell::type::Food;
                 game->foods.count_now++;
             }
         } else {
             game->extra_live.moves_uneaten++;
             if (game->extra_live.moves_uneaten >=
                 (game->width + game->height) * 2 / 3) {
-                game->field[x][y].object = Eaten_Food;
+                game->field[x][y].object = cell::type::Eaten_Food;
                 game->extra_live.eaten = 1;
                 game->foods.count_now--;
                 if (maybe_new_level()) {
                     if (game && game->alive) {
                         glutTimerFunc(60 * 1000.0 / game->pacman->speed,
-                                      move_pacman, 0);
+                                      reinterpret_cast<void (*)(int)>(move_pacman), 0);
                     }
                     return;
                 }
@@ -147,8 +150,8 @@ static void move_pacman() {
         }
     }
 
-    if (game->field[new_x][new_y].object == Wall) {
-        glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+    if (game->field[new_x][new_y].object == cell::type::Wall) {
+        glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman), 0);
         return;
     }
 
@@ -159,12 +162,12 @@ static void move_pacman() {
     game->pacman->under = game->field[new_x][new_y];
     game->field[new_x][new_y] = PACMAN_CELL;
 
-    if (game->pacman->under.object == Pacman) {
+    if (game->pacman->under.object == cell::type::Pacman) {
         game->pacman->under = NOTHING_CELL;
     }
 
-    else if (game->pacman->under.object == Ghost) {
-        while (game->pacman->under.object == Ghost) {
+    else if (game->pacman->under.object == cell::type::Ghost) {
+        while (game->pacman->under.object == cell::type::Ghost) {
             int id = game->pacman->under.ghost_id;
             game->pacman->under = game->ghosts[id]->under;
 
@@ -209,8 +212,8 @@ static void move_pacman() {
         }
     }
     // not else if because under feared ghost may be Food.
-    if (game->pacman->under.object == Food) {
-        game->pacman->under.object = Eaten_Food;
+    if (game->pacman->under.object == cell::type::Food) {
+        game->pacman->under.object = cell::type::Eaten_Food;
         game->foods.count_now--;
         if (game->pacman->under.food_type == SMALL) {
             game->score += game->level;
@@ -242,13 +245,13 @@ static void move_pacman() {
         check_fruits(game);
         if (maybe_new_level()) {
             if (game && game->alive) {
-                glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman,
+                glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman),
                               0);
             }
             return;
         }
     }
-    glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+    glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman), 0);
 }
 
 static void move_Ghost(int id) {
@@ -269,14 +272,14 @@ static void move_Ghost(int id) {
         return;
     }
 
-    if (game->field[new_x][new_y].object == Wall) {
+    if (game->field[new_x][new_y].object == cell::type::Wall) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[id]->speed, move_Ghost, id);
         return;
     }
     game->field[game->ghosts[id]->x][game->ghosts[id]->y] =
         game->ghosts[id]->under;
 
-    if (game->ghost_fear[id] && game->field[new_x][new_y].object == Pacman) {
+    if (game->ghost_fear[id] && game->field[new_x][new_y].object == cell::type::Pacman) {
         new_x = game->ghosts[id]->start_position.x;
         new_y = game->ghosts[id]->start_position.y;
         game->ghost_fear[id] = 0;
@@ -290,7 +293,7 @@ static void move_Ghost(int id) {
     game->ghosts[id]->under = game->field[new_x][new_y];
     game->field[new_x][new_y] = GHOST_CELL(id);
 
-    if (game->ghosts[id]->under.object == Pacman) {
+    if (game->ghosts[id]->under.object == cell::type::Pacman) {
         game->ghosts[id]->under = game->pacman->under;
         game->lives--;
 
@@ -301,7 +304,7 @@ static void move_Ghost(int id) {
             escape_Game();
             return;
         }
-    } else if (game->ghosts[id]->under.object == Ghost) {
+    } else if (game->ghosts[id]->under.object == cell::type::Ghost) {
         int ghost_under_id = game->ghosts[id]->under.ghost_id;
         game->ghosts[id]->under = game->ghosts[ghost_under_id]->under;
     }
@@ -325,7 +328,7 @@ static void frame() {
 
     if (game->countdown.active && !game->countdown.runned) {
         game->countdown.runned = 1;
-        glutTimerFunc(game->countdown.ms, countdown_tick, 0);
+        glutTimerFunc(game->countdown.ms, reinterpret_cast<void (*)(int)>(countdown_tick), 0);
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -333,11 +336,11 @@ static void frame() {
                   -1 + FONT_HEIGHT_UPPER_CASE, WHITE, WHITE);
     draw_game(game);
 
-    glutTimerFunc(1000.0 / fps, frame, 0);
+    glutTimerFunc(1000.0 / fps, reinterpret_cast<void (*)(int)>(frame), 0);
     glutSwapBuffers();
 }
 
-static void render() {
+void GamePage::render() {
     if (game) {
         sync_sizing_props(game);
         return;
@@ -358,13 +361,13 @@ static void render() {
         animate_Ghost(i);
     }
     frame();
-    glutTimerFunc(60 * 1000.0 / game->pacman->speed, move_pacman, 0);
+    glutTimerFunc(60 * 1000.0 / game->pacman->speed, reinterpret_cast<void (*)(int)>(move_pacman), 0);
     for (int i = 0; i < game->ghost_count; i++) {
         glutTimerFunc(60 * 1000.0 / game->ghosts[i]->speed, move_Ghost, i);
     }
 }
 
-static void mouse(float x, float y) {
+void GamePage::mouse(float x, float y) {
     // game->alive check prevents double click
     if (in_button(escape_btn, x, y) && game->alive) {
         game->alive = 0; // signal for stop
@@ -373,7 +376,7 @@ static void mouse(float x, float y) {
     }
 }
 
-static void keyboard_special(int key, int x, int y) {
+void GamePage::keyboard_special(int key, int x, int y) {
     if (key == GLUT_KEY_F1 && game->pause) {
         time_t t = time(NULL);
         struct tm *t_info;
@@ -410,7 +413,7 @@ static void keyboard_special(int key, int x, int y) {
     }
 }
 
-static void keyboard(unsigned char key, int x, int y) {
+void GamePage::keyboard(unsigned char key, int x, int y) {
     if (key == 'r' && game->countdown.active) {
         stop_countdown(game);
         return;
@@ -429,21 +432,13 @@ static void keyboard(unsigned char key, int x, int y) {
         return;
     }
 }
-static void init_Game_Page() { escape_btn = new_Button(escape_btn_text); }
 
-static void free_Game_Page() {
+GamePage::GamePage() { escape_btn = new_Button(escape_btn_text); }
+
+GamePage::~GamePage() {
     free_Button(escape_btn);
     if (game != NULL) {
         game->alive = 0;
         escape_Game();
     }
-}
-
-Page game_Page() {
-    return (Page){.render = render,
-                  .mouse = mouse,
-                  .keyboard = keyboard,
-                  .keyboard_special = keyboard_special,
-                  .init_Page = init_Game_Page,
-                  .free_Page = free_Game_Page};
 }

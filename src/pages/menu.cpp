@@ -1,9 +1,12 @@
+extern "C" {
+    #include "ui/render.h"
+}
+
 #include <GL/freeglut.h>
 #include <stdio.h>
 
-#include "main.h"
-#include "pages/page.h"
-#include "ui/render.h"
+#include "main.hpp"
+#include "pages/menu.hpp"
 
 static char menu_str[] = "Menu page";
 
@@ -13,7 +16,7 @@ static Button *about_btn = NULL;
 static Button *exit_btn = NULL;
 static Button *score_btn = NULL;
 
-static void init() {
+MenuPage::MenuPage() {
     game_btn = new_Button("New game");
     settings_btn = new_Button("Settings");
     about_btn = new_Button("About");
@@ -21,7 +24,7 @@ static void init() {
     score_btn = new_Button("Scores");
 }
 
-static void free_Menu() {
+MenuPage::~MenuPage() {
     free_Button(game_btn);
     free_Button(settings_btn);
     free_Button(about_btn);
@@ -29,7 +32,7 @@ static void free_Menu() {
     free_Button(score_btn);
 }
 
-static void render() {
+void MenuPage::render() {
     glClear(GL_COLOR_BUFFER_BIT);
     float x = 0.0 - (sizeof menu_str - 1) * FONT_WIDTH; // center
     float y = 1.0 - FONT_HEIGHT_UPPER_CASE;             // on the top
@@ -43,7 +46,7 @@ static void render() {
     render_button(exit_btn, 0, -FONT_HEIGHT_UPPER_CASE * 6, WHITE, WHITE);
 }
 
-static void mouse(float x, float y) {
+void MenuPage::mouse(float x, float y) {
     if (in_button(about_btn, x, y)) {
         set_program_state(About);
     } else if (in_button(settings_btn, x, y)) {
@@ -57,14 +60,5 @@ static void mouse(float x, float y) {
     }
 }
 
-static void keyboard_special(int key, int x, int y) {}
-static void keyboard(unsigned char key, int x, int y) {}
-
-Page menu_Page() {
-    return (Page){.render = render,
-                  .mouse = mouse,
-                  .keyboard = keyboard,
-                  .keyboard_special = keyboard_special,
-                  .init_Page = init,
-                  .free_Page = free_Menu};
-}
+void MenuPage::keyboard_special(int key, int x, int y) {}
+void MenuPage::keyboard(unsigned char key, int x, int y) {}

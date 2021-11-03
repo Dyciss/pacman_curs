@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(pacman)
 
-add_executable(pacman ./src/main.c 
-    ./src/pages/menu.c ./src/pages/about.c ./src/pages/game.c ./src/pages/settings.c ./src/pages/result.c ./src/pages/score.c
+add_executable(pacman ./src/main.cpp 
+    ./src/pages/menu.cpp ./src/pages/about.cpp ./src/pages/game.cpp ./src/pages/settings.cpp ./src/pages/result.cpp ./src/pages/score.cpp
     ./src/ui/render.c  ./src/ui/windowsize.c ./src/ui/gameui.c ./src/ui/gamesizing.c
     ./src/settings/settings.c
     ./src/engine/engine.c ./src/engine/queue.c
@@ -17,6 +17,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/FreeGLUT/freeglut/freeglut EXCLUDE_
 
 target_include_directories(pacman PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
+add_definitions(-g -pg)
 if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()

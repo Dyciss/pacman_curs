@@ -1,6 +1,9 @@
-#include "main.h"
-#include "pages/page.h"
-#include "ui/render.h"
+extern "C" {
+    #include "ui/render.h"
+}
+
+#include "main.hpp"
+#include "pages/result.hpp"
 #include <GL/freeglut.h>
 #include <stdio.h>
 
@@ -14,7 +17,7 @@ static Button *score_btn = NULL;
 
 #define str_len 64
 #define current_y (1 - line_number * FONT_HEIGHT_UPPER_CASE)
-static void render() {
+void ResultPage::render() {
     char str[str_len + 1] = {'\0'};
     int line_number = 1;
 
@@ -37,7 +40,7 @@ static void render() {
     }
 }
 
-static void mouse(float x, float y) {
+void ResultPage::mouse(float x, float y) {
     if (in_button(menu_btn, x, y)) {
         set_program_state(Menu);
     } else if (in_button(game_btn, x, y)) {
@@ -49,17 +52,17 @@ static void mouse(float x, float y) {
     }
 }
 
-static void keyboard_special(int key, int x, int y) {}
-static void keyboard(unsigned char key, int x, int y) {}
+void ResultPage::keyboard_special(int key, int x, int y) {}
+void ResultPage::keyboard(unsigned char key, int x, int y) {}
 
-static void init_Result() {
+ResultPage::ResultPage() {
     menu_btn = new_Button("Go to Menu");
     game_btn = new_Button("New game");
     settings_btn = new_Button("Settings");
     score_btn = new_Button("Scores");
 }
 
-static void free_Result() {
+ResultPage::~ResultPage() {
     free_Button(menu_btn);
     free_Button(game_btn);
     free_Button(settings_btn);
@@ -69,13 +72,4 @@ static void free_Result() {
 void set_result(int place_value, int score_value) {
     place = place_value;
     score = score_value;
-}
-
-Page result_Page() {
-    return (Page){.render = render,
-                  .mouse = mouse,
-                  .keyboard = keyboard,
-                  .keyboard_special = keyboard_special,
-                  .init_Page = init_Result,
-                  .free_Page = free_Result};
 }

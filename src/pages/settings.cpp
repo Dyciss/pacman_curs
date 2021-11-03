@@ -1,7 +1,10 @@
-#include "settings/settings.h"
-#include "main.h"
-#include "pages/page.h"
-#include "ui/render.h"
+extern "C" {
+    #include "settings/settings.h"
+    #include "ui/render.h"
+}
+
+#include "main.hpp"
+#include "pages/settings.hpp"
 
 #include <ctype.h>
 #include <string.h>
@@ -49,9 +52,9 @@ static void update_page() {
     glutSwapBuffers();
 }
 
-static void render() { update_page(); }
+void SettingsPage::render() { update_page(); }
 
-static void mouse(float x, float y) {
+void SettingsPage::mouse(float x, float y) {
     if (in_input(difficulty_inp, x, y)) {
         active_inp = difficulty_inp;
     } else if (in_input(user_name_inp, x, y)) {
@@ -69,8 +72,8 @@ static void mouse(float x, float y) {
     update_page();
 }
 
-static void keyboard_special(int key, int x, int y) {}
-static void keyboard(unsigned char key, int x, int y) {
+void SettingsPage::keyboard_special(int key, int x, int y) {}
+void SettingsPage::keyboard(unsigned char key, int x, int y) {
     if (key == '\x1B') { // escape btn
         set_program_state(Menu);
         return;
@@ -94,7 +97,7 @@ static void bind_input(Input **inp, enum setting_field f) {
     *inp = new_Input(field->text, field->max_len);
 }
 
-static void init() {
+SettingsPage::SettingsPage() {
     menu_btn = new_Button("Menu");
 
     bind_input(&difficulty_inp, Difficulty);
@@ -102,18 +105,9 @@ static void init() {
     bind_input(&load_from_inp, Load_file);
 }
 
-static void free_Settings() {
+SettingsPage::~SettingsPage() {
     free_Button(menu_btn);
     free_Input(difficulty_inp);
     free_Input(user_name_inp);
     free_Input(load_from_inp);
-}
-
-Page settings_Page() {
-    return (Page){.render = render,
-                  .mouse = mouse,
-                  .keyboard = keyboard,
-                  .keyboard_special = keyboard_special,
-                  .init_Page = init,
-                  .free_Page = free_Settings};
 }

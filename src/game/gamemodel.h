@@ -7,7 +7,7 @@ enum Food { SMALL = 1, ENERGIZER = 2, FRUIT = 3, EXTRALIVE = 4 };
 struct cell // = Nothing | Wall | Food(Type) | Pacman | Ghost(Id int) |
             // Eaten_Food(type)
 {
-    enum {
+    enum type {
         Nothing = 0,
         Wall = 1,
         Food = 2,
@@ -36,11 +36,19 @@ struct creature {
     } start_position;
 };
 
+#ifndef __cplusplus
 #define NOTHING_CELL ((struct cell){.object = Nothing, .ghost_id = -1})
 #define PACMAN_CELL ((struct cell){.object = Pacman, .ghost_id = -1})
 #define GHOST_CELL(id) ((struct cell){.object = Ghost, .ghost_id = (id)})
 #define WALL_CELL ((struct cell){.object = Wall, .ghost_id = -1})
 #define FOOD_CELL(type) ((struct cell){.object = Food, .food_type = (type)})
+#else
+#define NOTHING_CELL ((struct cell){.object = cell::type::Nothing, .ghost_id = -1})
+#define PACMAN_CELL ((struct cell){.object = cell::type::Pacman, .ghost_id = -1})
+#define GHOST_CELL(id) ((struct cell){.object = cell::type::Ghost, .ghost_id = (id)})
+#define WALL_CELL ((struct cell){.object = cell::type::Wall, .ghost_id = -1})
+#define FOOD_CELL(type) ((struct cell){.object = cell::type::Food, .food_type = (type)})
+#endif
 
 struct fruit {
     int x;
